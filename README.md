@@ -18,7 +18,9 @@ In case you are the maintainer of a new SAP open source project, these are the s
 
 ## About this project
 
-*Insert a short description of your project here...*
+The *extension-content-operator* implements implements the lifecycle management of a Kubernetes CRD `ContentConfiguration` resource, which is the API for configuration of Extensions in openMFP.
+
+For reference, see the [RFC for openMFP Extension Management - CDM Processing](https://github.com/openmfp/architecture/pull/2/files?short_path=8a071a3#diff-8a071a31a02919a613572237f1e968fe02b9cf7d350c2cf796ba6b35495ec09b).
 
 ## Getting Started
 
