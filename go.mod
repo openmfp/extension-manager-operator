@@ -92,6 +92,8 @@ require (
 
 replace github.com/openmfp/content-configuration-operator/pkg/subroutines => ./pkg/subroutines
 
+replace github.com/openmfp/extension-content-operator/api/v1alpha1 => ./api/v1alpha1
+
 // replace github.com/openmfp/content-configuration-operator/pkg/subroutines/mocks => ./pkg/subroutines/mocks
 
 replace dario.cat/mergo => github.com/imdario/mergo v0.3.16

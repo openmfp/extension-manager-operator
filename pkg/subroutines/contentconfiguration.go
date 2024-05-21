@@ -40,7 +40,9 @@ func (r *ContentConfigurationSubroutine) Finalizers() []string { // coverage-ign
 
 func (r *ContentConfigurationSubroutine) Process(ctx context.Context, runtimeObj lifecycle.RuntimeObject) (ctrl.Result, errors.OperatorError) {
 	// TODO: processing logic
-	// instance := runtimeObj.(*cachev1alpha1.ContentConfiguration)
+	// instance := runtimeObj.(*v1alpha1.ContentConfiguration)
+
+	// logger.Log.Info("Processing ContentConfiguration", "namespace", instance.Namespace, "name", instance.Name)
 
 	return ctrl.Result{}, nil
 }

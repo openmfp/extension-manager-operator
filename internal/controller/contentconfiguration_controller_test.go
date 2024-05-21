@@ -18,9 +18,11 @@ package controller
 
 import (
 	"context"
+	"os"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
+	"github.com/rs/zerolog"
 	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/types"
 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
@@ -28,6 +30,8 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
 	cachev1alpha1 "github.com/openmfp/extension-content-operator/api/v1alpha1"
+	"github.com/openmfp/golang-commons/controller/lifecycle"
+	"github.com/openmfp/golang-commons/logger"
 )
 
 var _ = Describe("ContentConfiguration Controller", func() {
@@ -41,6 +45,13 @@ var _ = Describe("ContentConfiguration Controller", func() {
 			Namespace: "default", // TODO(user):Modify as needed
 		}
 		contentconfiguration := &cachev1alpha1.ContentConfiguration{}
+
+		logConfig := logger.DefaultConfig()
+		logConfig.NoJSON = true
+		logConfig.Name = "ContentConfigurationTestSuite"
+		log, _ := logger.New(logConfig)
+		// Disable color logging as vs-code does not support color logging in the test output
+		log = logger.NewFromZerolog(log.Output(&zerolog.ConsoleWriter{Out: os.Stdout, NoColor: true}))
 
 		BeforeEach(func() {
 			By("creating the custom resource for the Kind ContentConfiguration")
@@ -69,8 +80,7 @@ var _ = Describe("ContentConfiguration Controller", func() {
 		It("should successfully reconcile the resource", func() {
 			By("Reconciling the created resource")
 			controllerReconciler := &ContentConfigurationReconciler{
-				Client: k8sClient,
-				Scheme: k8sClient.Scheme(),
+				lifecycle: lifecycle.NewLifecycleManager(log, operatorName, contentConfigurationReconcilerName, k8sClient, []lifecycle.Subroutine{}).WithSpreadingReconciles().WithConditionManagement(),
 			}
 
 			_, err := controllerReconciler.Reconcile(ctx, reconcile.Request{
