@@ -72,3 +72,10 @@ func (i *ContentConfiguration) GetConditions() []metav1.Condition { return i.Sta
 func (i *ContentConfiguration) SetConditions(conditions []metav1.Condition) {
 	i.Status.Conditions = conditions
 }
+
+func (i *ContentConfiguration) GetObservedGeneration() int64      { return i.Status.ObservedGeneration }
+func (i *ContentConfiguration) SetObservedGeneration(g int64)     { i.Status.ObservedGeneration = g }
+func (i *ContentConfiguration) GetNextReconcileTime() metav1.Time { return i.Status.NextReconcileTime }
+func (i *ContentConfiguration) SetNextReconcileTime(time metav1.Time) {
+	i.Status.NextReconcileTime = time
+}
