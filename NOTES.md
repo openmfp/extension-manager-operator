@@ -18,3 +18,7 @@ of `kubebuilder` and `operator-sdk` CLIs.
 ## CD: Continuous Deployment
 
 Don't use `kustomize`
+
+# Drawings Collaboration
+
+Use the following Miro Board for collaboration on drawings: [https://miro.com/app/board/uXjVKFWUajY=/](https://miro.com/app/board/uXjVKFWUajY=/) 
