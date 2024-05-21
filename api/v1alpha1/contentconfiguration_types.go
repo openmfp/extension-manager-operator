@@ -36,6 +36,10 @@ type ContentConfigurationSpec struct {
 type ContentConfigurationStatus struct {
 	// INSERT ADDITIONAL STATUS FIELD - define observed state of cluster
 	// Important: Run "make" to regenerate code after modifying this file
+	Conditions         []metav1.Condition `json:"conditions,omitempty"`
+	Namespace          *string            `json:"namespace,omitempty"`
+	ObservedGeneration int64              `json:"observedGeneration,omitempty" protobuf:"varint,3,opt,name=observedGeneration"`
+	NextReconcileTime  metav1.Time        `json:"nextReconcileTime,omitempty"`
 }
 
 //+kubebuilder:object:root=true
@@ -61,4 +65,10 @@ type ContentConfigurationList struct {
 
 func init() {
 	SchemeBuilder.Register(&ContentConfiguration{}, &ContentConfigurationList{})
+}
+
+func (i *ContentConfiguration) GetConditions() []metav1.Condition { return i.Status.Conditions }
+
+func (i *ContentConfiguration) SetConditions(conditions []metav1.Condition) {
+	i.Status.Conditions = conditions
 }

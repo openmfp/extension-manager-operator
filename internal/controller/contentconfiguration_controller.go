@@ -19,44 +19,40 @@ package controller
 import (
 	"context"
 
-	"k8s.io/apimachinery/pkg/runtime"
 	ctrl "sigs.k8s.io/controller-runtime"
-	"sigs.k8s.io/controller-runtime/pkg/client"
-	"sigs.k8s.io/controller-runtime/pkg/log"
+	"sigs.k8s.io/controller-runtime/pkg/predicate"
 
+	"github.com/openmfp/content-configuration-operator/pkg/subroutines"
 	cachev1alpha1 "github.com/openmfp/extension-content-operator/api/v1alpha1"
+	"github.com/openmfp/extension-content-operator/internal/config"
+	"github.com/openmfp/golang-commons/controller/lifecycle"
+	"github.com/openmfp/golang-commons/logger"
+)
+
+var (
+	operatorName                       = "extension-content-operator"
+	contentConfigurationReconcilerName = "ContentConfigurationReconciler"
 )
 
 // ContentConfigurationReconciler reconciles a ContentConfiguration object
 type ContentConfigurationReconciler struct {
-	client.Client
-	Scheme *runtime.Scheme
+	lifecycle *lifecycle.LifecycleManager
 }
 
-//+kubebuilder:rbac:groups=cache.core.openmfp.io,resources=contentconfigurations,verbs=get;list;watch;create;update;patch;delete
-//+kubebuilder:rbac:groups=cache.core.openmfp.io,resources=contentconfigurations/status,verbs=get;update;patch
-//+kubebuilder:rbac:groups=cache.core.openmfp.io,resources=contentconfigurations/finalizers,verbs=update
+func NewContentConfigurationReconciler(log *logger.Logger, mgr ctrl.Manager, cfg config.Config) *ContentConfigurationReconciler {
+	subs := []lifecycle.Subroutine{}
+	if cfg.Subroutines.Namespace.Enabled {
+		subs = append(subs, subroutines.NewContentConfigurationSubroutine(mgr.GetClient()))
+	}
+	return &ContentConfigurationReconciler{
+		lifecycle: lifecycle.NewLifecycleManager(log, operatorName, contentConfigurationReconcilerName, mgr.GetClient(), subs).WithSpreadingReconciles().WithConditionManagement(),
+	}
+}
 
-// Reconcile is part of the main kubernetes reconciliation loop which aims to
-// move the current state of the cluster closer to the desired state.
-// TODO(user): Modify the Reconcile function to compare the state specified by
-// the ContentConfiguration object against the actual cluster state, and then
-// perform operations to make the cluster state reflect the state specified by
-// the user.
-//
-// For more details, check Reconcile and its Result here:
-// - https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.16.3/pkg/reconcile
 func (r *ContentConfigurationReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
-	_ = log.FromContext(ctx)
-
-	// TODO(user): your logic here
-
-	return ctrl.Result{}, nil
+	return r.lifecycle.Reconcile(ctx, req, &cachev1alpha1.ContentConfiguration{})
 }
 
-// SetupWithManager sets up the controller with the Manager.
-func (r *ContentConfigurationReconciler) SetupWithManager(mgr ctrl.Manager) error {
-	return ctrl.NewControllerManagedBy(mgr).
-		For(&cachev1alpha1.ContentConfiguration{}).
-		Complete(r)
+func (r *ContentConfigurationReconciler) SetupWithManager(mgr ctrl.Manager, cfg config.Config, log *logger.Logger, eventPredicates ...predicate.Predicate) error {
+	return r.lifecycle.SetupWithManager(mgr, cfg.MaxConcurrentReconciles, contentConfigurationReconcilerName, &cachev1alpha1.ContentConfiguration{}, cfg.DebugLabelValue, r, log, eventPredicates...)
 }

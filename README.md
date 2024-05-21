@@ -23,7 +23,7 @@ In case you are the maintainer of a new SAP open source project, these are the s
 ## Getting Started
 
 ### Prerequisites
-- go version v1.20.0+
+- go version v1.22.0+
 - docker version 17.03+.
 - kubectl version v1.11.3+.
 - Access to a Kubernetes v1.11.3+ cluster.
@@ -87,7 +87,8 @@ make undeploy
 make generate
 make manifests
 make install
-make run
+go run ./main.go operator
+
 ```
 
 
