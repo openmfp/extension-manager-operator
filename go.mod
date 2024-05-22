@@ -1,12 +1,15 @@
 module github.com/openmfp/extension-content-operator
 
-go 1.22.2
+go 1.22.0
+
+toolchain go1.22.2
 
 require (
 	github.com/onsi/ginkgo/v2 v2.17.3
 	github.com/onsi/gomega v1.33.1
 	github.com/openmfp/content-configuration-operator/pkg/subroutines v0.0.0-00010101000000-000000000000
 	github.com/openmfp/golang-commons v0.29.0
+	github.com/rs/zerolog v1.32.0
 	github.com/spf13/cobra v1.8.0
 	github.com/stretchr/testify v1.9.0
 	github.com/vrischmann/envconfig v1.3.0
@@ -56,7 +59,6 @@ require (
 	github.com/prometheus/client_model v0.6.1 // indirect
 	github.com/prometheus/common v0.53.0 // indirect
 	github.com/prometheus/procfs v0.15.0 // indirect
-	github.com/rs/zerolog v1.32.0 // indirect
 	github.com/sosodev/duration v1.3.1 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/vektah/gqlparser/v2 v2.5.12 // indirect
