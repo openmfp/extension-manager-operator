@@ -2,8 +2,6 @@ module github.com/openmfp/content-configuration-operator/pkg/subroutines
 
 go 1.22.0
 
-toolchain go1.22.2
-
 require (
 	github.com/openmfp/golang-commons v0.29.0
 	github.com/stretchr/testify v1.9.0
