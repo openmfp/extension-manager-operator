@@ -38,3 +38,5 @@ On-prem docs link [https://portal.hyperspace.tools.sap/projects/dxp/team-docs/Te
 ## Courses
 
 - [https://sdk.operatorframework.io/docs/building-operators/golang/tutorial/](https://sdk.operatorframework.io/docs/building-operators/golang/tutorial/)
+
+## Other
