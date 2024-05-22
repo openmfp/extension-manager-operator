@@ -85,6 +85,7 @@ make undeploy
 ### Run tests
 ```sh
 make test
+make test-e2e
 ```
 ### Debug locally
 ```sh

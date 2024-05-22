@@ -11,11 +11,11 @@ import (
 )
 
 const (
-	ContentConfigurationSubroutineName                        = "ContentConfigurationSubroutine"
-	ContentConfigurationSubroutineFinalizer                   = "account.core.openmfp.io/finalizer"
-	ContentConfigurationAccountOwnerLabel                     = "account.core.openmfp.io/owner"
-	ContentConfigurationAccountOwnerContentConfigurationLabel = "account.core.openmfp.io/owner-namespace"
-	ContentConfigurationNamePrefix                            = "account-"
+	ContentConfigurationSubroutineName                 = "ContentConfigurationSubroutine"
+	ContentConfigurationSubroutineFinalizer            = "contentconfiguration.core.openmfp.io/finalizer"
+	ContentConfigurationOwnerLabel                     = "contentconfiguration.core.openmfp.io/owner"
+	ContentConfigurationOwnerContentConfigurationLabel = "contentconfiguration.core.openmfp.io/owner-namespace"
+	ContentConfigurationNamePrefix                     = "contentconfiguration-"
 )
 
 type ContentConfigurationSubroutine struct {
@@ -35,7 +35,7 @@ func (r *ContentConfigurationSubroutine) Finalize(ctx context.Context, runtimeOb
 }
 
 func (r *ContentConfigurationSubroutine) Finalizers() []string { // coverage-ignore
-	return []string{"account.core.openmfp.io/finalizer"}
+	return []string{"contentconfiguration.core.openmfp.io/finalizer"}
 }
 
 func (r *ContentConfigurationSubroutine) Process(ctx context.Context, runtimeObj lifecycle.RuntimeObject) (ctrl.Result, errors.OperatorError) {
