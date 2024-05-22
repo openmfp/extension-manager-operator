@@ -1,0 +1,33 @@
+---
+apiVersion: cache.core.openmfp.io/v1alpha1
+kind: ContentConfiguration
+metadata:
+  name: example-contentconfiguration-basic
+  namespace: default
+settingA: value1
+settingB: value2
+---
+apiVersion: cache.core.openmfp.io/v1alpha1
+kind: ContentConfiguration
+metadata:
+  name: example-contentconfiguration-advanced
+  namespace: default
+settingA: advancedValue1
+settingB: advancedValue2
+nestedSetting:
+  subSetting1: subValue1
+  subSetting2: subValue2
+---
+apiVersion: cache.core.openmfp.io/v1alpha1
+kind: ContentConfiguration
+metadata:
+  name: example-contentconfiguration-with-meta
+  namespace: default
+  labels:
+    environment: production
+    team: backend
+  annotations:
+    description: "This is an example ContentConfiguration with metadata."
+settingA: metaValue1
+settingB: metaValue2
+...

@@ -59,8 +59,31 @@ norbixaccenture/extension-content-operator   latest    b5cef5f8d92d   17 minutes
 Pseudo code for developer workflow:
 
 ```text
-k apply -f config/crd/crd.yaml
+# star Docker Desktop
+docker ps
+
+# create local K8s cluster with `kind`
+kind create cluster --name sap-poc
+kind get clusters
+
+# create a namespace
+k create ns sap-poc
+kubens sap-poc
+
+# Create a CRD (contract)
+k apply -f config/crd/custom-resource-definition.yaml
+
+# Create a CR (instance) of the CRD (TODO: doesn't work with this operator at the moment)
+k apply -f config/crd/content-configuration.yaml
+
 k get crds
+k get crds/contentconfigurations.cache.core.openmfp.io -o yaml
+
+k get contentconfigurations
+k get contentconfigurations/example-contentconfiguration-basic -o yaml
+k get contentconfigurations/example-contentconfiguration-advanced -o yaml
+k get contentconfigurations/example-contentconfiguration-meta -o yaml 
+
 go run ./main.go operator
 
 {"level":"info","service":"/home/norbix/go/pkg/mod/github.com/openmfp/golang-commons@v0.32.0/logger/logger.go","time":"2024-05-22T21:19:59+02:00","caller":"/home/norbix/go/src/corpo/extension-content-operator/cmd/operator.go:129","message":"starting manager"}
@@ -70,4 +93,7 @@ go run ./main.go operator
 {"level":"info","service":"/home/norbix/go/pkg/mod/github.com/openmfp/golang-commons@v0.32.0/logger/logger.go","component":"controller-runtime","controller":"ContentConfigurationReconciler","controllerGroup":"cache.core.openmfp.io","controllerKind":"ContentConfiguration","v":0,"source":"kind source: *v1alpha1.ContentConfiguration","time":"2024-05-22T21:19:59+02:00","caller":"/home/norbix/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.18.2/pkg/internal/controller/controller.go:173","message":"Starting EventSource"}
 {"level":"info","service":"/home/norbix/go/pkg/mod/github.com/openmfp/golang-commons@v0.32.0/logger/logger.go","component":"controller-runtime","controller":"ContentConfigurationReconciler","controllerGroup":"cache.core.openmfp.io","controllerKind":"ContentConfiguration","v":0,"time":"2024-05-22T21:19:59+02:00","caller":"/home/norbix/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.18.2/pkg/internal/controller/controller.go:181","message":"Starting Controller"}
 {"level":"info","service":"/home/norbix/go/pkg/mod/github.com/openmfp/golang-commons@v0.32.0/logger/logger.go","component":"controller-runtime","controller":"ContentConfigurationReconciler","controllerGroup":"cache.core.openmfp.io","controllerKind":"ContentConfiguration","v":0,"worker count":10,"time":"2024-05-22T21:19:59+02:00","caller":"/home/norbix/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.18.2/pkg/internal/controller/controller.go:215","message":"Starting workers"}
+
+^c
+k delete -f config/crd/custom-resource-definition.yaml
 ```

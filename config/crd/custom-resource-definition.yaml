@@ -12,6 +12,18 @@ spec:
       schema:
         openAPIV3Schema:
           type: object
+          properties:
+            settingA:
+              type: string
+            settingB:
+              type: string
+            nestedSetting:
+              type: object
+              properties:
+                subSetting1:
+                  type: string
+                subSetting2:
+                  type: string
   scope: Namespaced
   names:
     plural: contentconfigurations
