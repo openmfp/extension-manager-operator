@@ -82,13 +82,16 @@ make uninstall
 make undeploy
 ```
 
+### Run tests
+```sh
+make test
+```
 ### Debug locally
 ```sh
 make generate
 make manifests
 make install
 make run
-
 ```
 
 
