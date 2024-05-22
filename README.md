@@ -87,7 +87,7 @@ make undeploy
 make generate
 make manifests
 make install
-go run ./main.go operator
+make run
 
 ```
 
