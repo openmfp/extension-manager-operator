@@ -3,7 +3,7 @@ module github.com/openmfp/extension-content-operator
 go 1.22.0
 
 require (
-	github.com/onsi/ginkgo/v2 v2.17.3
+	github.com/onsi/ginkgo/v2 v2.18.0
 	github.com/onsi/gomega v1.33.1
 	github.com/openmfp/content-configuration-operator/pkg/subroutines v0.0.0-00010101000000-000000000000
 	github.com/openmfp/golang-commons v0.32.0
