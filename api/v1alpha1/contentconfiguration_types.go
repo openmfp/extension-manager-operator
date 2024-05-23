@@ -28,8 +28,29 @@ type ContentConfigurationSpec struct {
 	// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
 	// Important: Run "make" to regenerate code after modifying this file
 
-	// Foo is an example field of ContentConfiguration. Edit contentconfiguration_types.go to remove/update
-	Foo string `json:"foo,omitempty"`
+	// +kubebuilder:validation:RemoteConfiguration:
+	RemoteConfiguration RemoteConfiguration `json:"remoteConfiguration,omitempty"`
+
+	InlineConfiguration InlineConfiguration `json:"inlineConfiguration,omitempty"`
+}
+
+type InlineConfiguration struct {
+	ContentType string `json:"contentType,omitempty"` // "yaml" or "json"
+	Content     string `json:"content,omitempty"`
+}
+
+type RemoteConfiguration struct {
+	Url            string         `json:"url,omitempty"`
+	Authentication Authentication `json:"authentication,omitempty"`
+}
+
+type Authentication struct {
+	Type      string    `json:"type,omitempty"`
+	SecretRef SecretRef `json:"secretRef,omitempty"`
+}
+
+type SecretRef struct {
+	Name string `json:"name,omitempty"`
 }
 
 // ContentConfigurationStatus defines the observed state of ContentConfiguration
