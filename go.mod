@@ -7,7 +7,7 @@ require (
 	github.com/onsi/gomega v1.33.1
 	github.com/openmfp/content-configuration-operator/pkg/subroutines v0.0.0-00010101000000-000000000000
 	github.com/openmfp/golang-commons v0.32.0
-	github.com/rs/zerolog v1.32.0
+	github.com/rs/zerolog v1.33.0
 	github.com/spf13/cobra v1.8.0
 	github.com/stretchr/testify v1.9.0
 	github.com/vrischmann/envconfig v1.3.0
