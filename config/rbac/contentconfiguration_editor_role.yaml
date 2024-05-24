@@ -12,7 +12,7 @@ metadata:
   name: contentconfiguration-editor-role
 rules:
 - apiGroups:
-  - cache.core.openmfp.io
+  - core.openmfp.io
   resources:
   - contentconfigurations
   verbs:
@@ -24,7 +24,7 @@ rules:
   - update
   - watch
 - apiGroups:
-  - cache.core.openmfp.io
+  - core.openmfp.io
   resources:
   - contentconfigurations/status
   verbs:

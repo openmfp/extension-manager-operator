@@ -4,9 +4,9 @@ kind: CustomResourceDefinition
 metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.15.0
-  name: contentconfigurations.cache.core.openmfp.io
+  name: contentconfigurations.core.openmfp.io
 spec:
-  group: cache.core.openmfp.io
+  group: core.openmfp.io
   names:
     kind: ContentConfiguration
     listKind: ContentConfigurationList
@@ -40,10 +40,28 @@ spec:
           spec:
             description: ContentConfigurationSpec defines the desired state of ContentConfiguration
             properties:
-              foo:
-                description: Foo is an example field of ContentConfiguration. Edit
-                  contentconfiguration_types.go to remove/update
-                type: string
+              inlineConfiguration:
+                properties:
+                  content:
+                    type: string
+                  contentType:
+                    type: string
+                type: object
+              remoteConfiguration:
+                properties:
+                  authentication:
+                    properties:
+                      secretRef:
+                        properties:
+                          name:
+                            type: string
+                        type: object
+                      type:
+                        type: string
+                    type: object
+                  url:
+                    type: string
+                type: object
             type: object
           status:
             description: ContentConfigurationStatus defines the observed state of

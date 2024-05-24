@@ -1,4 +1,4 @@
-apiVersion: cache.core.openmfp.io/v1alpha1
+apiVersion: core.openmfp.io/v1alpha1
 kind: ContentConfiguration
 metadata:
   labels:

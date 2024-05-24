@@ -12,7 +12,7 @@ metadata:
   name: contentconfiguration-viewer-role
 rules:
 - apiGroups:
-  - cache.core.openmfp.io
+  - core.openmfp.io
   resources:
   - contentconfigurations
   verbs:
@@ -20,7 +20,7 @@ rules:
   - list
   - watch
 - apiGroups:
-  - cache.core.openmfp.io
+  - core.openmfp.io
   resources:
   - contentconfigurations/status
   verbs:
