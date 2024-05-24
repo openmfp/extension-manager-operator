@@ -1,0 +1,27 @@
+# permissions for end users to view contentconfigurations.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app.kubernetes.io/name: clusterrole
+    app.kubernetes.io/instance: contentconfiguration-viewer-role
+    app.kubernetes.io/component: rbac
+    app.kubernetes.io/created-by: extension-content-operator
+    app.kubernetes.io/part-of: extension-content-operator
+    app.kubernetes.io/managed-by: kustomize
+  name: contentconfiguration-viewer-role
+rules:
+- apiGroups:
+  - cache.core.openmfp.io
+  resources:
+  - contentconfigurations
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - cache.core.openmfp.io
+  resources:
+  - contentconfigurations/status
+  verbs:
+  - get
