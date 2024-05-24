@@ -1,4 +1,4 @@
 ## Append samples of your project ##
 resources:
-- cache_v1alpha1_contentconfiguration.yaml
+- v1alpha1_contentconfiguration.yaml
 #+kubebuilder:scaffold:manifestskustomizesamples

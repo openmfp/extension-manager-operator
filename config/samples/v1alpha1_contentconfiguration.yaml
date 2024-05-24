@@ -1,0 +1,51 @@
+apiVersion: core.openmfp.io/v1alpha1
+kind: ContentConfiguration
+metadata:
+  labels:
+    app.kubernetes.io/name: contentconfiguration
+    app.kubernetes.io/instance: contentconfiguration-sample
+    app.kubernetes.io/part-of: extension-content-operator
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/created-by: extension-content-operator
+  name: contentconfiguration-sample
+  generation: 1
+spec:
+  inlineConfiguration:
+    contentType: yaml # can be yaml or json
+    content: |
+      version: "3.0"
+      nodeConfiguration:
+        nodeDefaults:
+          baseUrl: https://{context.serviceProviderConfig.domain}
+          entityType: example
+        nodes:
+          - entityType: account
+            visibleForContext: contains(entityContext.account.permissions, 'example-permission')
+            luigiNodeConfig:
+              pathSegment: example-extension
+              label: {{exampleName}}
+              viewUrl: /example-path
+              virtualTree: false
+              isolateView: true
+              loadingIndicator:
+                enabled: false
+              icon: {{exampleIcon}}
+              category:
+                id: community-extensions
+                order: 200
+      texts:
+        - locale: ""
+          textDictionary:
+            exampleName: Example Extension
+            deployment: Deployment
+            exampleIcon: https://example.com/example-icon.svg
+        - locale: en
+          textDictionary:
+            example:  Example Extension
+            deployment: Deployment
+            exampleIcon: https://example.com/example-icon.svg
+        - locale: de
+          textDictionary:
+            example:  Example Extension
+            deployment: Deployment.md
+            exampleIcon: https://example.com/example-icon.svg
