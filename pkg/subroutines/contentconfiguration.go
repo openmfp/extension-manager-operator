@@ -30,7 +30,9 @@ func (r *ContentConfigurationSubroutine) GetName() string {
 	return ContentConfigurationSubroutineName
 }
 
-func (r *ContentConfigurationSubroutine) Finalize(ctx context.Context, runtimeObj lifecycle.RuntimeObject) (ctrl.Result, errors.OperatorError) {
+func (r *ContentConfigurationSubroutine) Finalize(
+	ctx context.Context,
+	runtimeObj lifecycle.RuntimeObject) (ctrl.Result, errors.OperatorError) {
 	return ctrl.Result{}, nil
 }
 
@@ -38,7 +40,9 @@ func (r *ContentConfigurationSubroutine) Finalizers() []string { // coverage-ign
 	return []string{"contentconfiguration.core.openmfp.io/finalizer"}
 }
 
-func (r *ContentConfigurationSubroutine) Process(ctx context.Context, runtimeObj lifecycle.RuntimeObject) (ctrl.Result, errors.OperatorError) {
+func (r *ContentConfigurationSubroutine) Process(
+	ctx context.Context,
+	runtimeObj lifecycle.RuntimeObject) (ctrl.Result, errors.OperatorError) {
 	// TODO: processing logic
 	// instance := runtimeObj.(*v1alpha1.ContentConfiguration)
 
