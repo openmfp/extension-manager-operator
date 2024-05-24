@@ -10,6 +10,5 @@ jobs:
     secrets: inherit
     with:
       imageTagName: ghcr.io/openmfp/extension-content-operator
-      useMake: false
+      useMake: true
       useLocalCoverageConfig: true
-      useTask: true
