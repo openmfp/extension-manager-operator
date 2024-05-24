@@ -5,7 +5,6 @@ go 1.22.0
 require (
 	github.com/onsi/ginkgo/v2 v2.18.0
 	github.com/onsi/gomega v1.33.1
-	github.com/openmfp/content-configuration-operator/pkg/subroutines v0.0.0-00010101000000-000000000000
 	github.com/openmfp/golang-commons v0.32.0
 	github.com/rs/zerolog v1.32.0
 	github.com/spf13/cobra v1.8.0
@@ -59,6 +58,7 @@ require (
 	github.com/prometheus/procfs v0.15.0 // indirect
 	github.com/sosodev/duration v1.3.1 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
+	github.com/stretchr/objx v0.5.2 // indirect
 	github.com/vektah/gqlparser/v2 v2.5.12 // indirect
 	go.opentelemetry.io/otel v1.26.0 // indirect
 	go.opentelemetry.io/otel/metric v1.26.0 // indirect
@@ -89,10 +89,6 @@ require (
 	sigs.k8s.io/structured-merge-diff/v4 v4.4.1 // indirect
 	sigs.k8s.io/yaml v1.4.0 // indirect
 )
-
-replace github.com/openmfp/content-configuration-operator/pkg/subroutines => ./pkg/subroutines
-
-replace github.com/openmfp/extension-content-operator/api/v1alpha1 => ./api/v1alpha1
 
 // replace github.com/openmfp/content-configuration-operator/pkg/subroutines/mocks => ./pkg/subroutines/mocks
 
