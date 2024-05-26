@@ -35,6 +35,7 @@ type ContentConfigurationSpec struct {
 }
 
 type InlineConfiguration struct {
+    // +kubebuilder:validation:Enum=yaml;json
 	ContentType string `json:"contentType,omitempty"` // "yaml" or "json"
 	Content     string `json:"content,omitempty"`
 }
