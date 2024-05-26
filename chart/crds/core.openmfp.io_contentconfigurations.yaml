@@ -155,6 +155,8 @@ spec:
                   - type
                   type: object
                 type: array
+              configurationResult:
+                type: string
               nextReconcileTime:
                 format: date-time
                 type: string
