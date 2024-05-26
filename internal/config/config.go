@@ -12,10 +12,10 @@ type Config struct {
 	DebugLabelValue string `envconfig:"optional"`
 	Log             struct {
 		Level  string `envconfig:"default=info"`
-		NoJson bool   `envconfig:"default=false"`
+		NoJSON bool   `envconfig:"default=false"`
 	}
 	ShutdownTimeout time.Duration `envconfig:"default=1s"`
-	EnableHttp2     bool          `envconfig:"default=false"`
+	EnableHTTP2     bool          `envconfig:"default=false"`
 	Metrics         struct {
 		BindAddress string `envconfig:"default=:8080"`
 		Secure      bool   `envconfig:"default=false"`

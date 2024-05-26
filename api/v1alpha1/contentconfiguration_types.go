@@ -40,7 +40,7 @@ type InlineConfiguration struct {
 }
 
 type RemoteConfiguration struct {
-	Url            string         `json:"url,omitempty"`
+	URL            string         `json:"url,omitempty"`
 	Authentication Authentication `json:"authentication,omitempty"`
 }
 

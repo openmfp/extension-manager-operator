@@ -45,7 +45,7 @@ var (
 	enableLeaderElection bool
 	probeAddr            string
 	loglevel             string
-	logNoJson            bool
+	logNoJSON            bool
 	secureMetrics        bool
 	enableHTTP2          bool
 	cfg                  config.Config
@@ -64,14 +64,14 @@ func init() { // coverage-ignore
 		"The address the probe endpoint binds to.")
 	operatorCmd.Flags().StringVar(&loglevel, "log-level", cfg.Log.Level,
 		"The log level for the application. Default is info.")
-	operatorCmd.Flags().BoolVar(&logNoJson, "log-no-json", cfg.Log.NoJson,
+	operatorCmd.Flags().BoolVar(&logNoJSON, "log-no-json", cfg.Log.NoJSON,
 		"Flag to disable JSON logging. Default is false.")
 	operatorCmd.Flags().BoolVar(&enableLeaderElection, "leader-elect", cfg.LeaderElection.Enabled,
 		"Enable leader election for controller manager. "+
 			"Enabling this will ensure there is only one active controller manager.")
 	operatorCmd.Flags().BoolVar(&secureMetrics, "metrics-secure", cfg.Metrics.Secure,
 		"If set the metrics endpoint is served securely")
-	operatorCmd.Flags().BoolVar(&enableHTTP2, "enable-http2", cfg.EnableHttp2,
+	operatorCmd.Flags().BoolVar(&enableHTTP2, "enable-http2", cfg.EnableHTTP2,
 		"If set, HTTP/2 will be enabled for the metrics and webhook servers")
 }
 
@@ -135,7 +135,7 @@ func RunController(cmd *cobra.Command, args []string) { // coverage-ignore
 func initLog() *logger.Logger { // coverage-ignore
 	logcfg := logger.DefaultConfig()
 	logcfg.Level = loglevel
-	logcfg.NoJSON = logNoJson
+	logcfg.NoJSON = logNoJSON
 	log, err := logger.New(logcfg)
 	if err != nil {
 		setupLog.Error(err, "unable to create logger")
