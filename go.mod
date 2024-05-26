@@ -5,7 +5,7 @@ go 1.22.0
 require (
 	github.com/onsi/ginkgo/v2 v2.18.0
 	github.com/onsi/gomega v1.33.1
-	github.com/openmfp/golang-commons v0.32.0
+	github.com/openmfp/golang-commons v0.33.0
 	github.com/rs/zerolog v1.33.0
 	github.com/spf13/cobra v1.8.0
 	github.com/stretchr/testify v1.9.0
@@ -89,7 +89,5 @@ require (
 	sigs.k8s.io/structured-merge-diff/v4 v4.4.1 // indirect
 	sigs.k8s.io/yaml v1.4.0 // indirect
 )
-
-// replace github.com/openmfp/content-configuration-operator/pkg/subroutines/mocks => ./pkg/subroutines/mocks
 
 replace dario.cat/mergo => github.com/imdario/mergo v0.3.16
