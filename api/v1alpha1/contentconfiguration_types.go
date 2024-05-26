@@ -17,6 +17,7 @@ limitations under the License.
 package v1alpha1
 
 import (
+	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -35,7 +36,7 @@ type ContentConfigurationSpec struct {
 }
 
 type InlineConfiguration struct {
-    // +kubebuilder:validation:Enum=yaml;json
+	// +kubebuilder:validation:Enum=yaml;json
 	ContentType string `json:"contentType,omitempty"` // "yaml" or "json"
 	Content     string `json:"content,omitempty"`
 }
@@ -46,12 +47,8 @@ type RemoteConfiguration struct {
 }
 
 type Authentication struct {
-	Type      string    `json:"type,omitempty"`
-	SecretRef SecretRef `json:"secretRef,omitempty"`
-}
-
-type SecretRef struct {
-	Name string `json:"name,omitempty"`
+	Type      string                      `json:"type,omitempty"`
+	SecretRef corev1.LocalObjectReference `json:"secretRef,omitempty"`
 }
 
 // ContentConfigurationStatus defines the observed state of ContentConfiguration
