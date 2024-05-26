@@ -55,9 +55,10 @@ type Authentication struct {
 type ContentConfigurationStatus struct {
 	// INSERT ADDITIONAL STATUS FIELD - define observed state of cluster
 	// Important: Run "make" to regenerate code after modifying this file
-	Conditions         []metav1.Condition `json:"conditions,omitempty"`
-	ObservedGeneration int64              `json:"observedGeneration,omitempty" protobuf:"varint,3,opt,name=observedGeneration"`
-	NextReconcileTime  metav1.Time        `json:"nextReconcileTime,omitempty"`
+	Conditions          []metav1.Condition `json:"conditions,omitempty"`
+	ObservedGeneration  int64              `json:"observedGeneration,omitempty" protobuf:"varint,3,opt,name=observedGeneration"`
+	NextReconcileTime   metav1.Time        `json:"nextReconcileTime,omitempty"`
+	ConfigurationResult string             `json:"configurationResult,omitempty"`
 }
 
 //+kubebuilder:object:root=true
