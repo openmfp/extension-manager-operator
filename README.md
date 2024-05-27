@@ -86,6 +86,7 @@ task undeploy
 ```sh
 task test
 task test-e2e
+task cover
 ```
 ### Debug locally
 ```sh
