@@ -2,7 +2,8 @@ package subroutines
 
 import (
 	"context"
-
+	"fmt"
+	"github.com/openmfp/extension-content-operator/api/v1alpha1"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
@@ -41,12 +42,35 @@ func (r *ContentConfigurationSubroutine) Finalizers() []string { // coverage-ign
 }
 
 func (r *ContentConfigurationSubroutine) Process(
-	ctx context.Context,
-	runtimeObj lifecycle.RuntimeObject) (ctrl.Result, errors.OperatorError) {
-	// TODO: processing logic
-	// instance := runtimeObj.(*v1alpha1.ContentConfiguration)
+	ctx context.Context, runtimeObj lifecycle.RuntimeObject,
+) (ctrl.Result, errors.OperatorError) {
+	instance := runtimeObj.(*v1alpha1.ContentConfiguration)
 
-	// logger.Log.Info("Processing ContentConfiguration", "namespace", instance.Namespace, "name", instance.Name)
+	//if instance == nil {
+	//	instance = &v1alpha1.ContentConfiguration{}
+	//}
+
+	fmt.Println("###", instance)
+
+	//if instance.Spec.InlineConfiguration.Url != "" {
+	//	instance.Status.ConfigurationResult.Url = "1213"
+	//} else {
+	//	instance.Status.ConfigurationResult.Url = "123"
+	//}
+
+	instance.Spec.InlineConfiguration.Content = "this is inline config"
+	instance.Status.ConfigurationResult = "this is config result"
+
+	err := r.client.Update(ctx, instance)
+	if err != nil {
+		fmt.Println("### err", err)
+		return ctrl.Result{}, errors.NewOperatorError(err, true, true)
+	}
+
+	err = r.client.Status().Update(ctx, instance)
+	if err != nil {
+		return ctrl.Result{}, errors.NewOperatorError(err, true, true)
+	}
 
 	return ctrl.Result{}, nil
 }
