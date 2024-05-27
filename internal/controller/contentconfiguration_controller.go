@@ -18,6 +18,7 @@ package controller
 
 import (
 	"context"
+	"github.com/openmfp/extension-content-operator/pkg/subroutines"
 
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/predicate"
@@ -40,9 +41,9 @@ type ContentConfigurationReconciler struct {
 
 func NewContentConfigurationReconciler(log *logger.Logger, mgr ctrl.Manager, cfg config.Config) *ContentConfigurationReconciler {
 	subs := []lifecycle.Subroutine{}
-	// if cfg.Subroutines.Namespace.Enabled {
-	// 	subs = append(subs, subroutines.NewContentConfigurationSubroutine(mgr.GetClient()))
-	// }
+	//if cfg.Subroutines.Namespace.Enabled {
+	subs = append(subs, subroutines.NewContentConfigurationSubroutine(mgr.GetClient()))
+	//}
 	return &ContentConfigurationReconciler{
 		lifecycle: lifecycle.NewLifecycleManager(log, operatorName, contentConfigurationReconcilerName, mgr.GetClient(), subs).WithSpreadingReconciles().WithConditionManagement(),
 	}

@@ -2,13 +2,14 @@ package subroutines
 
 import (
 	"context"
-	"fmt"
 	"github.com/openmfp/extension-content-operator/api/v1alpha1"
-	ctrl "sigs.k8s.io/controller-runtime"
-	"sigs.k8s.io/controller-runtime/pkg/client"
-
+	"github.com/openmfp/extension-content-operator/pkg/retryHttpClient"
 	"github.com/openmfp/golang-commons/controller/lifecycle"
 	"github.com/openmfp/golang-commons/errors"
+	"net/http"
+	ctrl "sigs.k8s.io/controller-runtime"
+	"sigs.k8s.io/controller-runtime/pkg/client"
+	"time"
 )
 
 const (
@@ -20,11 +21,15 @@ const (
 )
 
 type ContentConfigurationSubroutine struct {
-	client client.Client
+	client          client.Client
+	retryHttpClient retryHttpClient.Service
 }
 
 func NewContentConfigurationSubroutine(client client.Client) *ContentConfigurationSubroutine {
-	return &ContentConfigurationSubroutine{client: client}
+	return &ContentConfigurationSubroutine{
+		client:          client,
+		retryHttpClient: retryHttpClient.New(5, 1*time.Second, 5*time.Second),
+	}
 }
 
 func (r *ContentConfigurationSubroutine) GetName() string {
@@ -46,29 +51,28 @@ func (r *ContentConfigurationSubroutine) Process(
 ) (ctrl.Result, errors.OperatorError) {
 	instance := runtimeObj.(*v1alpha1.ContentConfiguration)
 
-	//if instance == nil {
-	//	instance = &v1alpha1.ContentConfiguration{}
-	//}
+	var rawConfig []byte
+	// InlineConfiguration has higher priority than RemoteConfiguration
+	if instance.Spec.InlineConfiguration.Content != "" {
+		rawConfig = []byte(instance.Spec.InlineConfiguration.Content)
+	} else {
+		bytes, err := r.retryHttpClient.Do(instance.Spec.RemoteConfiguration.URL, http.MethodGet, nil)
+		if err != nil {
+			ctrl.Log.Error(err, "failed to fetch remote configuration")
 
-	fmt.Println("###", instance)
-
-	//if instance.Spec.InlineConfiguration.Url != "" {
-	//	instance.Status.ConfigurationResult.Url = "1213"
-	//} else {
-	//	instance.Status.ConfigurationResult.Url = "123"
-	//}
-
-	instance.Spec.InlineConfiguration.Content = "this is inline config"
-	instance.Status.ConfigurationResult = "this is config result"
-
-	err := r.client.Update(ctx, instance)
-	if err != nil {
-		fmt.Println("### err", err)
-		return ctrl.Result{}, errors.NewOperatorError(err, true, true)
+			return ctrl.Result{}, errors.NewOperatorError(err, true, true)
+		}
+		rawConfig = bytes
 	}
 
-	err = r.client.Status().Update(ctx, instance)
+	// TODO replace it with validation function
+	validatedConfig := string(rawConfig)
+
+	instance.Status.ConfigurationResult = validatedConfig
+
+	err := r.client.Status().Update(ctx, instance)
 	if err != nil {
+		ctrl.Log.Error(err, "failed to update instance status")
 		return ctrl.Result{}, errors.NewOperatorError(err, true, true)
 	}
 
