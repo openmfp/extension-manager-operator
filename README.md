@@ -32,7 +32,7 @@ In case you are the maintainer of a new SAP open source project, these are the s
 **Build and push your image to the location specified by `IMG`:**
 
 ```sh
-make docker-build docker-push IMG=<some-registry>/extension-content-operator:tag
+task docker-build docker-push IMG=<some-registry>/extension-content-operator:tag
 ```
 
 **NOTE:** This image ought to be published in the personal registry you specified. 
@@ -42,13 +42,13 @@ Make sure you have the proper permission to the registry if the above commands d
 **Install the CRDs into the cluster:**
 
 ```sh
-make install
+task install
 ```
 
 **Deploy the Manager to the cluster with the image specified by `IMG`:**
 
 ```sh
-make deploy IMG=<some-registry>/extension-content-operator:tag
+task deploy IMG=<some-registry>/extension-content-operator:tag
 ```
 
 > **NOTE**: If you encounter RBAC errors, you may need to grant yourself cluster-admin 
@@ -73,26 +73,27 @@ kubectl delete -k config/samples/
 **Delete the APIs(CRDs) from the cluster:**
 
 ```sh
-make uninstall
+task uninstall
 ```
 
 **UnDeploy the controller from the cluster:**
 
 ```sh
-make undeploy
+task undeploy
 ```
 
 ### Run tests
 ```sh
-make test
-make test-e2e
+task test
+task test-e2e
+task cover
 ```
 ### Debug locally
 ```sh
-make generate
-make manifests
-make install
-make run
+task generate
+task manifests
+task install
+task run
 ```
 
 
