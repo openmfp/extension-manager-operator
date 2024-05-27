@@ -35,6 +35,7 @@ const (
 )
 
 func warnError(err error) {
+	//nolint:errcheck
 	fmt.Fprintf(GinkgoWriter, "warning: %v\n", err)
 }
 
@@ -52,7 +53,10 @@ func Run(cmd *exec.Cmd) ([]byte, error) {
 	cmd.Dir = dir
 
 	if err := os.Chdir(cmd.Dir); err != nil {
-		fmt.Fprintf(GinkgoWriter, "chdir dir: %s\n", err)
+		_, errPrint := fmt.Fprintf(GinkgoWriter, "chdir dir: %s\n", err)
+		if errPrint != nil {
+			return nil, errPrint
+		}
 	}
 
 	cmd.Env = append(os.Environ(), "GO111MODULE=on")
