@@ -57,6 +57,7 @@ func Run(cmd *exec.Cmd) ([]byte, error) {
 
 	cmd.Env = append(os.Environ(), "GO111MODULE=on")
 	command := strings.Join(cmd.Args, " ")
+	//nolint:errcheck
 	fmt.Fprintf(GinkgoWriter, "running: %s\n", command)
 	output, err := cmd.CombinedOutput()
 	if err != nil {
