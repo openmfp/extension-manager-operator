@@ -3,8 +3,12 @@ exclude:
     - ^pkg/subroutines/mocks # exclude generated mock files
     - api/v1alpha1 # skipping generated files and crd type definitions
     - main\.go$ # skip covering main.go
-    - internal/controller/
-    - test/utils/
-    - pkg/subroutines/
+    # - internal/controller/
+    # - test/utils/
+    # - pkg/subroutines/
     
  
+profile: cover.out
+
+threshold:
+  file: 10
