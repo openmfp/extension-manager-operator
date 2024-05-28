@@ -2,14 +2,15 @@ package subroutines
 
 import (
 	"context"
+	"net/http"
+
 	"github.com/openmfp/extension-content-operator/api/v1alpha1"
-	"github.com/openmfp/extension-content-operator/pkg/retryHttpClient"
+	"github.com/openmfp/extension-content-operator/pkg/httpclient"
 	"github.com/openmfp/golang-commons/controller/lifecycle"
 	"github.com/openmfp/golang-commons/errors"
-	"net/http"
+	"github.com/openmfp/golang-commons/logger"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
-	"time"
 )
 
 const (
@@ -21,14 +22,16 @@ const (
 )
 
 type ContentConfigurationSubroutine struct {
-	client          client.Client
-	retryHttpClient retryHttpClient.Service
+	client     client.Client
+	httpClient httpclient.Service
+	log        *logger.Logger
 }
 
-func NewContentConfigurationSubroutine(client client.Client) *ContentConfigurationSubroutine {
+func NewContentConfigurationSubroutine(client client.Client, log *logger.Logger) *ContentConfigurationSubroutine {
 	return &ContentConfigurationSubroutine{
-		client:          client,
-		retryHttpClient: retryHttpClient.New(5, 1*time.Second, 5*time.Second),
+		client:     client,
+		httpClient: httpclient.NewService(),
+		log:        log,
 	}
 }
 
@@ -56,9 +59,9 @@ func (r *ContentConfigurationSubroutine) Process(
 	if instance.Spec.InlineConfiguration.Content != "" {
 		rawConfig = []byte(instance.Spec.InlineConfiguration.Content)
 	} else {
-		bytes, err := r.retryHttpClient.Do(instance.Spec.RemoteConfiguration.URL, http.MethodGet, nil)
+		bytes, err := r.httpClient.Do(http.MethodGet, instance.Spec.RemoteConfiguration.URL, nil)
 		if err != nil {
-			ctrl.Log.Error(err, "failed to fetch remote configuration")
+			r.log.Err(err).Msg("failed to fetch remote configuration")
 
 			return ctrl.Result{}, errors.NewOperatorError(err, true, true)
 		}
@@ -72,7 +75,8 @@ func (r *ContentConfigurationSubroutine) Process(
 
 	err := r.client.Status().Update(ctx, instance)
 	if err != nil {
-		ctrl.Log.Error(err, "failed to update instance status")
+		r.log.Err(err).Msg("failed to update instance status")
+
 		return ctrl.Result{}, errors.NewOperatorError(err, true, true)
 	}
 
