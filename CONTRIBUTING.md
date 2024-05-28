@@ -1,38 +1,30 @@
-# Contributing
+## Overview
 
-## Code of Conduct
+# Contributing to openMFP
+We want to make contributing to this project as easy and transparent as possible.
 
-All members of the project community must abide by the [SAP Open Source Code of Conduct](https://github.com/SAP/.github/blob/main/CODE_OF_CONDUCT.md).
-Only by respecting each other we can develop a productive, collaborative community.
-Instances of abusive, harassing, or otherwise unacceptable behavior may be reported by contacting [a project maintainer](.reuse/dep5).
+## Our development process
+We use GitHub to track issues and feature requests, as well as accept pull requests.
 
-## Engaging in Our Project
+## Pull requests
+You are welcome to contribute with your pull requests. These steps explain the contribution process:
 
-We use GitHub to manage reviews of pull requests.
+1. Fork the repository and create your branch from `main`.
+1. [Add tests](#testing) for your code.
+1. If you've changed APIs, update the documentation. 
+1. Make sure the tests pass. Our github actions pipeline is running the unit and e2e tests for your PR and will indicate any issues.
+1. Sign the Developer Certificate of Origin (DCO).
 
-* If you are a new contributor, see: [Steps to Contribute](#steps-to-contribute)
+## Testing
 
-* Before implementing your change, create an issue that describes the problem you would like to solve or the code that should be enhanced. Please note that you are willing to work on that issue.
+> **NOTE:** You should always add tests if you are adding code to our repository.
 
-* The team will review the issue and decide whether it should be implemented as a pull request. In that case, they will assign the issue to you. If the team decides against picking up the issue, the team will post a comment with an explanation.
+To let tests run locally, run `go test ./...` in the root directory of the repository.
 
-## Steps to Contribute
+## Issues
+We use GitHub issues to track bugs. Please ensure your description is
+clear and includes sufficient instructions to reproduce the issue.
 
-Should you wish to work on an issue, please claim it first by commenting on the GitHub issue that you want to work on. This is to prevent duplicated efforts from other contributors on the same issue.
-
-If you have questions about one of the issues, please comment on them, and one of the maintainers will clarify.
-
-## Contributing Code or Documentation
-
-You are welcome to contribute code in order to fix a bug or to implement a new feature that is logged as an issue.
-
-The following rule governs code contributions:
-
-* Contributions must be licensed under the [Apache 2.0 License](./LICENSE)
-* Due to legal reasons, contributors will be asked to accept a Developer Certificate of Origin (DCO) when they create the first pull request to this project. This happens in an automated fashion during the submission process. SAP uses [the standard DCO text of the Linux Foundation](https://developercertificate.org/).
-
-## Issues and Planning
-
-* We use GitHub issues to track bugs and enhancement requests.
-
-* Please provide as much context as possible when you open an issue. The information you provide must be comprehensive enough to reproduce that issue for the assignee.
+## License
+By contributing to openMFP, you agree that your contributions will be licensed
+under its [Apache-2.0 license](LICENSE).
