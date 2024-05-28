@@ -1,21 +1,6 @@
-# SAP Repository Template
+# extension-content-operator
 
-Default templates for SAP open source repositories, including LICENSE, .reuse/dep5, Code of Conduct, etc... All repositories on github.com/SAP will be created based on this template.
-
-## To-Do
-
-In case you are the maintainer of a new SAP open source project, these are the steps to do with the template files:
-
-- Check if the default license (Apache 2.0) also applies to your project. A license change should only be required in exceptional cases. If this is the case, please change the [license file](LICENSE).
-- Adjust the contribution guidelines (e.g. add coding style guidelines, pull request checklists, different license if needed etc.)
-- Add information about your project to this README (name, description, requirements etc). Especially take care for the <your-project> placeholders - those ones need to be replaced with your project name. See the sections below the horizontal line and [our guidelines on our wiki page](https://wiki.one.int.sap/wiki/pages/viewpage.action?pageId=3564976048#GuidelinesforGitHubHealthfiles(Readme,Contributing,CodeofConduct)-Readme.md) what is required and recommended.
-- Remove all content in this README above and including the horizontal line ;)
-
-***
-
-# Our new open source project
-
-## About this project
+## About extension-content-operator
 
 The *extension-content-operator* implements implements the lifecycle management of a Kubernetes CRD `ContentConfiguration` resource, which is the API for configuration of Extensions in openMFP.
 
