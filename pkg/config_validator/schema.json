@@ -1,0 +1,46 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "luigiConfigFragment": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "object",
+            "properties": {
+              "nodes": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "entityType": {
+                      "type": "string"
+                    },
+                    "pathSegment": {
+                      "type": "string"
+                    },
+                    "label": {
+                      "type": "string"
+                    },
+                    "icon": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["entityType", "pathSegment", "label", "icon"]
+                }
+              }
+            },
+            "required": ["nodes"]
+          }
+        },
+        "required": ["data"]
+      }
+    }
+  },
+  "required": ["name", "luigiConfigFragment"]
+}

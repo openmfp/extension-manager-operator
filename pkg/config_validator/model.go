@@ -1,4 +1,4 @@
-package contentconfiguration
+package config_validator
 
 type ContentConfiguration struct {
 	Name                string                `json:"name" yaml:"name"`
