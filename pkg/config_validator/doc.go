@@ -1,43 +1,15 @@
-/*
-Package config_validator provides utilities for validating content configurations.
-
-The package supports validating configurations in JSON and YAML formats.
-
-Example:
-
-    import (
-        "github.com/username/golang-commons/contentconfiguration"
-    )
-
-    func main() {
-        jsonConfig := ` + "`" + `{
-            "name": "overview",
-            "luigiConfigFragment": [
-                {
-                    "data": {
-                        "nodes": [
-                            {
-                                "entityType": "global",
-                                "pathSegment": "home",
-                                "label": "Overview",
-                                "icon": "home"
-                            }
-                        ]
-                    }
-                }
-            ]
-        }` + "`" + `
-		cC := contentconfiguration.NewContentConfiguration()
-
-        valid, errors := cC.ValidateJSON([]byte(jsonConfig))
-        if !valid {
-            fmt.Println("Validation failed:", errors)
-        } else {
-            fmt.Println("Validation succeeded")
-        }
-    }
-
-The package also supports schema validation.
-*/
-
+// Package config_validator provides functionality to validate configuration data.
+//
+// It includes functions to validate JSON and YAML configuration against a JSON Schema.
+//
+// Usage:
+//
+//	config := NewContentConfiguration()
+//	jsonInput := []byte(`{"name": "example", "luigiConfigFragment": [{"data": {"nodes": [{"entityType": "example", "pathSegment": "example", "label": "example", "icon": "example"}]}}]}`)
+//	result, err := config.Validate(jsonInput, "json")
+//	if err != nil {
+//	    fmt.Println("Validation error:", err)
+//	} else {
+//	    fmt.Println("Validation successful. Result:", result)
+//	}
 package config_validator

@@ -1,12 +1,12 @@
 package config_validator
 
 type ContentConfiguration struct {
-	Name                string                `json:"name" yaml:"name"`
-	LuigiConfigFragment []LuigiConfigFragment `json:"luigiConfigFragment" yaml:"luigiConfigFragment"`
+	Name                string                `json:"name,omitempty" yaml:"name,omitempty"`
+	LuigiConfigFragment []LuigiConfigFragment `json:"luigiConfigFragment,omitempty" yaml:"luigiConfigFragment,omitempty"`
 }
 
 type LuigiConfigFragment struct {
-	Data LuigiConfigData `json:"data" yaml:"data"`
+	Data LuigiConfigData `json:"data,omitempty" yaml:"data,omitempty"`
 }
 
 type LuigiConfigData struct {
@@ -14,8 +14,8 @@ type LuigiConfigData struct {
 }
 
 type Node struct {
-	EntityType  string `json:"entityType" yaml:"entityType"`
-	PathSegment string `json:"pathSegment" yaml:"pathSegment"`
-	Label       string `json:"label" yaml:"label"`
-	Icon        string `json:"icon" yaml:"icon"`
+	EntityType  string `json:"entityType,omitempty" yaml:"entityType,omitempty"`
+	PathSegment string `json:"pathSegment,omitempty" yaml:"pathSegment,omitempty"`
+	Label       string `json:"label,omitempty" yaml:"label,omitempty"`
+	Icon        string `json:"icon,omitempty" yaml:"icon,omitempty"`
 }
