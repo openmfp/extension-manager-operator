@@ -1,7 +1,8 @@
-package contentconfiguration
+package config_validator
 
 import (
 	"encoding/json"
+	"errors"
 	"github.com/xeipuuv/gojsonschema"
 	"gopkg.in/yaml.v3"
 )
@@ -59,40 +60,69 @@ func NewContentConfiguration() ContentConfigurationInterface {
 	return &contentConfiguration{}
 }
 
-func (cC *contentConfiguration) ValidateJSON(input []byte) (bool, []string) {
+func (cC *contentConfiguration) Validate(input []byte, contentType string) (string, error) {
+
+	switch contentType {
+	case "json":
+		return validateJSON(input)
+	case "yaml":
+		return validateYAML(input)
+	default:
+		return "", errors.New("no validator found for content type")
+
+	}
+}
+
+func validateJSON(input []byte) (string, error) {
 	var config ContentConfiguration
 	if err := json.Unmarshal(input, &config); err != nil {
-		return false, []string{err.Error()}
+		return "", err
 	}
-	return validateSchema(input, ContentConfigurationSchema)
+	return validateSchema(config, ContentConfigurationSchema)
+
 }
 
-func (cC *contentConfiguration) ValidateYAML(input []byte) (bool, []string) {
+func validateYAML(input []byte) (string, error) {
 	var config ContentConfiguration
 	if err := yaml.Unmarshal(input, &config); err != nil {
-		return false, []string{err.Error()}
+		return "", err
 	}
 
-	return validateSchema(input, ContentConfigurationSchema)
-
+	return validateSchema(config, ContentConfigurationSchema)
 }
 
-func validateSchema(input []byte, schema string) (bool, []string) {
-	schemaLoader := gojsonschema.NewStringLoader(schema)
-	documentLoader := gojsonschema.NewBytesLoader(input)
+func validateSchema(input ContentConfiguration, schema string) (string, error) {
+	// Marshal the input to JSON
+	jsonBytes, err := json.Marshal(input)
+	if err != nil {
+		return "", errors.New("error marshaling input to JSON")
+	}
 
+	// Load the schema and JSON data for validation
+	schemaLoader := gojsonschema.NewStringLoader(schema)
+	documentLoader := gojsonschema.NewBytesLoader(jsonBytes)
+
+	// Validate the JSON data against the schema
 	result, err := gojsonschema.Validate(schemaLoader, documentLoader)
 	if err != nil {
-		return false, []string{err.Error()}
+		return "", errors.New("error validating JSON data")
 	}
 
-	if !result.Valid() {
-		var errors []string
-		for _, desc := range result.Errors() {
-			errors = append(errors, desc.String())
-		}
-		return false, errors
+	// Generate the result string
+	//var validationResult string
+	if result.Valid() {
+		//validationResult = "The document is valid"
+		//validationResult = string(jsonBytes)
+		//return validationResult, nil
+		return string(jsonBytes), nil
+		//} else {
+		//validationResult = "The document is not valid. See errors:\n"
+		//for _, desc := range result.Errors() {
+		//	validationResult += fmt.Sprintf("- %s\n", desc)
+		//}
+		//return "", errors.New("The document is not valid")
 	}
 
-	return true, nil
+	//return validationResult, nil
+	return "", errors.New("The document is not valid")
 }

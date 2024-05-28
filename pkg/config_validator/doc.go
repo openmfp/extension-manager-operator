@@ -1,5 +1,5 @@
 /*
-Package contentconfiguration provides utilities for validating content configurations.
+Package config_validator provides utilities for validating content configurations.
 
 The package supports validating configurations in JSON and YAML formats.
 
@@ -40,4 +40,4 @@ Example:
 The package also supports schema validation.
 */
 
-package contentconfiguration
+package config_validator
