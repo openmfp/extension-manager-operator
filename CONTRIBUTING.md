@@ -17,7 +17,7 @@ You are welcome to contribute with your pull requests. These steps explain the c
 
 ## Testing
 
-> **NOTE:** You should always add if you are adding code to our repository.
+> **NOTE:** You should always add tests if you are adding code to our repository.
 
 To let tests run locally, run `go test ./...` in the root directory of the repository.
 
