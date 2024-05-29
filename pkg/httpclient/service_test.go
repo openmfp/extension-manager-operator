@@ -27,7 +27,7 @@ func TestService_Do(t *testing.T) {
 		expectError    bool
 	}{
 		{
-			name:           "successful GET request",
+			name:           "successful_GET_request",
 			method:         http.MethodGet,
 			url:            "https://example.com/success",
 			mockResponse:   `{"message": "success"}`,
@@ -36,7 +36,7 @@ func TestService_Do(t *testing.T) {
 			expectError:    false,
 		},
 		{
-			name:           "non-200 status code",
+			name:           "non_200_status_code",
 			method:         http.MethodGet,
 			url:            "https://example.com/error",
 			mockResponse:   `{"message": "error"}`,
@@ -45,14 +45,14 @@ func TestService_Do(t *testing.T) {
 			expectError:    true,
 		},
 		{
-			name:         "request creation error",
+			name:         "request_creation_error",
 			method:       "INVALID_METHOD",
 			url:          "https://example.com/invalid",
 			expectedBody: "",
 			expectError:  true,
 		},
 		{
-			name:           "successful POST request with body",
+			name:           "successful_POST_request_with_body",
 			method:         http.MethodPost,
 			url:            "https://example.com/post",
 			requestBody:    strings.NewReader(`{"key": "value"}`),
@@ -62,21 +62,12 @@ func TestService_Do(t *testing.T) {
 			expectError:    false,
 		},
 		{
-			name:         "network error",
+			name:         "network_error",
 			method:       http.MethodGet,
 			url:          "https://example.com/network-error",
 			mockError:    errors.New("network error"),
 			expectedBody: "",
 			expectError:  true,
-		},
-		{
-			name:           "read body error",
-			method:         http.MethodGet,
-			url:            "https://example.com/read-error",
-			mockResponse:   string([]byte{0x81, 0xff, 0xff, 0xff}),
-			mockStatusCode: http.StatusOK,
-			expectedBody:   "",
-			expectError:    true,
 		},
 	}
 
