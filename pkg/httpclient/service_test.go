@@ -1,6 +1,7 @@
 package httpclient
 
 import (
+	"errors"
 	"io"
 	"net/http"
 	"strings"
@@ -21,6 +22,7 @@ func TestService_Do(t *testing.T) {
 		requestBody    io.Reader
 		mockResponse   string
 		mockStatusCode int
+		mockError      error
 		expectedBody   string
 		expectError    bool
 	}{
@@ -59,6 +61,23 @@ func TestService_Do(t *testing.T) {
 			expectedBody:   `{"status": "created"}`,
 			expectError:    false,
 		},
+		{
+			name:         "network error",
+			method:       http.MethodGet,
+			url:          "https://example.com/network-error",
+			mockError:    errors.New("network error"),
+			expectedBody: "",
+			expectError:  true,
+		},
+		{
+			name:           "read body error",
+			method:         http.MethodGet,
+			url:            "https://example.com/read-error",
+			mockResponse:   string([]byte{0x81, 0xff, 0xff, 0xff}),
+			mockStatusCode: http.StatusOK,
+			expectedBody:   "",
+			expectError:    true,
+		},
 	}
 
 	for _, tt := range tests {
@@ -66,8 +85,13 @@ func TestService_Do(t *testing.T) {
 			httpmock.Activate()
 			defer httpmock.DeactivateAndReset()
 
-			httpmock.RegisterResponder(tt.method, tt.url,
-				httpmock.NewStringResponder(tt.mockStatusCode, tt.mockResponse))
+			if tt.mockError != nil {
+				httpmock.RegisterResponder(tt.method, tt.url,
+					httpmock.NewErrorResponder(tt.mockError))
+			} else {
+				httpmock.RegisterResponder(tt.method, tt.url,
+					httpmock.NewStringResponder(tt.mockStatusCode, tt.mockResponse))
+			}
 
 			body, err := service.Do(tt.method, tt.url, tt.requestBody)
 			if tt.expectError {

@@ -20,8 +20,9 @@ import (
 	"context"
 	"testing"
 
-	"github.com/jarcoal/httpmock"
 	cachev1alpha1 "github.com/openmfp/extension-content-operator/api/v1alpha1"
+
+	"github.com/jarcoal/httpmock"
 	"github.com/stretchr/testify/suite"
 	metaV1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"

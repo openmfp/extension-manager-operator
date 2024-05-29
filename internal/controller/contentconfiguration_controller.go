@@ -19,15 +19,14 @@ package controller
 import (
 	"context"
 
+	cachev1alpha1 "github.com/openmfp/extension-content-operator/api/v1alpha1"
+	"github.com/openmfp/extension-content-operator/internal/config"
 	"github.com/openmfp/extension-content-operator/pkg/subroutines"
+	"github.com/openmfp/golang-commons/controller/lifecycle"
+	"github.com/openmfp/golang-commons/logger"
 
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/predicate"
-
-	cachev1alpha1 "github.com/openmfp/extension-content-operator/api/v1alpha1"
-	"github.com/openmfp/extension-content-operator/internal/config"
-	"github.com/openmfp/golang-commons/controller/lifecycle"
-	"github.com/openmfp/golang-commons/logger"
 )
 
 var (
