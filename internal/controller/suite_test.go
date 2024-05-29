@@ -18,12 +18,25 @@ package controller
 
 import (
 	"fmt"
+	"os"
 	"path/filepath"
 	"runtime"
 	"testing"
+	"time"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
+	"github.com/openmfp/extension-content-operator/internal/config"
+	openmfpcontext "github.com/openmfp/golang-commons/context"
+	"github.com/openmfp/golang-commons/controller/lifecycle"
+	"github.com/openmfp/golang-commons/logger"
+	"github.com/rs/zerolog"
+	"github.com/stretchr/testify/suite"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/types"
+	utilruntime "k8s.io/apimachinery/pkg/util/runtime"
+	ctrl "sigs.k8s.io/controller-runtime"
+	"sigs.k8s.io/controller-runtime/pkg/reconcile"
 
 	"k8s.io/client-go/kubernetes/scheme"
 	"k8s.io/client-go/rest"
@@ -34,20 +47,24 @@ import (
 
 	cachev1alpha1 "github.com/openmfp/extension-content-operator/api/v1alpha1"
 	//+kubebuilder:scaffold:imports
+	"context"
+
+	v1 "k8s.io/api/core/v1"
+	"k8s.io/apimachinery/pkg/api/errors"
 )
 
 // These tests use Ginkgo (BDD-style Go testing framework). Refer to
 // http://onsi.github.io/ginkgo/ to learn more about Ginkgo.
 
+const (
+	defaultTestTimeout  = 10 * time.Second
+	defaultTickInterval = 250 * time.Millisecond
+	defaultNamespace    = "default"
+)
+
 var cfg *rest.Config
 var k8sClient client.Client
 var testEnv *envtest.Environment
-
-func TestControllers(t *testing.T) {
-	RegisterFailHandler(Fail)
-
-	RunSpecs(t, "Controller Suite")
-}
 
 var _ = BeforeSuite(func() {
 	logf.SetLogger(zap.New(zap.WriteTo(GinkgoWriter), zap.UseDevMode(true)))
@@ -88,3 +105,139 @@ var _ = AfterSuite(func() {
 	err := testEnv.Stop()
 	Expect(err).NotTo(HaveOccurred())
 })
+
+var _ = Describe("ContentConfiguration Controller", func() {
+	Context("When reconciling a resource", func() {
+		const resourceName = "test-resource"
+
+		ctx := context.Background()
+
+		typeNamespacedName := types.NamespacedName{
+			Name:      resourceName,
+			Namespace: defaultNamespace,
+		}
+		contentconfiguration := &cachev1alpha1.ContentConfiguration{}
+
+		logConfig := logger.DefaultConfig()
+		logConfig.NoJSON = true
+		logConfig.Name = "ContentConfigurationTestSuite"
+		log, _ := logger.New(logConfig)
+		// Disable color logging as vs-code does not support color logging in the test output
+		log = logger.NewFromZerolog(log.Output(&zerolog.ConsoleWriter{Out: os.Stdout, NoColor: true}))
+
+		BeforeEach(func() {
+			By("creating the custom resource for the Kind ContentConfiguration")
+			err := k8sClient.Get(ctx, typeNamespacedName, contentconfiguration)
+			if err != nil && errors.IsNotFound(err) {
+				resource := &cachev1alpha1.ContentConfiguration{
+					ObjectMeta: metav1.ObjectMeta{
+						Name:      resourceName,
+						Namespace: defaultNamespace,
+					},
+					// TODO(user): Specify other spec details if needed.
+				}
+				Expect(k8sClient.Create(ctx, resource)).To(Succeed())
+			}
+		})
+
+		AfterEach(func() {
+			// TODO(user): Cleanup logic after each test, like removing the resource instance.
+			resource := &cachev1alpha1.ContentConfiguration{}
+			err := k8sClient.Get(ctx, typeNamespacedName, resource)
+			Expect(err).NotTo(HaveOccurred())
+
+			By("Cleanup the specific resource instance ContentConfiguration")
+			Expect(k8sClient.Delete(ctx, resource)).To(Succeed())
+		})
+		It("should successfully reconcile the resource", func() {
+			By("Reconciling the created resource")
+			controllerReconciler := &ContentConfigurationReconciler{
+				lifecycle: lifecycle.NewLifecycleManager(log, operatorName, contentConfigurationReconcilerName, k8sClient, []lifecycle.Subroutine{}).WithSpreadingReconciles().WithConditionManagement(),
+			}
+
+			_, err := controllerReconciler.Reconcile(ctx, reconcile.Request{
+				NamespacedName: typeNamespacedName,
+			})
+			Expect(err).NotTo(HaveOccurred())
+			// TODO(user): Add more specific assertions depending on your controller's reconciliation logic.
+			// Example: If you expect a certain status condition after reconciliation, verify it here.
+		})
+	})
+})
+
+type ContentConfigurationTestSuite struct {
+	suite.Suite
+
+	kubernetesClient  client.Client
+	kubernetesManager ctrl.Manager
+	testEnv           *envtest.Environment
+
+	cancel context.CancelFunc
+}
+
+// TestControllers takes part in it, do not delete it
+func TestControllers(t *testing.T) {
+	RegisterFailHandler(Fail)
+
+	RunSpecs(t, "Controller Suite")
+}
+
+func (suite *ContentConfigurationTestSuite) SetupSuite() {
+	logConfig := logger.DefaultConfig()
+	logConfig.NoJSON = true
+	logConfig.Name = "ContentConfigurationTestSuite"
+	log, err := logger.New(logConfig)
+	suite.Nil(err)
+	// Disable color logging as vs-code does not support color logging in the test output
+	log = logger.NewFromZerolog(log.Output(&zerolog.ConsoleWriter{Out: os.Stdout, NoColor: true}))
+
+	cfg, err := config.NewFromEnv()
+	suite.Nil(err)
+
+	testContext, _, _ := openmfpcontext.StartContext(log, cfg, cfg.ShutdownTimeout)
+
+	testContext = logger.SetLoggerInContext(testContext, log.ComponentLogger("TestSuite"))
+
+	suite.testEnv = &envtest.Environment{
+		CRDDirectoryPaths:     []string{filepath.Join("..", "..", "chart", "crds")},
+		ErrorIfCRDPathMissing: true,
+	}
+
+	k8scfg, err := suite.testEnv.Start()
+	suite.Nil(err)
+
+	utilruntime.Must(cachev1alpha1.AddToScheme(scheme.Scheme))
+	utilruntime.Must(v1.AddToScheme(scheme.Scheme))
+
+	// +kubebuilder:scaffold:scheme
+
+	suite.kubernetesClient, err = client.New(k8scfg, client.Options{
+		Scheme: scheme.Scheme,
+	})
+	suite.Nil(err)
+	ctrl.SetLogger(log.Logr())
+	suite.kubernetesManager, err = ctrl.NewManager(k8scfg, ctrl.Options{
+		Scheme:      scheme.Scheme,
+		BaseContext: func() context.Context { return testContext },
+	})
+	suite.Nil(err)
+
+	contentConfigurationReconciler := NewContentConfigurationReconciler(log, suite.kubernetesManager, cfg)
+	err = contentConfigurationReconciler.SetupWithManager(suite.kubernetesManager, cfg, log)
+	suite.Nil(err)
+
+	go suite.startController()
+}
+
+func (suite *ContentConfigurationTestSuite) startController() {
+	var controllerContext context.Context
+	controllerContext, suite.cancel = context.WithCancel(context.Background())
+	err := suite.kubernetesManager.Start(controllerContext)
+	suite.Nil(err)
+}
+
+func (suite *ContentConfigurationTestSuite) TearDownSuite() {
+	suite.cancel()
+	err := suite.testEnv.Stop()
+	suite.Nil(err)
+}
