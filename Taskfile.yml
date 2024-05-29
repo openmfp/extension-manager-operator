@@ -32,6 +32,7 @@ tasks:
     internal: true
     cmds:
       - test -s {{.LOCAL_BIN}}/kind || go install sigs.k8s.io/kind@{{.KIND_VERSION}}
+      - {{.LOCAL_BIN}}/kind create cluster --name kind
 
   ## Development
   manifests:
