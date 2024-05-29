@@ -68,7 +68,7 @@ tasks:
     #     vars:
     #       ADDITIONAL_COMMAND_ARGS: -coverprofile=./cover.out -covermode=atomic -coverpkg=./...
     cmds:
-      - $(pwd)/{{.LOCAL_BIN}}/go-test-coverage -config=.testcoverage.yml
+      - $(pwd)/{{.LOCAL_BIN}}/go-test-coverage -config=.testcoverage-local.yml
   helm-unittest:
     cmds:
       - helm unittest chart
