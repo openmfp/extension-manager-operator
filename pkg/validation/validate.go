@@ -2,11 +2,12 @@ package validation
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 
 	"github.com/xeipuuv/gojsonschema"
 	"gopkg.in/yaml.v3"
+
+	"github.com/pkg/errors"
 )
 
 const (
@@ -86,7 +87,7 @@ func validateSchema(input ContentConfiguration, schema []byte) (string, error) {
 				errorsAccumulator = append(errorsAccumulator, desc.String())
 			}
 		}
-		return "", errors.New(fmt.Sprintf(ErrorDocumentInvalid, fmt.Sprint(errorsAccumulator)))
+		return "", errors.Errorf(ErrorDocumentInvalid, fmt.Sprint(errorsAccumulator))
 	}
 
 	return string(jsonBytes), nil
