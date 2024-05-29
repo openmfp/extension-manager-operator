@@ -76,3 +76,9 @@ tasks:
     cmds:
       - task: lint
       - task: test
+  install:
+    cmds:
+      - kubectl apply -f config/crd/bases
+  uninstall:
+    cmds:
+      - kubectl delete --ignore-not-found=true -f config/crd/bases
