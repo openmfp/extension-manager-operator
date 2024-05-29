@@ -10,11 +10,13 @@ import (
 )
 
 const (
-	ERROR_EMPTY_INPUT      = "empty input provided"
-	ERROR_NO_VALIDATOR     = "no validator found for content type"
-	ERROR_MARSHAL_JSON     = "error marshaling input to JSON"
-	ERROR_VALIDATING_JSON  = "error validating JSON data"
-	ERROR_DOCUMENT_INVALID = "The document is not valid:\n%s"
+	ERROR_EMPTY_INPUT        = "empty input provided"
+	ERROR_NO_VALIDATOR       = "no validator found for content type"
+	ERROR_MARSHAL_JSON       = "error marshaling input to JSON"
+	ERROR_VALIDATING_JSON    = "error validating JSON data"
+	ERROR_DOCUMENT_INVALID   = "The document is not valid:\n%s"
+	ERROR_REQUIRED_FIELD     = "field '%s' is required"
+	ERROR_INVALID_FIELD_TYPE = "field '%s' is invalid, got '%s', expected '%s'"
 )
 
 var ContentConfigurationSchema = []byte(`{"$schema":"https://json-schema.org/draft/2020-12/schema","$id":"https://github.com/openmfp/extension-content-operator/pkg/config_validator/content-configuration","$defs":{"LuigiConfigData":{"properties":{"nodes":{"items":{"$ref":"#/$defs/Node"},"type":"array"}},"additionalProperties":false,"type":"object","required":["nodes"]},"LuigiConfigFragment":{"properties":{"data":{"$ref":"#/$defs/LuigiConfigData"}},"additionalProperties":false,"type":"object","required":["data"]},"Node":{"properties":{"entityType":{"type":"string"},"pathSegment":{"type":"string"},"label":{"type":"string"},"icon":{"type":"string"}},"additionalProperties":false,"type":"object","required":["entityType","pathSegment","label","icon"]}},"properties":{"name":{"type":"string"},"luigiConfigFragment":{"items":{"$ref":"#/$defs/LuigiConfigFragment"},"type":"array"}},"additionalProperties":false,"type":"object","required":["name","luigiConfigFragment"]}`)
@@ -75,7 +77,15 @@ func validateSchema(input ContentConfiguration, schema []byte) (string, error) {
 	if !result.Valid() {
 		var errorsAccumulator []string
 		for _, desc := range result.Errors() {
-			errorsAccumulator = append(errorsAccumulator, desc.String())
+			// Customize error messages based on schema validation errors
+			switch desc.Type() {
+			case "required":
+				errorsAccumulator = append(errorsAccumulator, fmt.Sprintf(ERROR_REQUIRED_FIELD, desc.Field()))
+			case "invalid_type":
+				errorsAccumulator = append(errorsAccumulator, fmt.Sprintf(ERROR_INVALID_FIELD_TYPE, desc.Field(), desc.Details()["type"], desc.Details()["expected"]))
+			default:
+				errorsAccumulator = append(errorsAccumulator, desc.String())
+			}
 		}
 		return "", errors.New(fmt.Sprintf(ERROR_DOCUMENT_INVALID, fmt.Sprint(errorsAccumulator)))
 	}
