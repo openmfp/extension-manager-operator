@@ -24,7 +24,7 @@ In order to use the shared package within the project please check the following
 
 ```go
 /*
-Package configvalidator provides functionality to validate configuration data against a JSON schema.
+Package validation provides functionality to validate configuration data against a JSON schema.
  
 This package includes a schema definition and functions to validate JSON and YAML configuration inputs.
 
@@ -34,7 +34,7 @@ data conforms to the expected structure.
 */
     
 func main() {
-    configValidator := configvalidator.NewContentConfiguration()
+    configValidator := validation.NewContentConfiguration()
 
     // Example JSON input
     jsonInput := []byte(`{
@@ -87,7 +87,7 @@ The schema is defined as follows:
 */
 var ContentConfigurationSchema = []byte(`{
     "$schema": "https://json-schema.org/draft/2020-12/schema",
-    "$id": "https://github.com/openmfp/extension-content-operator/pkg/config_validator/content-configuration",
+    "$id": "https://github.com/openmfp/extension-content-operator/pkg/validationvalidation/content-configuration",
     "$defs": {
         "LuigiConfigData": {
             "properties": {
@@ -149,7 +149,7 @@ In order to create a `strict` JSON schema from a go struct, the following steps 
 ```text
 go test -v -run ^Test_createJson$ ./...
 
-{"$schema":"https://json-schema.org/draft/2020-12/schema","$id":"https://github.com/openmfp/extension-content-operator/pkg/config_validator/content-configuration","$defs":{"LuigiConfigData":{"properties":{"nodes":{"items":{"$ref":"#/$defs/Node"},"type":"array"}},"additionalProperties":false,"type":"object","required":["nodes"]},"LuigiConfigFragment":{"properties":{"data":{"$ref":"#/$defs/LuigiConfigData"}},"additionalProperties":false,"type":"object"},"Node":{"properties":{"entityType":{"type":"string"},"pathSegment":{"type":"string"},"label":{"type":"string"},"icon":{"type":"string"}},"additionalProperties":false,"type":"object"}},"properties":{"name":{"type":"string"},"luigiConfigFragment":{"items":{"$ref":"#/$defs/LuigiConfigFragment"},"type":"array"}},"additionalProperties":false,"type":"object"}
+{"$schema":"https://json-schema.org/draft/2020-12/schema","$id":"https://github.com/openmfp/extension-content-operator/pkg/validation/content-configuration","$defs":{"LuigiConfigData":{"properties":{"nodes":{"items":{"$ref":"#/$defs/Node"},"type":"array"}},"additionalProperties":false,"type":"object","required":["nodes"]},"LuigiConfigFragment":{"properties":{"data":{"$ref":"#/$defs/LuigiConfigData"}},"additionalProperties":false,"type":"object"},"Node":{"properties":{"entityType":{"type":"string"},"pathSegment":{"type":"string"},"label":{"type":"string"},"icon":{"type":"string"}},"additionalProperties":false,"type":"object"}},"properties":{"name":{"type":"string"},"luigiConfigFragment":{"items":{"$ref":"#/$defs/LuigiConfigFragment"},"type":"array"}},"additionalProperties":false,"type":"object"}
 ```
 
 By removing the `omitempty` annotation to the struct, the JSON schema will be strictly generated.
@@ -159,7 +159,7 @@ By removing the `omitempty` annotation to the struct, the JSON schema will be st
 ```json
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/openmfp/extension-content-operator/pkg/config_validator/content-configuration",
+  "$id": "https://github.com/openmfp/extension-content-operator/pkg/validation/content-configuration",
   "$defs": {
     "LuigiConfigData": {
       "properties": {
@@ -223,7 +223,7 @@ By removing the `omitempty` annotation to the struct, the JSON schema will be st
 ```json
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/openmfp/extension-content-operator/pkg/config_validator/content-configuration",
+  "$id": "https://github.com/openmfp/extension-content-operator/pkg/validation/content-configuration",
   "$defs": {
     "LuigiConfigData": {
       "properties": {

@@ -1,4 +1,4 @@
-package config_validator
+package validation
 
 import (
 	"encoding/json"
@@ -19,7 +19,7 @@ const (
 	ERROR_INVALID_FIELD_TYPE = "field '%s' is invalid, got '%s', expected '%s'"
 )
 
-var ContentConfigurationSchema = []byte(`{"$schema":"https://json-schema.org/draft/2020-12/schema","$id":"https://github.com/openmfp/extension-content-operator/pkg/config_validator/content-configuration","$defs":{"LuigiConfigData":{"properties":{"nodes":{"items":{"$ref":"#/$defs/Node"},"type":"array"}},"additionalProperties":false,"type":"object","required":["nodes"]},"LuigiConfigFragment":{"properties":{"data":{"$ref":"#/$defs/LuigiConfigData"}},"additionalProperties":false,"type":"object","required":["data"]},"Node":{"properties":{"entityType":{"type":"string"},"pathSegment":{"type":"string"},"label":{"type":"string"},"icon":{"type":"string"}},"additionalProperties":false,"type":"object","required":["entityType","pathSegment","label","icon"]}},"properties":{"name":{"type":"string"},"luigiConfigFragment":{"items":{"$ref":"#/$defs/LuigiConfigFragment"},"type":"array"}},"additionalProperties":false,"type":"object","required":["name","luigiConfigFragment"]}`)
+var ContentConfigurationSchema = []byte(`{"$schema":"https://json-schema.org/draft/2020-12/schema","$id":"https://github.com/openmfp/extension-content-operator/pkg/validation/content-configuration","$defs":{"LuigiConfigData":{"properties":{"nodes":{"items":{"$ref":"#/$defs/Node"},"type":"array"}},"additionalProperties":false,"type":"object","required":["nodes"]},"LuigiConfigFragment":{"properties":{"data":{"$ref":"#/$defs/LuigiConfigData"}},"additionalProperties":false,"type":"object","required":["data"]},"Node":{"properties":{"entityType":{"type":"string"},"pathSegment":{"type":"string"},"label":{"type":"string"},"icon":{"type":"string"}},"additionalProperties":false,"type":"object","required":["entityType","pathSegment","label","icon"]}},"properties":{"name":{"type":"string"},"luigiConfigFragment":{"items":{"$ref":"#/$defs/LuigiConfigFragment"},"type":"array"}},"additionalProperties":false,"type":"object","required":["name","luigiConfigFragment"]}`)
 
 type contentConfiguration struct{}
 
@@ -77,7 +77,6 @@ func validateSchema(input ContentConfiguration, schema []byte) (string, error) {
 	if !result.Valid() {
 		var errorsAccumulator []string
 		for _, desc := range result.Errors() {
-			// Customize error messages based on schema validation errors
 			switch desc.Type() {
 			case "required":
 				errorsAccumulator = append(errorsAccumulator, fmt.Sprintf(ERROR_REQUIRED_FIELD, desc.Field()))

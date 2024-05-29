@@ -1,4 +1,4 @@
-package config_validator
+package validation
 
 import "testing"
 
