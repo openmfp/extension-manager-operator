@@ -31,8 +31,7 @@ tasks:
   setup:test-e2e:
     internal: true
     cmds:
-      - test -s {{.LOCAL_BIN}}/kind || go install sigs.k8s.io/kind@{{.KIND_VERSION}}
-      - {{.LOCAL_BIN}}/kind create cluster --name kind
+      - ( test -s {{.LOCAL_BIN}}/kind || GOBIN=$(pwd)/{{.LOCAL_BIN}} go install sigs.k8s.io/kind@{{.KIND_VERSION}} ) && {{.LOCAL_BIN}}/kind create cluster --name kind
 
   ## Development
   manifests:
