@@ -9,6 +9,14 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
+const (
+	ERROR_EMPTY_INPUT      = "empty input provided"
+	ERROR_NO_VALIDATOR     = "no validator found for content type"
+	ERROR_MARSHAL_JSON     = "error marshaling input to JSON"
+	ERROR_VALIDATING_JSON  = "error validating JSON data"
+	ERROR_DOCUMENT_INVALID = "The document is not valid:\n%s"
+)
+
 var ContentConfigurationSchema = []byte(`{"$schema":"https://json-schema.org/draft/2020-12/schema","$id":"https://github.com/openmfp/extension-content-operator/pkg/config_validator/content-configuration","$defs":{"LuigiConfigData":{"properties":{"nodes":{"items":{"$ref":"#/$defs/Node"},"type":"array"}},"additionalProperties":false,"type":"object","required":["nodes"]},"LuigiConfigFragment":{"properties":{"data":{"$ref":"#/$defs/LuigiConfigData"}},"additionalProperties":false,"type":"object","required":["data"]},"Node":{"properties":{"entityType":{"type":"string"},"pathSegment":{"type":"string"},"label":{"type":"string"},"icon":{"type":"string"}},"additionalProperties":false,"type":"object","required":["entityType","pathSegment","label","icon"]}},"properties":{"name":{"type":"string"},"luigiConfigFragment":{"items":{"$ref":"#/$defs/LuigiConfigFragment"},"type":"array"}},"additionalProperties":false,"type":"object","required":["name","luigiConfigFragment"]}`)
 
 type contentConfiguration struct{}
@@ -19,7 +27,7 @@ func NewContentConfiguration() ContentConfigurationInterface {
 
 func (cC *contentConfiguration) Validate(input []byte, contentType string) (string, error) {
 	if len(input) == 0 {
-		return "", errors.New("empty input provided")
+		return "", errors.New(ERROR_EMPTY_INPUT)
 	}
 
 	switch contentType {
@@ -29,7 +37,7 @@ func (cC *contentConfiguration) Validate(input []byte, contentType string) (stri
 		return validateYAML(input)
 	default:
 
-		return "", errors.New("no validator found for content type")
+		return "", errors.New(ERROR_NO_VALIDATOR)
 	}
 }
 
@@ -53,7 +61,7 @@ func validateYAML(input []byte) (string, error) {
 func validateSchema(input ContentConfiguration, schema []byte) (string, error) {
 	jsonBytes, err := json.Marshal(input)
 	if err != nil {
-		return "", errors.New("error marshaling input to JSON")
+		return "", errors.New(ERROR_MARSHAL_JSON)
 	}
 
 	schemaLoader := gojsonschema.NewBytesLoader(schema)
@@ -61,15 +69,15 @@ func validateSchema(input ContentConfiguration, schema []byte) (string, error) {
 
 	result, err := gojsonschema.Validate(schemaLoader, documentLoader)
 	if err != nil {
-		return "", errors.New("error validating JSON data")
+		return "", errors.New(ERROR_VALIDATING_JSON)
 	}
 
 	if !result.Valid() {
-		var errors1 []string
+		var errorsAccumulator []string
 		for _, desc := range result.Errors() {
-			errors1 = append(errors1, desc.String())
+			errorsAccumulator = append(errorsAccumulator, desc.String())
 		}
-		return "", errors.New(fmt.Sprintf("The document is not valid:\n%s", fmt.Sprint(errors1)))
+		return "", errors.New(fmt.Sprintf(ERROR_DOCUMENT_INVALID, fmt.Sprint(errorsAccumulator)))
 	}
 
 	return string(jsonBytes), nil

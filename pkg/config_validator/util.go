@@ -4,7 +4,7 @@ import (
 	"github.com/invopop/jsonschema"
 )
 
-func createJson(v any) []byte {
+func createJSON(v any) []byte {
 	r := new(jsonschema.Reflector)
 	r.ExpandedStruct = true
 
