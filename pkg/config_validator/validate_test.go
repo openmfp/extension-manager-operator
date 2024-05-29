@@ -90,9 +90,23 @@ luigiConfigFragment:
 		t.Errorf("expected error for unsupported content type, got: %v", err)
 	}
 
+	// Test invalid content type
+	result5, err := cC.Validate([]byte(validJSON), "invalid")
+	if err == nil || err.Error() != "no validator found for content type" {
+		t.Errorf("expected error for invalid content type, got: %v", err)
+	}
+
+	// Test empty input
+	result6, err := cC.Validate([]byte{}, "json")
+	if err == nil || err.Error() != "empty input provided" {
+		t.Errorf("expected error for empty input, got: %v", err)
+	}
+
 	_ = result
 	_ = result1
 	_ = result2
 	_ = result3
 	_ = result4
+	_ = result5
+	_ = result6
 }
