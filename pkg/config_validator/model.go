@@ -10,7 +10,7 @@ type LuigiConfigFragment struct {
 }
 
 type LuigiConfigData struct {
-	Nodes []Node `json:"nodes, omitempty" yaml:"nodes, omitempty"`
+	Nodes []Node `json:"nodes,omitempty" yaml:"nodes,omitempty"`
 }
 
 type Node struct {
