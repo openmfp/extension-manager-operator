@@ -12,3 +12,5 @@ jobs:
       imageTagName: ghcr.io/openmfp/extension-content-operator
       useTask: true
       useLocalCoverageConfig: true
+      coverageThreasholdTotal: 85
+
