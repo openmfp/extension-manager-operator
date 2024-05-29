@@ -64,11 +64,8 @@ tasks:
       - task: envtest
   cover:
     deps: [setup:envtest, setup:go-test-coverage]
-    # cmds:
-    #   - task: envtest
-    #     vars:
-    #       ADDITIONAL_COMMAND_ARGS: -coverprofile=./cover.out -covermode=atomic -coverpkg=./...
     cmds:
+      - touch cover.out
       - $(pwd)/{{.LOCAL_BIN}}/go-test-coverage -config=.testcoverage-local.yml
   helm-unittest:
     cmds:
