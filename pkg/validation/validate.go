@@ -10,13 +10,13 @@ import (
 )
 
 const (
-	ERROR_EMPTY_INPUT        = "empty input provided"
-	ERROR_NO_VALIDATOR       = "no validator found for content type"
-	ERROR_MARSHAL_JSON       = "error marshaling input to JSON"
-	ERROR_VALIDATING_JSON    = "error validating JSON data"
-	ERROR_DOCUMENT_INVALID   = "The document is not valid:\n%s"
-	ERROR_REQUIRED_FIELD     = "field '%s' is required"
-	ERROR_INVALID_FIELD_TYPE = "field '%s' is invalid, got '%s', expected '%s'"
+	ErrorEmptyInput       = "empty input provided"
+	ErrorNoValidator      = "no validator found for content type"
+	ErrorMarshalJSON      = "error marshaling input to JSON"
+	ErrorValidatingJSON   = "error validating JSON data"
+	ErrorDocumentInvalid  = "The document is not valid:\n%s"
+	ErrorRequiredField    = "field '%s' is required"
+	ErrorInvalidFieldType = "field '%s' is invalid, got '%s', expected '%s'"
 )
 
 var ContentConfigurationSchema = []byte(`{"$schema":"https://json-schema.org/draft/2020-12/schema","$id":"https://github.com/openmfp/extension-content-operator/pkg/validation/content-configuration","$defs":{"LuigiConfigData":{"properties":{"nodes":{"items":{"$ref":"#/$defs/Node"},"type":"array"}},"additionalProperties":false,"type":"object","required":["nodes"]},"LuigiConfigFragment":{"properties":{"data":{"$ref":"#/$defs/LuigiConfigData"}},"additionalProperties":false,"type":"object","required":["data"]},"Node":{"properties":{"entityType":{"type":"string"},"pathSegment":{"type":"string"},"label":{"type":"string"},"icon":{"type":"string"}},"additionalProperties":false,"type":"object","required":["entityType","pathSegment","label","icon"]}},"properties":{"name":{"type":"string"},"luigiConfigFragment":{"items":{"$ref":"#/$defs/LuigiConfigFragment"},"type":"array"}},"additionalProperties":false,"type":"object","required":["name","luigiConfigFragment"]}`)
@@ -29,7 +29,7 @@ func NewContentConfiguration() ContentConfigurationInterface {
 
 func (cC *contentConfiguration) Validate(input []byte, contentType string) (string, error) {
 	if len(input) == 0 {
-		return "", errors.New(ERROR_EMPTY_INPUT)
+		return "", errors.New(ErrorEmptyInput)
 	}
 
 	switch contentType {
@@ -39,7 +39,7 @@ func (cC *contentConfiguration) Validate(input []byte, contentType string) (stri
 		return validateYAML(input)
 	default:
 
-		return "", errors.New(ERROR_NO_VALIDATOR)
+		return "", errors.New(ErrorNoValidator)
 	}
 }
 
@@ -63,7 +63,7 @@ func validateYAML(input []byte) (string, error) {
 func validateSchema(input ContentConfiguration, schema []byte) (string, error) {
 	jsonBytes, err := json.Marshal(input)
 	if err != nil {
-		return "", errors.New(ERROR_MARSHAL_JSON)
+		return "", errors.New(ErrorMarshalJSON)
 	}
 
 	schemaLoader := gojsonschema.NewBytesLoader(schema)
@@ -71,7 +71,7 @@ func validateSchema(input ContentConfiguration, schema []byte) (string, error) {
 
 	result, err := gojsonschema.Validate(schemaLoader, documentLoader)
 	if err != nil {
-		return "", errors.New(ERROR_VALIDATING_JSON)
+		return "", errors.New(ErrorValidatingJSON)
 	}
 
 	if !result.Valid() {
@@ -79,14 +79,14 @@ func validateSchema(input ContentConfiguration, schema []byte) (string, error) {
 		for _, desc := range result.Errors() {
 			switch desc.Type() {
 			case "required":
-				errorsAccumulator = append(errorsAccumulator, fmt.Sprintf(ERROR_REQUIRED_FIELD, desc.Field()))
+				errorsAccumulator = append(errorsAccumulator, fmt.Sprintf(ErrorRequiredField, desc.Field()))
 			case "invalid_type":
-				errorsAccumulator = append(errorsAccumulator, fmt.Sprintf(ERROR_INVALID_FIELD_TYPE, desc.Field(), desc.Details()["type"], desc.Details()["expected"]))
+				errorsAccumulator = append(errorsAccumulator, fmt.Sprintf(ErrorInvalidFieldType, desc.Field(), desc.Details()["type"], desc.Details()["expected"]))
 			default:
 				errorsAccumulator = append(errorsAccumulator, desc.String())
 			}
 		}
-		return "", errors.New(fmt.Sprintf(ERROR_DOCUMENT_INVALID, fmt.Sprint(errorsAccumulator)))
+		return "", errors.New(fmt.Sprintf(ErrorDocumentInvalid, fmt.Sprint(errorsAccumulator)))
 	}
 
 	return string(jsonBytes), nil
