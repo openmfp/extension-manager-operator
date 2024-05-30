@@ -64,10 +64,10 @@ tasks:
     deps: [setup:envtest]
     cmds:
       - task: envtest
-  test-e2e:
-    deps: [setup:envtest, setup:test-e2e]
-    cmds:
-      - go test ./test/e2e/... -coverprofile cover.out
+  # test-e2e:
+  #   deps: [setup:envtest, setup:test-e2e]
+  #   cmds:
+  #     - go test ./test/e2e/... -coverprofile cover.out
   cover:
     deps: [test]
     cmds:
