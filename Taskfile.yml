@@ -76,7 +76,7 @@ tasks:
     deps: [setup:go-test-coverage, test]
     cmds:
       - test -s cover.out || touch cover.out
-      - $(pwd)/{{.LOCAL_BIN}}/go-test-coverage -config=.testcoverage.yml
+      - $(pwd)/{{.LOCAL_BIN}}/go-test-coverage -config=.testcoverage-local.yml
   helm-unittest:
     cmds:
       - helm unittest chart
