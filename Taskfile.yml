@@ -65,7 +65,7 @@ tasks:
     cmds:
       - go test $(go list ./... | grep -v /e2e) {{.ADDITIONAL_COMMAND_ARGS}} -coverprofile=cover.out
   test:
-    deps: [setup:envtest, test-e2e]
+    deps: [setup:envtest]
     cmds:
       - task: envtest
   test-e2e:
@@ -73,7 +73,7 @@ tasks:
     cmds:
       - go test ./test/e2e/... -coverprofile cover.out
   cover:
-    deps: [setup:envtest, setup:go-test-coverage, test]
+    deps: [setup:go-test-coverage, test]
     cmds:
       - test -s cover.out || touch cover.out
       - $(pwd)/{{.LOCAL_BIN}}/go-test-coverage -config=.testcoverage.yml
