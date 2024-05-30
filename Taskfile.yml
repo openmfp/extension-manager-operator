@@ -7,9 +7,6 @@ vars:
   ENVTEST_K8S_VERSION: "1.29.0"
   ENVTEST_VERSION: release-0.17
   CRD_DIRECTORY: chart/crds
-  GO_TEST_COVERAGE_VERSION: v2.10.1
-  KIND_VERSION: v0.23.0
-  GOLANGCI_LINT_VERSION: v1.59.0
 tasks:
   ## Setup
   setup:controller-gen:
@@ -23,11 +20,7 @@ tasks:
   setup:golangci-lint:
     internal: true
     cmds:
-      - test -s {{.LOCAL_BIN}}/golangci-lint || GOBIN=$(pwd)/{{.LOCAL_BIN}} go install github.com/golangci/golangci-lint/cmd/golangci-lint@{{.GOLANGCI_LINT_VERSION}}
-  setup:test-e2e:
-    internal: true
-    cmds:
-      - ( test -s {{.LOCAL_BIN}}/kind || GOBIN=$(pwd)/{{.LOCAL_BIN}} go install sigs.k8s.io/kind@{{.KIND_VERSION}} ) && {{.LOCAL_BIN}}/kind create cluster --name kind
+      - test -s {{.LOCAL_BIN}}/golangci-lint || GOBIN=$(pwd)/{{.LOCAL_BIN}} go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
 
   ## Development
   manifests:
@@ -59,20 +52,17 @@ tasks:
         sh: $(pwd)/{{.LOCAL_BIN}}/setup-envtest use {{.ENVTEST_K8S_VERSION}} --bin-dir $(pwd)/{{.LOCAL_BIN}} -p path
       GO111MODULE: on
     cmds:
-      - go test $(go list ./... | grep -v /e2e) {{.ADDITIONAL_COMMAND_ARGS}} -coverprofile=cover.out
+      - go test ./... {{.ADDITIONAL_COMMAND_ARGS}}
   test:
     deps: [setup:envtest]
     cmds:
       - task: envtest
-  # test-e2e:
-  #   deps: [setup:envtest, setup:test-e2e]
-  #   cmds:
-  #     - go test ./test/e2e/... -coverprofile cover.out
   cover:
-    deps: [test]
+    deps: [setup:envtest, test]
     cmds:
-      - test -s cover.out || touch cover.out
-      - go tool cover -func=cover.out
+      - task: envtest
+        vars:
+          ADDITIONAL_COMMAND_ARGS: -coverprofile=./cover.out -covermode=atomic -coverpkg=./...
   helm-unittest:
     cmds:
       - helm unittest chart
@@ -80,9 +70,3 @@ tasks:
     cmds:
       - task: lint
       - task: test
-  install:
-    cmds:
-      - kubectl apply -f config/crd/bases
-  uninstall:
-    cmds:
-      - kubectl delete --ignore-not-found=true -f config/crd/bases
