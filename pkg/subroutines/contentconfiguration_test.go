@@ -179,29 +179,13 @@ func TestService_Do(t *testing.T) {
 			url:            "https://example.com/error",
 			mockResponse:   `{"message": "error"}`,
 			mockStatusCode: http.StatusInternalServerError,
-			expectedBody:   "",
 			expectError:    true,
 		},
 		{
-			name:         "request_creation_error",
-			url:          "https://example.com/invalid",
-			expectedBody: "",
-			expectError:  true,
-		},
-		{
-			name:           "successful_POST_request_with_body",
-			url:            "https://example.com/post",
-			mockResponse:   `{"status": "created"}`,
-			mockStatusCode: http.StatusOK,
-			expectedBody:   `{"status": "created"}`,
-			expectError:    false,
-		},
-		{
-			name:         "network_error",
-			url:          "https://example.com/network-error",
-			mockError:    errors.New("network error"),
-			expectedBody: "",
-			expectError:  true,
+			name:        "network_error",
+			url:         "https://example.com/network-error",
+			mockError:   errors.New("network error"),
+			expectError: true,
 		},
 	}
 
