@@ -34,6 +34,8 @@ func TestContentConfigurationTestSuite(t *testing.T) {
 
 func (suite *ContentConfigurationTestSuite) TestNamespaceCreation() {
 	remoteURL := "https://this-address-should-be-mocked-by-httpmock"
+	remoteContent := "This is remote content"
+	inlineContent := "This is inline content"
 	// Define the test cases
 	testCases := []struct {
 		name           string
@@ -47,34 +49,34 @@ func (suite *ContentConfigurationTestSuite) TestNamespaceCreation() {
 			spec: cachev1alpha1.ContentConfigurationSpec{
 				InlineConfiguration: cachev1alpha1.InlineConfiguration{
 					//ContentType: tc.contentType,
-					Content: "This is inline content",
+					Content: inlineContent,
 				},
 			},
-			expectedResult: "This is inline content",
+			expectedResult: inlineContent,
 		},
 		{
 			name:         "TestBothInlineAndRemoteConfiguration",
 			instanceName: "inline-and-remote",
 			spec: cachev1alpha1.ContentConfigurationSpec{
 				InlineConfiguration: cachev1alpha1.InlineConfiguration{
-					Content: "This is inline content",
+					Content: inlineContent,
 				},
 				RemoteConfiguration: cachev1alpha1.RemoteConfiguration{
 					URL: "this-url-should-not-be-used",
 				},
 			},
-			expectedResult: "This is inline content",
+			expectedResult: inlineContent,
 		},
-		//{
-		//	name:         "TestRemoteContentConfiguration",
-		//	instanceName: "remote",
-		//	spec: cachev1alpha1.ContentConfigurationSpec{
-		//		RemoteConfiguration: cachev1alpha1.RemoteConfiguration{
-		//			URL: remoteURL,
-		//		},
-		//	},
-		//	expectedResult: "This is remote content",
-		//},
+		{
+			name:         "TestRemoteContentConfiguration",
+			instanceName: "remote",
+			spec: cachev1alpha1.ContentConfigurationSpec{
+				RemoteConfiguration: cachev1alpha1.RemoteConfiguration{
+					URL: remoteURL,
+				},
+			},
+			expectedResult: remoteContent,
+		},
 	}
 
 	// Iterate through the test cases
@@ -83,8 +85,9 @@ func (suite *ContentConfigurationTestSuite) TestNamespaceCreation() {
 			httpmock.Activate()
 			defer httpmock.DeactivateAndReset()
 
-			httpmock.RegisterResponder("GET", remoteURL,
-				httpmock.NewStringResponder(200, `this is remote content`))
+			httpmock.RegisterResponder(
+				"GET", remoteURL, httpmock.NewStringResponder(200, remoteContent),
+			)
 
 			// Given
 			testContext := context.Background()
