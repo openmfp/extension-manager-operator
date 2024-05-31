@@ -84,7 +84,7 @@ func TestService_Do(t *testing.T) {
 					httpmock.NewStringResponder(tt.mockStatusCode, tt.mockResponse))
 			}
 
-			body, err := service.Do(tt.method, tt.url, tt.requestBody)
+			body, err, _ := service.Do(tt.method, tt.url, tt.requestBody)
 			if tt.expectError {
 				assert.Error(t, err)
 			} else {

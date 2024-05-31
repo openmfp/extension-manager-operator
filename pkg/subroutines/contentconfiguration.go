@@ -4,14 +4,14 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/openmfp/extension-content-operator/api/v1alpha1"
 	"github.com/openmfp/extension-content-operator/pkg/httpclient"
+	ctrl "sigs.k8s.io/controller-runtime"
+	"sigs.k8s.io/controller-runtime/pkg/client"
+
+	"github.com/openmfp/extension-content-operator/api/v1alpha1"
 	"github.com/openmfp/golang-commons/controller/lifecycle"
 	"github.com/openmfp/golang-commons/errors"
 	"github.com/openmfp/golang-commons/logger"
-
-	ctrl "sigs.k8s.io/controller-runtime"
-	"sigs.k8s.io/controller-runtime/pkg/client"
 )
 
 const (
@@ -23,16 +23,12 @@ const (
 )
 
 type ContentConfigurationSubroutine struct {
-	client     client.Client
-	httpClient httpclient.Service
-	log        *logger.Logger
+	client client.Client
 }
 
-func NewContentConfigurationSubroutine(client client.Client, log *logger.Logger) *ContentConfigurationSubroutine {
+func NewContentConfigurationSubroutine(client client.Client) *ContentConfigurationSubroutine {
 	return &ContentConfigurationSubroutine{
-		client:     client,
-		httpClient: httpclient.NewService(),
-		log:        log,
+		client: client,
 	}
 }
 
@@ -53,6 +49,8 @@ func (r *ContentConfigurationSubroutine) Finalizers() []string { // coverage-ign
 func (r *ContentConfigurationSubroutine) Process(
 	ctx context.Context, runtimeObj lifecycle.RuntimeObject,
 ) (ctrl.Result, errors.OperatorError) {
+	log := logger.LoadLoggerFromContext(ctx)
+
 	instance := runtimeObj.(*v1alpha1.ContentConfiguration)
 
 	var rawConfig []byte
@@ -60,11 +58,11 @@ func (r *ContentConfigurationSubroutine) Process(
 	if instance.Spec.InlineConfiguration.Content != "" {
 		rawConfig = []byte(instance.Spec.InlineConfiguration.Content)
 	} else {
-		bytes, err := r.httpClient.Do(http.MethodGet, instance.Spec.RemoteConfiguration.URL, nil)
+		bytes, err, retry := httpclient.NewService().Do(http.MethodGet, instance.Spec.RemoteConfiguration.URL, nil)
 		if err != nil {
-			r.log.Err(err).Msg("failed to fetch remote configuration")
+			log.Err(err).Msg("failed to fetch remote configuration")
 
-			return ctrl.Result{}, errors.NewOperatorError(err, true, true)
+			return ctrl.Result{}, errors.NewOperatorError(err, retry, true)
 		}
 		rawConfig = bytes
 	}
@@ -74,12 +72,12 @@ func (r *ContentConfigurationSubroutine) Process(
 
 	instance.Status.ConfigurationResult = validatedConfig
 
-	err := r.client.Status().Update(ctx, instance)
-	if err != nil {
-		r.log.Err(err).Msg("failed to update instance status")
-
-		return ctrl.Result{}, errors.NewOperatorError(err, true, true)
-	}
+	//err := r.client.Status().Update(ctx, instance)
+	//if err != nil {
+	//	log.Err(err).Msg("failed to update instance status")
+	//
+	//	return ctrl.Result{}, errors.NewOperatorError(err, true, true)
+	//}
 
 	return ctrl.Result{}, nil
 }

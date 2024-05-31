@@ -19,14 +19,14 @@ package controller
 import (
 	"context"
 
+	ctrl "sigs.k8s.io/controller-runtime"
+	"sigs.k8s.io/controller-runtime/pkg/predicate"
+
 	cachev1alpha1 "github.com/openmfp/extension-content-operator/api/v1alpha1"
 	"github.com/openmfp/extension-content-operator/internal/config"
 	"github.com/openmfp/extension-content-operator/pkg/subroutines"
 	"github.com/openmfp/golang-commons/controller/lifecycle"
 	"github.com/openmfp/golang-commons/logger"
-
-	ctrl "sigs.k8s.io/controller-runtime"
-	"sigs.k8s.io/controller-runtime/pkg/predicate"
 )
 
 var (
@@ -41,9 +41,10 @@ type ContentConfigurationReconciler struct {
 
 func NewContentConfigurationReconciler(log *logger.Logger, mgr ctrl.Manager, cfg config.Config) *ContentConfigurationReconciler {
 	subs := []lifecycle.Subroutine{}
-	//if cfg.Subroutines.Namespace.Enabled {
-	subs = append(subs, subroutines.NewContentConfigurationSubroutine(mgr.GetClient(), log))
-	//}
+	if cfg.Subroutines.ContentConfiguration.Enabled {
+		subs = append(subs, subroutines.NewContentConfigurationSubroutine(mgr.GetClient()))
+	}
+
 	return &ContentConfigurationReconciler{
 		lifecycle: lifecycle.NewLifecycleManager(log, operatorName, contentConfigurationReconcilerName, mgr.GetClient(), subs).WithSpreadingReconciles().WithConditionManagement(),
 	}
