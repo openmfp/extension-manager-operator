@@ -62,7 +62,7 @@ tasks:
     cmds:
       - task: envtest
         vars:
-          ADDITIONAL_COMMAND_ARGS: -coverprofile=./cover.out -covermode=atomic -coverpkg=./...
+          ADDITIONAL_COMMAND_ARGS: -coverprofile=./cover.out -covermode=atomic
   helm-unittest:
     cmds:
       - helm unittest chart

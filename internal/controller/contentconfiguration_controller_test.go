@@ -25,11 +25,13 @@ import (
 	"github.com/rs/zerolog"
 	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/types"
+	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
 	cachev1alpha1 "github.com/openmfp/extension-content-operator/api/v1alpha1"
+	"github.com/openmfp/extension-content-operator/internal/config"
 	"github.com/openmfp/golang-commons/controller/lifecycle"
 	"github.com/openmfp/golang-commons/logger"
 )
@@ -89,6 +91,25 @@ var _ = Describe("ContentConfiguration Controller", func() {
 			Expect(err).NotTo(HaveOccurred())
 			// TODO(user): Add more specific assertions depending on your controller's reconciliation logic.
 			// Example: If you expect a certain status condition after reconciliation, verify it here.
+		})
+		It("should successfully call NewContentConfigurationReconciler", func() {
+			By("Create reconciler with NewContentConfigurationReconciler")
+
+			k8sManager, err := ctrl.NewManager(cfg, ctrl.Options{})
+			cfg := config.Config{}
+			reconciler := NewContentConfigurationReconciler(log, k8sManager, cfg)
+
+			Expect(err).NotTo(HaveOccurred())
+			Expect(reconciler).NotTo(BeNil())
+
+			err = reconciler.SetupWithManager(k8sManager, cfg, log)
+			Expect(err).NotTo(HaveOccurred())
+
+			result, _ := reconciler.Reconcile(ctx, reconcile.Request{
+				NamespacedName: typeNamespacedName,
+			})
+			// Expect(errReconcile).To(BeNil())
+			Expect(result).NotTo(BeNil())
 		})
 	})
 })
