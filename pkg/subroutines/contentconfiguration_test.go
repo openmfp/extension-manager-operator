@@ -156,6 +156,7 @@ func (suite *ContentConfigurationSubroutineTestSuite) TestFinalizers_OK() {
 	suite.Equal([]string{}, finalizers)
 
 }
+
 func TestService_Do(t *testing.T) {
 	tests := []struct {
 		name           string
@@ -167,7 +168,7 @@ func TestService_Do(t *testing.T) {
 		expectError    bool
 	}{
 		{
-			name:           "successful_GET_request",
+			name:           "GET_request_OK",
 			url:            "https://example.com/success",
 			mockResponse:   `{"message": "success"}`,
 			mockStatusCode: http.StatusOK,
@@ -175,14 +176,21 @@ func TestService_Do(t *testing.T) {
 			expectError:    false,
 		},
 		{
-			name:           "non_200_status_code",
+			name:           "status_code_500_Error",
 			url:            "https://example.com/error",
 			mockResponse:   `{"message": "error"}`,
 			mockStatusCode: http.StatusInternalServerError,
 			expectError:    true,
 		},
 		{
-			name:        "network_error",
+			name:           "status_code_404_Error",
+			url:            "https://example.com/error",
+			mockResponse:   `{"message": "error"}`,
+			mockStatusCode: http.StatusNotFound,
+			expectError:    true,
+		},
+		{
+			name:        "network_Error",
 			url:         "https://example.com/network-error",
 			mockError:   errors.New("network error"),
 			expectError: true,
