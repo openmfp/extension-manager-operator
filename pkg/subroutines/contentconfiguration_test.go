@@ -53,7 +53,7 @@ func (suite *ContentConfigurationSubroutineTestSuite) TestFinalize_OK() {
 }
 
 func (suite *ContentConfigurationSubroutineTestSuite) TestProcessingConfig() {
-	remoteUrl := "https://this-address-should-be-mocked-by-httpmock"
+	remoteURL := "https://this-address-should-be-mocked-by-httpmock"
 	inlineContent := "inline content"
 	remoteContent := "remote content"
 
@@ -78,10 +78,10 @@ func (suite *ContentConfigurationSubroutineTestSuite) TestProcessingConfig() {
 			name: "RemoteConfig_OK",
 			spec: cachev1alpha1.ContentConfigurationSpec{
 				RemoteConfiguration: cachev1alpha1.RemoteConfiguration{
-					URL: remoteUrl,
+					URL: remoteURL,
 				},
 			},
-			remoteURL:            remoteUrl,
+			remoteURL:            remoteURL,
 			statusCode:           http.StatusOK,
 			expectedConfigResult: remoteContent,
 		},
@@ -89,10 +89,10 @@ func (suite *ContentConfigurationSubroutineTestSuite) TestProcessingConfig() {
 			name: "RemoteConfig_http_error",
 			spec: cachev1alpha1.ContentConfigurationSpec{
 				RemoteConfiguration: cachev1alpha1.RemoteConfiguration{
-					URL: remoteUrl,
+					URL: remoteURL,
 				},
 			},
-			remoteURL:     remoteUrl,
+			remoteURL:     remoteURL,
 			statusCode:    http.StatusInternalServerError,
 			expectedError: golangCommonErrors.NewOperatorError(errors.New("received non-200 status code: 500"), false, true),
 		},
