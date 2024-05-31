@@ -4,14 +4,14 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/openmfp/extension-content-operator/api/v1alpha1"
-	"github.com/openmfp/extension-content-operator/pkg/httpclient"
-	"github.com/openmfp/golang-commons/logger"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
+	"github.com/openmfp/extension-content-operator/api/v1alpha1"
+	"github.com/openmfp/extension-content-operator/pkg/httpclient"
 	"github.com/openmfp/golang-commons/controller/lifecycle"
 	"github.com/openmfp/golang-commons/errors"
+	"github.com/openmfp/golang-commons/logger"
 )
 
 const (

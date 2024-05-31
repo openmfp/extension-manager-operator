@@ -4,9 +4,10 @@ import (
 	"context"
 	"testing"
 
+	"github.com/stretchr/testify/suite"
+
 	cachev1alpha1 "github.com/openmfp/extension-content-operator/api/v1alpha1"
 	"github.com/openmfp/extension-content-operator/pkg/subroutines/mocks"
-	"github.com/stretchr/testify/suite"
 )
 
 type ContentConfigurationSubroutineTestSuite struct {
