@@ -18,98 +18,102 @@ package controller
 
 import (
 	"context"
-	"os"
+	"testing"
 
-	. "github.com/onsi/ginkgo/v2"
-	. "github.com/onsi/gomega"
-	"github.com/rs/zerolog"
-	"k8s.io/apimachinery/pkg/api/errors"
+	"github.com/jarcoal/httpmock"
+	"github.com/stretchr/testify/suite"
+	metaV1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"
-	ctrl "sigs.k8s.io/controller-runtime"
-	"sigs.k8s.io/controller-runtime/pkg/reconcile"
-
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
 	cachev1alpha1 "github.com/openmfp/extension-content-operator/api/v1alpha1"
-	"github.com/openmfp/extension-content-operator/internal/config"
-	"github.com/openmfp/golang-commons/controller/lifecycle"
-	"github.com/openmfp/golang-commons/logger"
 )
 
-var _ = Describe("ContentConfiguration Controller", func() {
-	Context("When reconciling a resource", func() {
-		const resourceName = "test-resource"
+func TestContentConfigurationTestSuite(t *testing.T) {
+	suite.Run(t, new(ContentConfigurationTestSuite))
+}
 
-		ctx := context.Background()
+func (suite *ContentConfigurationTestSuite) TestNamespaceCreation() {
+	remoteURL := "https://this-address-should-be-mocked-by-httpmock"
+	remoteContent := "This is remote content"
+	inlineContent := "This is inline content"
+	// Define the test cases
+	testCases := []struct {
+		name           string
+		instanceName   string
+		spec           cachev1alpha1.ContentConfigurationSpec
+		expectedResult string
+	}{
+		{
+			name:         "TestInlineContentConfiguration",
+			instanceName: "inline",
+			spec: cachev1alpha1.ContentConfigurationSpec{
+				InlineConfiguration: cachev1alpha1.InlineConfiguration{
+					Content: inlineContent,
+				},
+			},
+			expectedResult: inlineContent,
+		},
+		{
+			name:         "TestBothInlineAndRemoteConfiguration",
+			instanceName: "inline-and-remote",
+			spec: cachev1alpha1.ContentConfigurationSpec{
+				InlineConfiguration: cachev1alpha1.InlineConfiguration{
+					Content: inlineContent,
+				},
+				RemoteConfiguration: cachev1alpha1.RemoteConfiguration{
+					URL: "this-url-should-not-be-used",
+				},
+			},
+			expectedResult: inlineContent,
+		},
+		{
+			name:         "TestRemoteContentConfiguration",
+			instanceName: "remote",
+			spec: cachev1alpha1.ContentConfigurationSpec{
+				RemoteConfiguration: cachev1alpha1.RemoteConfiguration{
+					URL: remoteURL,
+				},
+			},
+			expectedResult: remoteContent,
+		},
+	}
 
-		typeNamespacedName := types.NamespacedName{
-			Name:      resourceName,
-			Namespace: "default", // TODO(user):Modify as needed
-		}
-		contentconfiguration := &cachev1alpha1.ContentConfiguration{}
+	// Iterate through the test cases
+	for _, tc := range testCases {
+		suite.Run(tc.name, func() {
+			httpmock.Activate()
+			defer httpmock.DeactivateAndReset()
 
-		logConfig := logger.DefaultConfig()
-		logConfig.NoJSON = true
-		logConfig.Name = "ContentConfigurationTestSuite"
-		log, _ := logger.New(logConfig)
-		// Disable color logging as vs-code does not support color logging in the test output
-		log = logger.NewFromZerolog(log.Output(&zerolog.ConsoleWriter{Out: os.Stdout, NoColor: true}))
+			httpmock.RegisterResponder(
+				"GET", remoteURL, httpmock.NewStringResponder(200, remoteContent),
+			)
 
-		BeforeEach(func() {
-			By("creating the custom resource for the Kind ContentConfiguration")
-			err := k8sClient.Get(ctx, typeNamespacedName, contentconfiguration)
-			if err != nil && errors.IsNotFound(err) {
-				resource := &cachev1alpha1.ContentConfiguration{
-					ObjectMeta: metav1.ObjectMeta{
-						Name:      resourceName,
-						Namespace: "default",
-					},
-					// TODO(user): Specify other spec details if needed.
-				}
-				Expect(k8sClient.Create(ctx, resource)).To(Succeed())
+			// Given
+			testContext := context.Background()
+			instance := &cachev1alpha1.ContentConfiguration{
+				ObjectMeta: metaV1.ObjectMeta{
+					Name:      tc.instanceName,
+					Namespace: defaultNamespace,
+				},
+				Spec: tc.spec,
 			}
+
+			// When
+			err := suite.kubernetesClient.Create(testContext, instance)
+			suite.Nil(err)
+
+			// Then
+			createdInstance := cachev1alpha1.ContentConfiguration{}
+			suite.Assert().Eventually(
+				func() bool {
+					err := suite.kubernetesClient.Get(testContext, types.NamespacedName{
+						Name:      tc.instanceName,
+						Namespace: defaultNamespace,
+					}, &createdInstance)
+					return err == nil && createdInstance.Status.ConfigurationResult == tc.expectedResult
+				},
+				defaultTestTimeout, defaultTickInterval,
+			)
 		})
-
-		AfterEach(func() {
-			// TODO(user): Cleanup logic after each test, like removing the resource instance.
-			resource := &cachev1alpha1.ContentConfiguration{}
-			err := k8sClient.Get(ctx, typeNamespacedName, resource)
-			Expect(err).NotTo(HaveOccurred())
-
-			By("Cleanup the specific resource instance ContentConfiguration")
-			Expect(k8sClient.Delete(ctx, resource)).To(Succeed())
-		})
-		It("should successfully reconcile the resource", func() {
-			By("Reconciling the created resource")
-			controllerReconciler := &ContentConfigurationReconciler{
-				lifecycle: lifecycle.NewLifecycleManager(log, operatorName, contentConfigurationReconcilerName, k8sClient, []lifecycle.Subroutine{}).WithSpreadingReconciles().WithConditionManagement(),
-			}
-
-			_, err := controllerReconciler.Reconcile(ctx, reconcile.Request{
-				NamespacedName: typeNamespacedName,
-			})
-			Expect(err).NotTo(HaveOccurred())
-			// TODO(user): Add more specific assertions depending on your controller's reconciliation logic.
-			// Example: If you expect a certain status condition after reconciliation, verify it here.
-		})
-		It("should successfully call NewContentConfigurationReconciler", func() {
-			By("Create reconciler with NewContentConfigurationReconciler")
-
-			k8sManager, err := ctrl.NewManager(cfg, ctrl.Options{})
-			cfg := config.Config{}
-			reconciler := NewContentConfigurationReconciler(log, k8sManager, cfg)
-
-			Expect(err).NotTo(HaveOccurred())
-			Expect(reconciler).NotTo(BeNil())
-
-			err = reconciler.SetupWithManager(k8sManager, cfg, log)
-			Expect(err).NotTo(HaveOccurred())
-
-			result, _ := reconciler.Reconcile(ctx, reconcile.Request{
-				NamespacedName: typeNamespacedName,
-			})
-			// Expect(errReconcile).To(BeNil())
-			Expect(result).NotTo(BeNil())
-		})
-	})
-})
+	}
+}

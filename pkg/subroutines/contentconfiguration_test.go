@@ -49,7 +49,13 @@ func (suite *ContentConfigurationSubroutineTestSuite) TestFinalize_OK() {
 
 func (suite *ContentConfigurationSubroutineTestSuite) TestProcessing_OK() {
 	// Given
-	contentConfiguration := &cachev1alpha1.ContentConfiguration{}
+	contentConfiguration := &cachev1alpha1.ContentConfiguration{
+		Spec: cachev1alpha1.ContentConfigurationSpec{
+			InlineConfiguration: cachev1alpha1.InlineConfiguration{
+				Content: "inline content",
+			},
+		},
+	}
 
 	// When
 	_, err := suite.testObj.Process(context.Background(), contentConfiguration)

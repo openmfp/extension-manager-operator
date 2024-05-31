@@ -2,7 +2,11 @@ package subroutines
 
 import (
 	"context"
+	"net/http"
 
+	"github.com/openmfp/extension-content-operator/api/v1alpha1"
+	"github.com/openmfp/extension-content-operator/pkg/httpclient"
+	"github.com/openmfp/golang-commons/logger"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
@@ -41,12 +45,33 @@ func (r *ContentConfigurationSubroutine) Finalizers() []string {
 }
 
 func (r *ContentConfigurationSubroutine) Process(
-	ctx context.Context,
-	runtimeObj lifecycle.RuntimeObject) (ctrl.Result, errors.OperatorError) {
-	// TODO: processing logic
-	// instance := runtimeObj.(*v1alpha1.ContentConfiguration)
+	ctx context.Context, runtimeObj lifecycle.RuntimeObject,
+) (ctrl.Result, errors.OperatorError) {
+	log := logger.LoadLoggerFromContext(ctx)
 
-	// logger.Log.Info("Processing ContentConfiguration", "namespace", instance.Namespace, "name", instance.Name)
+	instance := runtimeObj.(*v1alpha1.ContentConfiguration)
+
+	var rawConfig []byte
+	// InlineConfiguration has higher priority than RemoteConfiguration
+	switch {
+	case instance.Spec.InlineConfiguration.Content != "":
+		rawConfig = []byte(instance.Spec.InlineConfiguration.Content)
+	case instance.Spec.RemoteConfiguration.URL != "":
+		bytes, err, retry := httpclient.NewService().Do(http.MethodGet, instance.Spec.RemoteConfiguration.URL, nil)
+		if err != nil {
+			log.Err(err).Msg("failed to fetch remote configuration")
+
+			return ctrl.Result{}, errors.NewOperatorError(err, retry, true)
+		}
+		rawConfig = bytes
+	default:
+		return ctrl.Result{}, errors.NewOperatorError(errors.New("no configuration provided"), false, true)
+	}
+
+	// TODO replace it with validation function
+	validatedConfig := string(rawConfig)
+
+	instance.Status.ConfigurationResult = validatedConfig
 
 	return ctrl.Result{}, nil
 }

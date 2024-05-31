@@ -27,6 +27,9 @@ type Config struct {
 		Enabled bool `envconfig:"default=false"`
 	}
 	Subroutines struct {
+		ContentConfiguration struct {
+			Enabled bool `envconfig:"default=true"`
+		}
 	}
 	MaxConcurrentReconciles int `envconfig:"default=10"`
 }
