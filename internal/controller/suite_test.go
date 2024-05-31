@@ -22,6 +22,7 @@ import (
 	"path/filepath"
 	"time"
 
+	//+kubebuilder:scaffold:imports
 	"github.com/rs/zerolog"
 	"github.com/stretchr/testify/suite"
 	v1 "k8s.io/api/core/v1"
@@ -30,7 +31,6 @@ import (
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/envtest"
-	//+kubebuilder:scaffold:imports
 
 	cachev1alpha1 "github.com/openmfp/extension-content-operator/api/v1alpha1"
 	"github.com/openmfp/extension-content-operator/internal/config"
