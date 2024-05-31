@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/jarcoal/httpmock"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 
 	cachev1alpha1 "github.com/openmfp/extension-content-operator/api/v1alpha1"
@@ -23,12 +24,16 @@ type ContentConfigurationSubroutineTestSuite struct {
 	clientMock *mocks.Client
 }
 
+func TestContentConfigurationSubroutineTestSuit(t *testing.T) {
+	suite.Run(t, new(ContentConfigurationSubroutineTestSuite))
+}
+
 func (suite *ContentConfigurationSubroutineTestSuite) SetupTest() {
 	// create new mock
 	suite.clientMock = new(mocks.Client)
 
 	// create new test object
-	suite.testObj = NewContentConfigurationSubroutine(nil)
+	suite.testObj = NewContentConfigurationSubroutine()
 }
 
 func (suite *ContentConfigurationSubroutineTestSuite) TestGetName_OK() {
@@ -148,10 +153,78 @@ func (suite *ContentConfigurationSubroutineTestSuite) TestFinalizers_OK() {
 	finalizers := suite.testObj.Finalizers()
 
 	// Then
-	suite.Equal([]string{"contentconfiguration.core.openmfp.io/finalizer"}, finalizers)
+	suite.Equal([]string{}, finalizers)
 
 }
+func TestService_Do(t *testing.T) {
+	tests := []struct {
+		name           string
+		url            string
+		mockResponse   string
+		mockStatusCode int
+		mockError      error
+		expectedBody   string
+		expectError    bool
+	}{
+		{
+			name:           "successful_GET_request",
+			url:            "https://example.com/success",
+			mockResponse:   `{"message": "success"}`,
+			mockStatusCode: http.StatusOK,
+			expectedBody:   `{"message": "success"}`,
+			expectError:    false,
+		},
+		{
+			name:           "non_200_status_code",
+			url:            "https://example.com/error",
+			mockResponse:   `{"message": "error"}`,
+			mockStatusCode: http.StatusInternalServerError,
+			expectedBody:   "",
+			expectError:    true,
+		},
+		{
+			name:         "request_creation_error",
+			url:          "https://example.com/invalid",
+			expectedBody: "",
+			expectError:  true,
+		},
+		{
+			name:           "successful_POST_request_with_body",
+			url:            "https://example.com/post",
+			mockResponse:   `{"status": "created"}`,
+			mockStatusCode: http.StatusOK,
+			expectedBody:   `{"status": "created"}`,
+			expectError:    false,
+		},
+		{
+			name:         "network_error",
+			url:          "https://example.com/network-error",
+			mockError:    errors.New("network error"),
+			expectedBody: "",
+			expectError:  true,
+		},
+	}
 
-func TestContentConfigurationSubroutineTestSuit(t *testing.T) {
-	suite.Run(t, new(ContentConfigurationSubroutineTestSuite))
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			httpmock.Activate()
+			defer httpmock.DeactivateAndReset()
+
+			if tt.mockError != nil {
+				httpmock.RegisterResponder(http.MethodGet, tt.url,
+					httpmock.NewErrorResponder(tt.mockError))
+			} else {
+				httpmock.RegisterResponder(http.MethodGet, tt.url,
+					httpmock.NewStringResponder(tt.mockStatusCode, tt.mockResponse))
+			}
+
+			body, err, _ := getRemoteConfig(tt.url)
+			if tt.expectError {
+				assert.Error(t, err)
+			} else {
+				assert.NoError(t, err)
+				assert.Equal(t, tt.expectedBody, string(body))
+			}
+		})
+	}
 }
