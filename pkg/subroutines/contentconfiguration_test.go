@@ -59,6 +59,26 @@ func (suite *ContentConfigurationSubroutineTestSuite) TestProcessing_OK() {
 	suite.Nil(err)
 }
 
+func (suite *ContentConfigurationSubroutineTestSuite) TestFinalizers_OK() {
+	// Given
+	contentConfiguration := &cachev1alpha1.ContentConfiguration{}
+
+	// When
+	result, err := suite.testObj.Finalize(context.Background(), contentConfiguration)
+
+	// Then
+	suite.False(result.Requeue)
+	suite.Assert().Zero(result.RequeueAfter)
+	suite.Nil(err)
+
+	// When
+	finalizers := suite.testObj.Finalizers()
+
+	// Then
+	suite.Equal([]string{"contentconfiguration.core.openmfp.io/finalizer"}, finalizers)
+
+}
+
 func TestContentConfigurationSubroutineTestSuit(t *testing.T) {
 	suite.Run(t, new(ContentConfigurationSubroutineTestSuite))
 }

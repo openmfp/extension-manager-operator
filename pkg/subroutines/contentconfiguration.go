@@ -36,7 +36,7 @@ func (r *ContentConfigurationSubroutine) Finalize(
 	return ctrl.Result{}, nil
 }
 
-func (r *ContentConfigurationSubroutine) Finalizers() []string { // coverage-ignore
+func (r *ContentConfigurationSubroutine) Finalizers() []string {
 	return []string{"contentconfiguration.core.openmfp.io/finalizer"}
 }
 
