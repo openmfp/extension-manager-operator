@@ -86,7 +86,14 @@ task run
 
 ```sh
 # create local KIND cluster
-kind create cluster
+cat <<EOF > kind-config.yaml
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+nodes:
+- role: control-plane
+- role: worker
+EOF
+kind create cluster --config ./kind-config.yaml
 
 # build docker local chart image
 docker build . --no-cache --tag local-extension-content-operator:test
