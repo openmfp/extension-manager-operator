@@ -82,6 +82,49 @@ task install
 task run
 ```
 
+## Using a `validation` library
+
+To install the validation library, add the following import statement in your Go project:
+
+```go
+import "github.com/openmfp/extension-content-operator/pkg/validation"
+```
+
+Example usage:
+
+```go
+package main
+
+import (
+    "fmt"
+    "github.com/openmfp/extension-content-operator/pkg/validation"
+)
+
+func main() {
+    cC := validation.NewContentConfiguration()
+
+    schema := []byte(`{
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "https://example.com/schema.json",
+        "type": "object",
+        "properties": {
+            "name": { "type": "string" }
+        },
+        "required": ["name"]
+    }`)
+
+    input := []byte(`{ "name": "example" }`)
+    contentType := "json"
+
+    result, err := cC.Validate(schema, input, contentType)
+    if err != nil {
+        fmt.Println("Validation failed:", err)
+    } else {
+        fmt.Println("Validation succeeded:", result)
+    }
+}
+```
+
 
 ## Support, Feedback, Contributing
 
