@@ -211,6 +211,8 @@ func TestService_Do(t *testing.T) {
 			}
 
 			r := NewContentConfigurationSubroutine()
+			r.WithClient(http.DefaultClient)
+
 			body, err, _ := r.getRemoteConfig(tt.url)
 			if tt.expectError {
 				assert.Error(t, err)
