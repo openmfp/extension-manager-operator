@@ -143,7 +143,11 @@ func validateSchema(input ContentConfiguration, schema []byte) (string, error) {
 			case "required":
 				errorsAccumulator = append(errorsAccumulator, fmt.Sprintf(ErrorRequiredField, desc.Field()))
 			case "invalid_type":
-				errorsAccumulator = append(errorsAccumulator, fmt.Sprintf(ErrorInvalidFieldType, desc.Field(), desc.Details()["type"], desc.Details()["expected"]))
+				errorsAccumulator = append(errorsAccumulator, fmt.Sprintf(
+					ErrorInvalidFieldType,
+					desc.Field(),
+					desc.Details()["type"],
+					desc.Details()["expected"]))
 			default:
 				errorsAccumulator = append(errorsAccumulator, desc.String())
 			}
