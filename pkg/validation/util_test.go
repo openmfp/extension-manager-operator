@@ -8,8 +8,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func Test_loadSchemaJSONFromFile(t *testing.T) {
-	// Create a temporary file for testing (in /tmp FS)
+func Test_loadSchemaJSONFromFile_ValidFile(t *testing.T) {
 	tmpFile, err := ioutil.TempFile("", "mock_schema.json.out")
 	if err != nil {
 		t.Fatal(err)
@@ -82,15 +81,38 @@ func Test_loadSchemaJSONFromFile(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	// Close the file
 	if err := tmpFile.Close(); err != nil {
 		t.Fatal(err)
 	}
 
-	// Test loading the schema JSON from the temporary file
 	schemaJSON, err := loadSchemaJSONFromFile(tmpFile.Name())
 
 	assert.NoError(t, err)
 	assert.NotNil(t, schemaJSON)
 	assert.Equal(t, []byte(schemaJSONContent), schemaJSON)
+}
+
+func Test_loadSchemaJSONFromFile_InvalidFile(t *testing.T) {
+	_, err := loadSchemaJSONFromFile("invalid_file_path")
+
+	assert.Error(t, err)
+	assert.Contains(t, err.Error(), "no such file or directory")
+	assert.True(t, os.IsNotExist(err))
+}
+
+func Test_loadSchemaJSONFromFile_EmptyFile(t *testing.T) {
+	tmpFile, err := ioutil.TempFile("", "mock_schema.json.out")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer os.Remove(tmpFile.Name())
+
+	if err := tmpFile.Close(); err != nil {
+		t.Fatal(err)
+	}
+
+	schemaJSON, err := loadSchemaJSONFromFile(tmpFile.Name())
+
+	assert.NoError(t, err)
+	assert.Equal(t, "", string(schemaJSON))
 }
