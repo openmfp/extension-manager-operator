@@ -2,28 +2,26 @@ package subroutines
 
 import (
 	"context"
+	"fmt"
+	"io"
+	"net/http"
 
 	ctrl "sigs.k8s.io/controller-runtime"
-	"sigs.k8s.io/controller-runtime/pkg/client"
 
+	"github.com/openmfp/extension-content-operator/api/v1alpha1"
 	"github.com/openmfp/golang-commons/controller/lifecycle"
 	"github.com/openmfp/golang-commons/errors"
+	"github.com/openmfp/golang-commons/logger"
 )
 
 const (
-	ContentConfigurationSubroutineName                 = "ContentConfigurationSubroutine"
-	ContentConfigurationSubroutineFinalizer            = "contentconfiguration.core.openmfp.io/finalizer"
-	ContentConfigurationOwnerLabel                     = "contentconfiguration.core.openmfp.io/owner"
-	ContentConfigurationOwnerContentConfigurationLabel = "contentconfiguration.core.openmfp.io/owner-namespace"
-	ContentConfigurationNamePrefix                     = "contentconfiguration-"
+	ContentConfigurationSubroutineName = "ContentConfigurationSubroutine"
 )
 
-type ContentConfigurationSubroutine struct {
-	client client.Client
-}
+type ContentConfigurationSubroutine struct{}
 
-func NewContentConfigurationSubroutine(client client.Client) *ContentConfigurationSubroutine {
-	return &ContentConfigurationSubroutine{client: client}
+func NewContentConfigurationSubroutine() *ContentConfigurationSubroutine {
+	return &ContentConfigurationSubroutine{}
 }
 
 func (r *ContentConfigurationSubroutine) GetName() string {
@@ -36,17 +34,69 @@ func (r *ContentConfigurationSubroutine) Finalize(
 	return ctrl.Result{}, nil
 }
 
-func (r *ContentConfigurationSubroutine) Finalizers() []string { // coverage-ignore
-	return []string{"contentconfiguration.core.openmfp.io/finalizer"}
+func (r *ContentConfigurationSubroutine) Finalizers() []string {
+	return []string{}
 }
 
 func (r *ContentConfigurationSubroutine) Process(
-	ctx context.Context,
-	runtimeObj lifecycle.RuntimeObject) (ctrl.Result, errors.OperatorError) {
-	// TODO: processing logic
-	// instance := runtimeObj.(*v1alpha1.ContentConfiguration)
+	ctx context.Context, runtimeObj lifecycle.RuntimeObject,
+) (ctrl.Result, errors.OperatorError) {
+	log := logger.LoadLoggerFromContext(ctx)
 
-	// logger.Log.Info("Processing ContentConfiguration", "namespace", instance.Namespace, "name", instance.Name)
+	instance := runtimeObj.(*v1alpha1.ContentConfiguration)
+
+	var rawConfig []byte
+	// InlineConfiguration has higher priority than RemoteConfiguration
+	switch {
+	case instance.Spec.InlineConfiguration.Content != "":
+		rawConfig = []byte(instance.Spec.InlineConfiguration.Content)
+	case instance.Spec.RemoteConfiguration.URL != "":
+		bytes, err, retry := getRemoteConfig(instance.Spec.RemoteConfiguration.URL)
+		if err != nil {
+			log.Err(err).Msg("failed to fetch remote configuration")
+
+			return ctrl.Result{}, errors.NewOperatorError(err, retry, true)
+		}
+		rawConfig = bytes
+	default:
+		return ctrl.Result{}, errors.NewOperatorError(errors.New("no configuration provided"), false, true)
+	}
+
+	// TODO replace it with validation function
+	validatedConfig := string(rawConfig)
+
+	instance.Status.ConfigurationResult = validatedConfig
 
 	return ctrl.Result{}, nil
+}
+
+// Do makes an HTTP request to the specified URL.
+func getRemoteConfig(url string) (res []byte, err error, retry bool) {
+	req, err := http.NewRequest(http.MethodGet, url, nil)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create request: %v", err), false
+	}
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return nil, fmt.Errorf("request failed: %v", err), false
+	}
+	defer resp.Body.Close() // nolint: errcheck
+
+	if resp.StatusCode != http.StatusOK {
+		// Give the caller signal to retry if we have 5xx status codes
+		if resp.StatusCode >= http.StatusInternalServerError && resp.StatusCode < 600 {
+			return nil, fmt.Errorf("received non-200 status code: %d", resp.StatusCode), true
+		}
+
+		return nil, fmt.Errorf("received non-200 status code: %d", resp.StatusCode), false
+	}
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read response body: %v", err), false
+	}
+
+	return body, nil, false
 }

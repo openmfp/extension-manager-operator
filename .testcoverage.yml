@@ -1,10 +1,7 @@
+# gh pipeline coverage configuration
 exclude:
   paths:
     - ^pkg/subroutines/mocks # exclude generated mock files
     - api/v1alpha1 # skipping generated files and crd type definitions
     - main\.go$ # skip covering main.go
-    - internal/controller/
     - test/utils/
-    - pkg/subroutines/
-    
- 

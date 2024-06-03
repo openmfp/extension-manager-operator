@@ -52,23 +52,17 @@ tasks:
         sh: $(pwd)/{{.LOCAL_BIN}}/setup-envtest use {{.ENVTEST_K8S_VERSION}} --bin-dir $(pwd)/{{.LOCAL_BIN}} -p path
       GO111MODULE: on
     cmds:
-      - go test $(go list ./... | grep -v /e2e) {{.ADDITIONAL_COMMAND_ARGS}}
+      - go test ./... {{.ADDITIONAL_COMMAND_ARGS}}
   test:
     deps: [setup:envtest]
     cmds:
       - task: envtest
-  # cover:
-  #   deps: [setup:envtest]
-  #   cmds:
-  #     - |
-  #       export KUBEBUILDER_ASSETS="$(shell $(ENVTEST) use $(ENVTEST_K8S_VERSION) --bin-dir $(LOCAL_BIN) -p path)"
-  #       go test $(go list ./... | grep -v /e2e) -coverprofile cover.out -covermode=atomic -coverpkg=./...
   cover:
-    deps: [setup:envtest]
+    deps: [setup:envtest, test]
     cmds:
       - task: envtest
         vars:
-          ADDITIONAL_COMMAND_ARGS: -coverprofile=./cover.out -covermode=atomic -coverpkg=./...
+          ADDITIONAL_COMMAND_ARGS: -coverprofile=./cover.out -covermode=atomic
   helm-unittest:
     cmds:
       - helm unittest chart
@@ -76,9 +70,3 @@ tasks:
     cmds:
       - task: lint
       - task: test
-  install:
-    cmds:
-      - kubectl apply -f config/crd/bases
-  uninstall:
-    cmds:
-      - kubectl delete --ignore-not-found=true -f config/crd/bases
