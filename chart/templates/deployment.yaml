@@ -27,7 +27,7 @@ spec:
           imagePullPolicy: Always
           name: manager
           securityContext:
-            runAsNonRoot: false
+            runAsNonRoot: true
           ports:
           - containerPort: {{ .Values.metrics.port }}
             name: metrics
