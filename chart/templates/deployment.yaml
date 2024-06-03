@@ -24,7 +24,7 @@ spec:
           - --log-level={{ .Values.logLevel }}
           - "--health-probe-bind-address=:{{ .Values.health.port }}"
           image: {{ .Values.image.name }}:{{ .Values.image.tag }}
-          imagePullPolicy: Always
+          imagePullPolicy: IfNotPresent
           name: manager
           securityContext:
             runAsNonRoot: true
