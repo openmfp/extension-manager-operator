@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
+	"os"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -213,4 +215,95 @@ func getCreateJSONStrictFixture() []byte {
 	}
 
 	return compactJSON.Bytes()
+}
+
+func Test_loadSchemaJSONFromFile(t *testing.T) {
+	// Create a temporary file for testing
+	tmpFile, err := ioutil.TempFile("", "mock_schema.json.out")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer os.Remove(tmpFile.Name())
+
+	// Write JSON content to the temporary file
+	schemaJSONContent := `{
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "https://github.com/openmfp/extension-content-operator/pkg/validation/content-configuration",
+        "$defs": {
+            "LuigiConfigData": {
+                "properties": {
+                    "nodes": {
+                        "items": {
+                            "$ref": "#/$defs/Node"
+                        },
+                        "type": "array"
+                    }
+                },
+                "additionalProperties": false,
+                "type": "object",
+                "required": ["nodes"]
+            },
+            "LuigiConfigFragment": {
+                "properties": {
+                    "data": {
+                        "$ref": "#/$defs/LuigiConfigData"
+                    }
+                },
+                "additionalProperties": false,
+                "type": "object",
+                "required": ["data"]
+            },
+            "Node": {
+                "properties": {
+                    "entityType": {
+                        "type": "string"
+                    },
+                    "pathSegment": {
+                        "type": "string"
+                    },
+                    "label": {
+                        "type": "string"
+                    },
+                    "icon": {
+                        "type": "string"
+                    }
+                },
+                "additionalProperties": false,
+                "type": "object",
+                "required": ["entityType", "pathSegment", "label", "icon"]
+            }
+        },
+        "properties": {
+            "name": {
+                "type": "string"
+            },
+            "luigiConfigFragment": {
+                "items": {
+                    "$ref": "#/$defs/LuigiConfigFragment"
+                },
+                "type": "array"
+            }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": ["name", "luigiConfigFragment"]
+    }`
+	if _, err := tmpFile.Write([]byte(schemaJSONContent)); err != nil {
+		t.Fatal(err)
+	}
+
+	// Close the file
+	if err := tmpFile.Close(); err != nil {
+		t.Fatal(err)
+	}
+
+	// Test loading the schema JSON from the temporary file
+	schemaJSON, err := loadSchemaJSONFromFile(tmpFile.Name())
+
+	// Assert no error occurred
+	assert.NoError(t, err)
+
+	// Assert schemaJSON is not nil and contains the expected content
+	assert.NotNil(t, schemaJSON)
+	assert.Equal(t, []byte(schemaJSONContent), schemaJSON)
 }

@@ -1,6 +1,8 @@
 package validation
 
 import (
+	"io/ioutil"
+
 	"github.com/invopop/jsonschema"
 )
 
@@ -15,4 +17,12 @@ func createJSON(v any) []byte {
 	}
 
 	return jsonData
+}
+
+func loadSchemaJSONFromFile(filePath string) ([]byte, error) {
+	schemaJSON, err := ioutil.ReadFile(filePath)
+	if err != nil {
+		return nil, err
+	}
+	return schemaJSON, nil
 }

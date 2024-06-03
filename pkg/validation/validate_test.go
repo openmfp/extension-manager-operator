@@ -12,6 +12,7 @@ import (
 
 func TestValidate(t *testing.T) {
 	cC := NewContentConfiguration()
+	schema := getJSONSchemaFixture()
 	validJSON := getValidJSONFixture()
 	invalidJSON := getInvalidJSONFixture()
 	validYAML := getValidYAMLFixture()
@@ -19,13 +20,13 @@ func TestValidate(t *testing.T) {
 
 	// Test valid JSON
 	expected := validJSON
-	result, err := cC.Validate([]byte(validJSON), "json")
+	result, err := cC.Validate(schema, []byte(validJSON), "json")
 	assert.NoError(t, err)
 	assert.Equal(t, expected, result)
 
 	// Test invalid JSON
 	expected = ""
-	result, err = cC.Validate([]byte(invalidJSON), "json")
+	result, err = cC.Validate(schema, []byte(invalidJSON), "json")
 	if err == nil {
 		t.Error("expected invalid JSON to fail validation, but it passed")
 	}
@@ -35,34 +36,44 @@ func TestValidate(t *testing.T) {
 
 	// Test valid YAML
 	expected = validJSON
-	result, err = cC.Validate([]byte(validYAML), "yaml")
+	result, err = cC.Validate(schema, []byte(validYAML), "yaml")
 	assert.NoError(t, err)
 	assert.Equal(t, expected, result)
 
 	// Test invalid YAML
 	expected = ""
-	result, err = cC.Validate([]byte(invalidYAML), "yaml")
+	result, err = cC.Validate(schema, []byte(invalidYAML), "yaml")
 	assert.Error(t, err)
 	assert.Equal(t, expected, result)
 	assert.Contains(t, err.Error(), "The document is not valid:")
 
 	// Test unsupported content type
-	result, err = cC.Validate([]byte(validJSON), "xml")
+	result, err = cC.Validate(schema, []byte(validJSON), "xml")
 	assert.Error(t, err)
 	assert.Equal(t, expected, result)
 	assert.Contains(t, err.Error(), "no validator found for content type")
 
 	// Test invalid content type
-	result, err = cC.Validate([]byte(validJSON), "invalid")
+	result, err = cC.Validate(schema, []byte(validJSON), "invalid")
 	assert.Error(t, err)
 	assert.Equal(t, expected, result)
 	assert.Contains(t, err.Error(), "no validator found for content type")
 
 	// Test empty input
-	result, err = cC.Validate([]byte{}, "json")
+	result, err = cC.Validate(schema, []byte{}, "json")
 	assert.Error(t, err)
 	assert.Equal(t, expected, result)
 	assert.Contains(t, err.Error(), "empty input provided")
+}
+
+func getJSONSchemaFixture() []byte {
+	schemaFilePath := "./example_schema.json"
+	schemaJSON, err := loadSchemaJSONFromFile(schemaFilePath)
+	if err != nil {
+		log.Fatalf("failed to load schema JSON from file: %v", err)
+	}
+
+	return schemaJSON
 }
 
 func getValidJSONFixture() string {

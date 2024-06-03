@@ -1,5 +1,5 @@
 package validation
 
 type ContentConfigurationInterface interface {
-	Validate([]byte, string) (string, error)
+	Validate([]byte, []byte, string) (string, error)
 }
