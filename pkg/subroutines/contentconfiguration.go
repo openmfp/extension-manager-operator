@@ -22,14 +22,14 @@ type ContentConfigurationSubroutine struct {
 	client *http.Client
 }
 
-func NewContentConfigurationSubroutine(client *http.Client) *ContentConfigurationSubroutine {
-	if client == nil {
-		client = &http.Client{}
-	}
-
+func NewContentConfigurationSubroutine() *ContentConfigurationSubroutine {
 	return &ContentConfigurationSubroutine{
-		client: client,
+		client: &http.Client{},
 	}
+}
+
+func (r *ContentConfigurationSubroutine) WithClient(client *http.Client) {
+	r.client = client
 }
 
 func (r *ContentConfigurationSubroutine) GetName() string {

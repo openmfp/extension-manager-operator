@@ -77,8 +77,8 @@ task cover
 ```sh
 task generate
 task manifests
-make install
-make run
+task install
+task run
 ```
 
 ### Debug Helm chart locally

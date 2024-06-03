@@ -33,7 +33,7 @@ func (suite *ContentConfigurationSubroutineTestSuite) SetupTest() {
 	suite.clientMock = new(mocks.Client)
 
 	// create new test object
-	suite.testObj = NewContentConfigurationSubroutine(nil)
+	suite.testObj = NewContentConfigurationSubroutine()
 }
 
 func (suite *ContentConfigurationSubroutineTestSuite) TestGetName_OK() {
@@ -210,7 +210,7 @@ func TestService_Do(t *testing.T) {
 					httpmock.NewStringResponder(tt.mockStatusCode, tt.mockResponse))
 			}
 
-			r := NewContentConfigurationSubroutine(nil)
+			r := NewContentConfigurationSubroutine()
 			body, err, _ := r.getRemoteConfig(tt.url)
 			if tt.expectError {
 				assert.Error(t, err)
