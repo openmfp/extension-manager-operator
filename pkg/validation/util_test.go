@@ -1,6 +1,8 @@
 package validation
 
 import (
+	"bytes"
+	"encoding/json"
 	"fmt"
 	"testing"
 
@@ -66,7 +68,7 @@ func Test_strict_createJson(t *testing.T) {
 }
 
 func getCreateJSONNonStrictFixture() []byte {
-	return []byte(`{
+	originalJSON := []byte(`{
         "$schema": "https://json-schema.org/draft/2020-12/schema",
         "$id": "https://github.com/openmfp/extension-content-operator/pkg/validation/content-configuration",
         "$defs": {
@@ -124,10 +126,17 @@ func getCreateJSONNonStrictFixture() []byte {
         "additionalProperties": false,
         "type": "object"
     }`)
+
+	var compactJSON bytes.Buffer
+	if err := json.Compact(&compactJSON, originalJSON); err != nil {
+		return nil
+	}
+
+	return compactJSON.Bytes()
 }
 
 func getCreateJSONStrictFixture() []byte {
-	return []byte(`{
+	originalJSON := []byte(`{
         "$schema": "https://json-schema.org/draft/2020-12/schema",
         "$id": "https://github.com/openmfp/extension-content-operator/pkg/validation/content-configuration",
         "$defs": {
@@ -197,4 +206,11 @@ func getCreateJSONStrictFixture() []byte {
             "luigiConfigFragmenty"
         ]
     }`)
+
+	var compactJSON bytes.Buffer
+	if err := json.Compact(&compactJSON, originalJSON); err != nil {
+		return nil
+	}
+
+	return compactJSON.Bytes()
 }
