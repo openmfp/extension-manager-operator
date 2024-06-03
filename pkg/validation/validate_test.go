@@ -1,6 +1,14 @@
 package validation
 
-import "testing"
+import (
+	"bytes"
+	"encoding/json"
+	"log"
+	"testing"
+
+	"github.com/stretchr/testify/assert"
+	"gopkg.in/yaml.v3"
+)
 
 func TestValidate(t *testing.T) {
 	cC := NewContentConfiguration()
@@ -10,46 +18,51 @@ func TestValidate(t *testing.T) {
 	invalidYAML := getInvalidYAMLFixture()
 
 	// Test valid JSON
-	_, err := cC.Validate([]byte(validJSON), "json")
-	if err != nil {
-		t.Errorf("expected valid JSON to pass validation, got error: %v", err)
-	}
+	expected := validJSON
+	result, err := cC.Validate([]byte(validJSON), "json")
+	assert.NoError(t, err)
+	assert.Equal(t, expected, result)
 
 	// Test invalid JSON
-	_, err = cC.Validate([]byte(invalidJSON), "json")
+	expected = ""
+	result, err = cC.Validate([]byte(invalidJSON), "json")
 	if err == nil {
 		t.Error("expected invalid JSON to fail validation, but it passed")
 	}
+	assert.Error(t, err)
+	assert.Equal(t, expected, result)
+	assert.Contains(t, err.Error(), "The document is not valid:")
 
 	// Test valid YAML
-	_, err = cC.Validate([]byte(validYAML), "yaml")
-	if err != nil {
-		t.Errorf("expected valid YAML to pass validation, got error: %v", err)
-	}
+	expected = validJSON
+	result, err = cC.Validate([]byte(validYAML), "yaml")
+	assert.NoError(t, err)
+	assert.Equal(t, expected, result)
 
 	// Test invalid YAML
-	_, err = cC.Validate([]byte(invalidYAML), "yaml")
-	if err == nil {
-		t.Error("expected invalid YAML to fail validation, but it passed")
-	}
+	expected = ""
+	result, err = cC.Validate([]byte(invalidYAML), "yaml")
+	assert.Error(t, err)
+	assert.Equal(t, expected, result)
+	assert.Contains(t, err.Error(), "The document is not valid:")
 
 	// Test unsupported content type
-	_, err = cC.Validate([]byte(validJSON), "xml")
-	if err == nil || err.Error() != "no validator found for content type" {
-		t.Errorf("expected error for unsupported content type, got: %v", err)
-	}
+	result, err = cC.Validate([]byte(validJSON), "xml")
+	assert.Error(t, err)
+	assert.Equal(t, expected, result)
+	assert.Contains(t, err.Error(), "no validator found for content type")
 
 	// Test invalid content type
-	_, err = cC.Validate([]byte(validJSON), "invalid")
-	if err == nil || err.Error() != "no validator found for content type" {
-		t.Errorf("expected error for invalid content type, got: %v", err)
-	}
+	result, err = cC.Validate([]byte(validJSON), "invalid")
+	assert.Error(t, err)
+	assert.Equal(t, expected, result)
+	assert.Contains(t, err.Error(), "no validator found for content type")
 
 	// Test empty input
-	_, err = cC.Validate([]byte{}, "json")
-	if err == nil || err.Error() != "empty input provided" {
-		t.Errorf("expected error for empty input, got: %v", err)
-	}
+	result, err = cC.Validate([]byte{}, "json")
+	assert.Error(t, err)
+	assert.Equal(t, expected, result)
+	assert.Contains(t, err.Error(), "empty input provided")
 }
 
 func getValidJSONFixture() string {
@@ -71,7 +84,12 @@ func getValidJSONFixture() string {
 		]
 	}`
 
-	return validJSON
+	var buf bytes.Buffer
+	if err := json.Compact(&buf, []byte(validJSON)); err != nil {
+		return ""
+	}
+
+	return buf.String()
 }
 
 func getInvalidJSONFixture() string {
@@ -92,7 +110,12 @@ func getInvalidJSONFixture() string {
 			]
 		}`
 
-	return invalidJSON
+	var buf bytes.Buffer
+	if err := json.Compact(&buf, []byte(invalidJSON)); err != nil {
+		return ""
+	}
+
+	return buf.String()
 }
 
 func getValidYAMLFixture() string {
@@ -107,7 +130,18 @@ luigiConfigFragment:
          icon: home
 `
 
-	return validYAML
+	var data interface{}
+	err := yaml.Unmarshal([]byte(validYAML), &data)
+	if err != nil {
+		log.Fatalf("failed to unmarshal YAML: %v", err)
+	}
+
+	compactYAML, err := yaml.Marshal(&data)
+	if err != nil {
+		log.Fatalf("failed to marshal YAML: %v", err)
+	}
+
+	return string(compactYAML)
 }
 
 func getInvalidYAMLFixture() string {
@@ -120,5 +154,16 @@ luigiConfigFragment:
          pathSegment: home
 `
 
-	return invalidYAML
+	var data interface{}
+	err := yaml.Unmarshal([]byte(invalidYAML), &data)
+	if err != nil {
+		log.Fatalf("failed to unmarshal YAML: %v", err)
+	}
+
+	compactYAML, err := yaml.Marshal(&data)
+	if err != nil {
+		log.Fatalf("failed to marshal YAML: %v", err)
+	}
+
+	return string(compactYAML)
 }
