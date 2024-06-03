@@ -1,7 +1,7 @@
 package validation
 
 import (
-	"io/ioutil"
+	"fmt"
 	"os"
 	"testing"
 
@@ -9,14 +9,19 @@ import (
 )
 
 func Test_loadSchemaJSONFromFile_ValidFile(t *testing.T) {
-	tmpFile, err := ioutil.TempFile("", "mock_schema.json.out")
+	tmpFile, err := os.CreateTemp("", "mock_schema.json.out")
+
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer os.Remove(tmpFile.Name())
+	defer func() {
+		if err := os.Remove(tmpFile.Name()); err != nil {
+			fmt.Println("Failed to remove temp file:", err)
+		}
+	}()
 
 	schemaJSONContent := getJSONSchemaFixture()
-	if _, err := tmpFile.Write([]byte(schemaJSONContent)); err != nil {
+	if _, err := tmpFile.Write(schemaJSONContent); err != nil {
 		t.Fatal(err)
 	}
 
@@ -28,7 +33,7 @@ func Test_loadSchemaJSONFromFile_ValidFile(t *testing.T) {
 
 	assert.NoError(t, err)
 	assert.NotNil(t, schemaJSON)
-	assert.Equal(t, []byte(schemaJSONContent), schemaJSON)
+	assert.Equal(t, schemaJSONContent, schemaJSON)
 }
 
 func Test_loadSchemaJSONFromFile_InvalidFile(t *testing.T) {
@@ -40,11 +45,15 @@ func Test_loadSchemaJSONFromFile_InvalidFile(t *testing.T) {
 }
 
 func Test_loadSchemaJSONFromFile_EmptyFile(t *testing.T) {
-	tmpFile, err := ioutil.TempFile("", "mock_schema.json.out")
+	tmpFile, err := os.CreateTemp("", "mock_schema.json.out")
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer os.Remove(tmpFile.Name())
+	defer func() {
+		if err := os.Remove(tmpFile.Name()); err != nil {
+			fmt.Println("Failed to remove temp file:", err)
+		}
+	}()
 
 	if err := tmpFile.Close(); err != nil {
 		t.Fatal(err)
