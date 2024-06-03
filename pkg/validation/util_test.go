@@ -32,7 +32,10 @@ func Test_nonstrict_createJson(t *testing.T) {
 		LuigiConfigFragment []LuigiConfigFragment `json:"luigiConfigFragmenty,omitempty" yaml:"luigiConfigFragment,omitempty"`
 	}
 
-	result := createJSON(&ContentConfiguration{})
+	result, err := createJSON(&ContentConfiguration{})
+	if err != nil {
+		fmt.Println(err)
+	}
 	expected := getCreateJSONNonStrictFixture()
 
 	fmt.Println(string(result))
@@ -62,7 +65,10 @@ func Test_strict_createJson(t *testing.T) {
 		LuigiConfigFragment []LuigiConfigFragment `json:"luigiConfigFragmenty" yaml:"luigiConfigFragment"`
 	}
 
-	result := createJSON(&ContentConfiguration{})
+	result, err := createJSON(&ContentConfiguration{})
+	if err != nil {
+		fmt.Println(err)
+	}
 	expected := getCreateJSONStrictFixture()
 
 	assert.IsType(t, []byte{}, result)
