@@ -82,6 +82,37 @@ task install
 task run
 ```
 
+### Debug Helm chart locally
+
+```sh
+# create local KIND cluster
+kind create cluster
+
+# build docker local chart image
+docker build . --no-cache --tag local-extension-content-operator:test
+
+# load image to kind
+kind load docker-image local-extension-content-operator:test
+
+# apply CRDS
+kubectl apply -f chart/crds/core.openmfp.io_contentconfigurations.yaml
+
+# change in imagePullPolicy in chart/templates/deployment.yaml
+imagePullPolicy: IfNotPresent
+
+# apply chart with test configuration
+helm template -f ./chart/test-values.yaml extension-content-operator ./chart/ | kubectl apply -f -
+
+# create sample resources
+kubectl apply -f config/samples/v1alpha1_contentconfiguration.yaml
+
+# cleanup
+kubectl delete -f config/samples/v1alpha1_contentconfiguration.yaml
+helm template -f ./chart/test-values.yaml extension-content-operator ./chart/ | kubectl delete -f -
+kubectl delete -f chart/crds/core.openmfp.io_contentconfigurations.yaml
+docker image rm local-extension-content-operator:test
+kind delete cluster
+```
 
 ## Support, Feedback, Contributing
 
