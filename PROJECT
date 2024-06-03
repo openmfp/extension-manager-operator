@@ -16,7 +16,7 @@ resources:
     namespaced: true
   controller: true
   domain: core.openmfp.io
-  group: cache
+  group: v1alpha1
   kind: ContentConfiguration
   path: github.com/openmfp/extension-content-operator/api/v1alpha1
   version: v1alpha1

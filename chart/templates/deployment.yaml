@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  revisionHistoryLimit: {{ .Values.deployment.revisionHistoryLimit }}
+  selector:
+    matchLabels:
+      service: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        service: {{ .Release.Name }}
+        control-plane: controller-manager
+      annotations:
+        sidecar.istio.io/inject: "false"
+    spec:
+      serviceAccountName: {{ .Release.Name }}
+      containers:
+        - args:
+          - operator
+          - --leader-elect
+          - --log-level={{ .Values.logLevel }}
+          - "--health-probe-bind-address=:{{ .Values.health.port }}"
+          image: {{ .Values.image.name }}:{{ .Values.image.tag }}
+          name: manager
+          securityContext:
+            runAsNonRoot: true
+          ports:
+          - containerPort: {{ .Values.metrics.port }}
+            name: metrics
+            protocol: TCP
+          - name: health-port
+            containerPort: {{ .Values.health.port }}
+            protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: {{ .Values.health.port}}
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: {{ .Values.health.port}}
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          resources:
+            limits:
+              cpu: {{ .Values.deployment.resources.limits.cpu }}
+              memory: {{ .Values.deployment.resources.limits.memory }}
+            requests:
+              cpu: {{ .Values.deployment.resources.requests.cpu }}
+              memory: {{ .Values.deployment.resources.requests.memory }}
+      terminationGracePeriodSeconds: 10
+
+
+
