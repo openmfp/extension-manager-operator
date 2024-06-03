@@ -6,7 +6,7 @@ rules:
 - apiGroups:
   - core.openmfp.io
   resources:
-  - accounts
+  - contentconfigurations
   verbs:
   - create
   - delete
@@ -30,8 +30,8 @@ rules:
 - apiGroups:
   - core.openmfp.io
   resources:
-  - accounts
-  - accounts/status
+  - contentconfigurations
+  - contentconfigurations/status
   verbs:
   - create
   - delete
