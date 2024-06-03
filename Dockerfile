@@ -33,9 +33,4 @@ WORKDIR /
 COPY --from=builder /workspace/manager .
 USER 65532:65532
 
-ENV USER_UID=65532
-ENV GROUP_UID=65532
-COPY --from=builder --chown=${USER_UID}:${GROUP_UID}  /workspace/manager /operator/manager
-
-USER ${USER_UID}:${GROUP_UID}
-ENTRYPOINT ["/operator/manager"]
+ENTRYPOINT ["/manager"]
