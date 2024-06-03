@@ -4,61 +4,10 @@ import "testing"
 
 func TestValidate(t *testing.T) {
 	cC := NewContentConfiguration()
-
-	validJSON := `{
-		"name": "overview",
-		"luigiConfigFragment": [
-			{
-				"data": {
-					"nodes": [
-						{
-							"entityType": "global",
-							"pathSegment": "home",
-							"label": "Overview",
-							"icon": "home"
-						}
-					]
-				}
-			}
-		]
-	}`
-
-	invalidJSON := `{
-			"name": "overview",
-			"luigiConfigFragment": [
-				{
-					"data": {
-						"nodes": [
-							{
-								"entityType": "global",
-								"pathSegment": "home",
-								"label": "Overview"
-							}
-						]
-					}
-				}
-			]
-		}`
-
-	validYAML := `
-name: overview
-luigiConfigFragment:
- - data:
-     nodes:
-       - entityType: global
-         pathSegment: home
-         label: Overview
-         icon: home
-`
-
-	invalidYAML := `
-name: overview
-luigiConfigFragment:
- - data:
-     nodes:
-       - entityType: global
-         pathSegment: home
-`
+	validJSON := getValidJSONFixture()
+	invalidJSON := getInvalidJSONFixture()
+	validYAML := getValidYAMLFixture()
+	invalidYAML := getInvalidYAMLFixture()
 
 	// Test valid JSON
 	_, err := cC.Validate([]byte(validJSON), "json")
@@ -101,4 +50,75 @@ luigiConfigFragment:
 	if err == nil || err.Error() != "empty input provided" {
 		t.Errorf("expected error for empty input, got: %v", err)
 	}
+}
+
+func getValidJSONFixture() string {
+	validJSON := `{
+		"name": "overview",
+		"luigiConfigFragment": [
+			{
+				"data": {
+					"nodes": [
+						{
+							"entityType": "global",
+							"pathSegment": "home",
+							"label": "Overview",
+							"icon": "home"
+						}
+					]
+				}
+			}
+		]
+	}`
+
+	return validJSON
+}
+
+func getInvalidJSONFixture() string {
+	invalidJSON := `{
+			"name": "overview",
+			"luigiConfigFragment": [
+				{
+					"data": {
+						"nodes": [
+							{
+								"entityType": "global",
+								"pathSegment": "home",
+								"label": "Overview"
+							}
+						]
+					}
+				}
+			]
+		}`
+
+	return invalidJSON
+}
+
+func getValidYAMLFixture() string {
+	validYAML := `
+name: overview
+luigiConfigFragment:
+ - data:
+     nodes:
+       - entityType: global
+         pathSegment: home
+         label: Overview
+         icon: home
+`
+
+	return validYAML
+}
+
+func getInvalidYAMLFixture() string {
+	invalidYAML := `
+name: overview
+luigiConfigFragment:
+ - data:
+     nodes:
+       - entityType: global
+         pathSegment: home
+`
+
+	return invalidYAML
 }
