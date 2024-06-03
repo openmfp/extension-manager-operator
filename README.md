@@ -71,15 +71,14 @@ task undeploy
 ### Run tests
 ```sh
 task test
-task test-e2e
 task cover
 ```
 ### Debug locally
 ```sh
 task generate
 task manifests
-task install
-task run
+make install
+make run
 ```
 
 ### Debug Helm chart locally
