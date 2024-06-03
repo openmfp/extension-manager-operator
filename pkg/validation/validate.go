@@ -47,7 +47,6 @@ func validateJSON(schema, input []byte) (string, error) {
 	if err := json.Unmarshal(input, &config); err != nil {
 		return "", err
 	}
-	//return validateSchema(config, ContentConfigurationSchema)
 	return validateSchema(schema, config)
 }
 
@@ -56,12 +55,10 @@ func validateYAML(schema, input []byte) (string, error) {
 	if err := yaml.Unmarshal(input, &config); err != nil {
 		return "", err
 	}
-	//return validateSchema(config, ContentConfigurationSchema)
 	return validateSchema(schema, config)
 
 }
 
-// func validateSchema(input ContentConfiguration, schema []byte) (string, error) {
 func validateSchema(schema []byte, input ContentConfiguration) (string, error) {
 	jsonBytes, err := json.Marshal(input)
 	if err != nil {
