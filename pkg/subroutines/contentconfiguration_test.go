@@ -90,7 +90,11 @@ func (suite *ContentConfigurationSubroutineTestSuite) TestProcessingConfig() {
 					ContentType: "yaml",
 				},
 			},
-			expectedError: golangCommonErrors.NewOperatorError(errors.New("yaml: unmarshal errors:\n  line 1: cannot unmarshal !!str `I am no...` into validation.ContentConfiguration"), false, true),
+			expectedError: golangCommonErrors.NewOperatorError(
+				errors.New(
+					"yaml: unmarshal errors:\n  line 1: cannot unmarshal !!str `I am no...` into validation.ContentConfiguration"),
+				false, true,
+			),
 		},
 		{
 			name: "InlineConfigJSON_OK",
@@ -110,18 +114,21 @@ func (suite *ContentConfigurationSubroutineTestSuite) TestProcessingConfig() {
 					ContentType: "json",
 				},
 			},
-			expectedError: golangCommonErrors.NewOperatorError(errors.New("invalid character 'I' looking for beginning of value"), false, true),
+			expectedError: golangCommonErrors.NewOperatorError(
+				errors.New("invalid character 'I' looking for beginning of value"), false, true,
+			),
 		},
 		{
 			name: "RemoteConfig_OK",
 			spec: cachev1alpha1.ContentConfigurationSpec{
 				RemoteConfiguration: cachev1alpha1.RemoteConfiguration{
-					URL: remoteURL,
+					ContentType: "json",
+					URL:         remoteURL,
 				},
 			},
 			remoteURL:            remoteURL,
 			statusCode:           http.StatusOK,
-			expectedConfigResult: `{"name":"overview","luigiConfigFragment":[{"data":{"nodes":[{"entityType":"global","pathSegment":"home","label":"Overview","icon":"home"}]}}]}`,
+			expectedConfigResult: `{"name":"overview","luigiConfigFragment":[{"data":{"nodes":[{"entityType":"global","pathSegment":"home","label":"Overview","icon":"home"}]}}]}`, // nolint: lll
 		},
 		{
 			name: "RemoteConfig_http_error",

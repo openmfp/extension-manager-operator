@@ -12,6 +12,7 @@ import (
 
 const (
 	ErrorEmptyInput       = "empty input provided"
+	ErrorEmptyContentType = "empty content type provided"
 	ErrorNoValidator      = "no validator found for content type"
 	ErrorMarshalJSON      = "error marshaling input to JSON"
 	ErrorValidatingJSON   = "error validating JSON data"
@@ -36,6 +37,8 @@ func (cC *contentConfiguration) Validate(schema, input []byte, contentType strin
 		return validateJSON(schema, input)
 	case "yaml":
 		return validateYAML(schema, input)
+	case "":
+		return "", errors.New(ErrorEmptyContentType)
 	default:
 
 		return "", errors.New(ErrorNoValidator)
