@@ -7,10 +7,10 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/openmfp/extension-content-operator/pkg/validation"
 	ctrl "sigs.k8s.io/controller-runtime"
 
 	"github.com/openmfp/extension-content-operator/api/v1alpha1"
+	"github.com/openmfp/extension-content-operator/pkg/validation"
 	"github.com/openmfp/golang-commons/controller/lifecycle"
 	"github.com/openmfp/golang-commons/errors"
 	"github.com/openmfp/golang-commons/logger"
@@ -30,7 +30,7 @@ func NewContentConfigurationSubroutine() *ContentConfigurationSubroutine {
 	}
 }
 
-func (r *ContentConfigurationSubroutine) SetValidator(validator validation.ContentConfigurationInterface) {
+func (r *ContentConfigurationSubroutine) WithValidator(validator validation.ContentConfigurationInterface) {
 	r.validator = validator
 }
 
