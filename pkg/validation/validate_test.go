@@ -88,6 +88,30 @@ func Test_validateJSON(t *testing.T) {
 	assert.Error(t, err)
 	assert.Equal(t, "", result)
 	assert.Contains(t, err.Error(), "The document is not valid:")
+
+	// Test empty JSON
+	result, err = validateJSON(schema, []byte{})
+	assert.Error(t, err)
+	assert.Equal(t, "", result)
+	assert.Contains(t, err.Error(), "unexpected end of JSON input")
+
+	// Test invalid schema
+	result, err = validateJSON([]byte{}, []byte(validJSON))
+	assert.Error(t, err)
+	assert.Equal(t, "", result)
+	//assert.Contains(t, err.Error(), "invalid character '}' looking for beginning of value")
+
+	// Test invalid schema and JSON
+	result, err = validateJSON([]byte{}, []byte{})
+	assert.Error(t, err)
+	assert.Equal(t, "", result)
+	assert.Contains(t, err.Error(), "unexpected end of JSON input")
+
+	// Test error Marshal
+	result, err = validateJSON(schema, []byte(getInvalidTypeYAMLFixture()))
+	assert.Error(t, err)
+	assert.Equal(t, "", result)
+	assert.Contains(t, err.Error(), "invalid character 'l' looking for beginning of value")
 }
 
 func Test_validateYAML(t *testing.T) {
