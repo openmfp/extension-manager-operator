@@ -69,7 +69,8 @@ func TestValidate(t *testing.T) {
 	result, err = cC.Validate(schema, []byte(getInvalidTypeYAMLFixture()), "yaml")
 	assert.Error(t, err)
 	assert.Equal(t, expected, result)
-	assert.Contains(t, err.Error(), "yaml: unmarshal errors:\n  line 3: cannot unmarshal !!str `string` into []validation.Node")
+	assert.Contains(t, err.Error(), "yaml: unmarshal errors:\n  line 3: "+
+		"cannot unmarshal !!str `string` into []validation.Node")
 
 }
 
