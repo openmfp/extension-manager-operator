@@ -15,8 +15,8 @@ resources:
     crdVersion: v1
     namespaced: true
   controller: true
-  domain: core.openmfp.io
-  group: cache
+  domain: openmfp.io
+  group: core
   kind: ContentConfiguration
   path: github.com/openmfp/extension-content-operator/api/v1alpha1
   version: v1alpha1
