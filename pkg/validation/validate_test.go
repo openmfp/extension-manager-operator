@@ -65,12 +65,11 @@ func TestValidate(t *testing.T) {
 	assert.Equal(t, expected, result)
 	assert.Contains(t, err.Error(), "empty input provided")
 
-	// Test ErrorInvalidFieldType
-	result, err = cC.Validate(schema, []byte(invalidYAML), "yaml")
+	// Test error Marshal
+	result, err = cC.Validate(schema, []byte(getInvalidTypeYAMLFixture()), "yaml")
 	assert.Error(t, err)
 	assert.Equal(t, expected, result)
-	assert.Contains(t, err.Error(), "The document is not valid:\n[field 'luigiConfigFragment.0.data.nodes.0' is required "+
-		"field 'luigiConfigFragment.0.data.nodes.0' is required]")
+	assert.Contains(t, err.Error(), "yaml: unmarshal errors:\n  line 3: cannot unmarshal !!str `string` into []validation.Node")
 
 }
 
@@ -171,6 +170,28 @@ luigiConfigFragment:
      nodes:
        - entityType: global
          pathSegment: home
+`
+
+	var data interface{}
+	err := yaml.Unmarshal([]byte(invalidYAML), &data)
+	if err != nil {
+		log.Fatalf("failed to unmarshal YAML: %v", err)
+	}
+
+	compactYAML, err := yaml.Marshal(&data)
+	if err != nil {
+		log.Fatalf("failed to marshal YAML: %v", err)
+	}
+
+	return string(compactYAML)
+}
+
+func getInvalidTypeYAMLFixture() string {
+	invalidYAML := `
+name: overview
+luigiConfigFragment:
+ - data:
+     nodes: "string"
 `
 
 	var data interface{}
