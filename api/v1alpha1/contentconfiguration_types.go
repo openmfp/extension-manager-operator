@@ -65,6 +65,7 @@ type ContentConfigurationStatus struct {
 //+kubebuilder:subresource:status
 
 // ContentConfiguration is the Schema for the contentconfigurations API
+// +kubebuilder:resource:shortName=cc
 type ContentConfiguration struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
