@@ -3,6 +3,7 @@ package validation
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"log"
 	"testing"
 
@@ -133,21 +134,83 @@ func Test_validateYAML(t *testing.T) {
 }
 
 func Test_validateSchema(t *testing.T) {
-	t.Skipf("skipping test")
 	schema := getJSONSchemaFixture()
 	validJSON := getValidJSONFixture()
-	invalidJSON := getInvalidJSONFixture()
+	//invalidJSON := getInvalidJSONFixture()
+
+	// Example of valid ContentConfiguration
+	validConfig := ContentConfiguration{
+		Name: "overview",
+		LuigiConfigFragment: []LuigiConfigFragment{
+			{
+				Data: LuigiConfigData{
+					Nodes: []Node{
+						{
+							EntityType:  "global",
+							PathSegment: "home",
+							Label:       "Overview",
+							Icon:        "home", // Ensure this matches schema if required
+						},
+					},
+				},
+			},
+		},
+	}
+
+	// Example of invalid ContentConfiguration
+	invalidConfig := ContentConfiguration{
+		// Populate with invalid data according to the schema
+	}
 
 	// Test valid schema
-	result, err := validateSchema(schema, ContentConfiguration{})
+	result, err := validateSchema(schema, validConfig)
+	fmt.Printf("Valid schema test: result=%s, err=%v\n", result, err)
 	assert.NoError(t, err)
 	assert.Equal(t, validJSON, result)
 
 	// Test invalid schema
-	result, err = validateSchema(schema, ContentConfiguration{})
-	assert.NoError(t, err)
-	assert.Equal(t, invalidJSON, result)
+	result, err = validateSchema(schema, invalidConfig)
+	fmt.Printf("Invalid schema test: result=%s, err=%v\n", result, err)
+	assert.Error(t, err)
+	//assert.Equal(t, invalidJSON, result)
+
+	//// Test error Marshal
+	//result, err = validateJSON(schema, []byte(getInvalidTypeYAMLFixture()))
+	//assert.Error(t, err)
+	//assert.Equal(t, "", result)
+	//assert.Contains(t, err.Error(), "invalid character 'l' looking for beginning of value")
+
+	// Test error marshal
+	type invalidConfig2 struct {
+		Name    string
+		Channel chan struct{}
+	}
+
+	iC2 := invalidConfig2{}
+	result, err = validateSchema([]byte{}, iC2)
+	assert.Error(t, err)
+	assert.Equal(t, "", result)
+	//assert.Contains(t, err.Error(), "json: error calling Marshal: json: unsupported type: struct")
 }
+
+//func Test_validateSchema(t *testing.T) {
+//	//t.Skipf("skipping test")
+//	schema := getJSONSchemaFixture()
+//	validJSON := getValidJSONFixture()
+//	invalidJSON := getInvalidJSONFixture()
+//
+//	//input, err := validateYAML(schema, []byte(validYAML))
+//
+//	// Test valid schema
+//	result, err := validateSchema(schema, ContentConfiguration{})
+//	assert.NoError(t, err)
+//	assert.Equal(t, validJSON, result)
+//
+//	// Test invalid schema
+//	result, err = validateSchema(schema, ContentConfiguration{})
+//	assert.NoError(t, err)
+//	assert.Equal(t, invalidJSON, result)
+//}
 
 func getJSONSchemaFixture() []byte {
 	schemaFilePath := "./example_schema.json"
