@@ -69,7 +69,8 @@ func TestValidate(t *testing.T) {
 	result, err = cC.Validate(schema, []byte(invalidYAML), "yaml")
 	assert.Error(t, err)
 	assert.Equal(t, expected, result)
-	assert.Contains(t, err.Error(), "The document is not valid:\n[field 'luigiConfigFragment.0.data.nodes.0' is required field 'luigiConfigFragment.0.data.nodes.0' is required]")
+	assert.Contains(t, err.Error(), "The document is not valid:\n[field 'luigiConfigFragment.0.data.nodes.0' is required "+
+		"field 'luigiConfigFragment.0.data.nodes.0' is required]")
 
 }
 
