@@ -163,10 +163,6 @@ kubectl delete -f chart/crds/core.openmfp.io_contentconfigurations.yaml
 docker image rm local-extension-content-operator:test
 kind delete cluster
 ```
-    }
-}
-
-
 
 ## Support, Feedback, Contributing
 
