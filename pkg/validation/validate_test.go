@@ -145,42 +145,15 @@ func Test_validateSchema(t *testing.T) {
 }
 
 func Test_validateSchema_invalidType(t *testing.T) {
-	//// Example JSON schema
-	//schema := []byte(`{
-	//	"$schema": "http://json-schema.org/draft-07/schema#",
-	//	"type": "object",
-	//	"properties": {
-	//		"name": {
-	//			"type": "string"
-	//		},
-	//		"age": {
-	//			"type": "integer"
-	//		}
-	//	},
-	//	"required": ["name", "age"]
-	//}`)
-	//
-	//// Example input with invalid type for 'age' (should be integer, but is string)
-	//invalidTypeConfig := struct {
-	//	Name string `json:"name"`
-	//	Age  string `json:"age"`
-	//}{
-	//	Name: "John Doe",
-	//	Age:  "twenty-five",
-	//}
-
 	schema := getJSONSchemaFixture()
 	invalidTypeConfig := getInvalidContentConfigurationTypeFixture()
 
 	// Validate the schema
+	expected := ""
 	result, err := validateSchema(schema, invalidTypeConfig)
 	fmt.Printf("Invalid type test: result=%s, err=%v\n", result, err)
 	assert.Error(t, err)
-	//expectedError := fmt.Sprintf(ErrorDocumentInvalid, []string{
-	//	fmt.Sprintf(ErrorInvalidFieldType, "age", "string", "integer"),
-	//})
-	//assert.EqualError(t, err, expectedError)
-	assert.Equal(t, "", result)
+	assert.Equal(t, expected, result)
 }
 
 func getJSONSchemaFixture() []byte {
@@ -356,19 +329,5 @@ type ContentConfigurationTypeMock struct {
 func getInvalidContentConfigurationTypeFixture() ContentConfigurationTypeMock {
 	return ContentConfigurationTypeMock{
 		Name: 1,
-		//LuigiConfigFragment: []LuigiConfigFragment{
-		//	{
-		//		Data: LuigiConfigData{
-		//			Nodes: []Node{
-		//				{
-		//					EntityType:  "global",
-		//					PathSegment: "home",
-		//					Label:       "Overview",
-		//					Icon:        "home",
-		//				},
-		//			},
-		//		},
-		//	},
-		//},
 	}
 }
