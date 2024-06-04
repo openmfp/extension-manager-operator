@@ -137,30 +137,10 @@ func Test_validateSchema(t *testing.T) {
 	schema := getJSONSchemaFixture()
 	validJSON := getValidJSONFixture()
 	//invalidJSON := getInvalidJSONFixture()
-
-	// Example of valid ContentConfiguration
-	validConfig := ContentConfiguration{
-		Name: "overview",
-		LuigiConfigFragment: []LuigiConfigFragment{
-			{
-				Data: LuigiConfigData{
-					Nodes: []Node{
-						{
-							EntityType:  "global",
-							PathSegment: "home",
-							Label:       "Overview",
-							Icon:        "home", // Ensure this matches schema if required
-						},
-					},
-				},
-			},
-		},
-	}
+	validConfig := getValidConfigFixture()
 
 	// Example of invalid ContentConfiguration
-	invalidConfig := ContentConfiguration{
-		// Populate with invalid data according to the schema
-	}
+	invalidConfig := ContentConfiguration{}
 
 	// Test valid schema
 	result, err := validateSchema(schema, validConfig)
@@ -172,45 +152,52 @@ func Test_validateSchema(t *testing.T) {
 	result, err = validateSchema(schema, invalidConfig)
 	fmt.Printf("Invalid schema test: result=%s, err=%v\n", result, err)
 	assert.Error(t, err)
-	//assert.Equal(t, invalidJSON, result)
-
-	//// Test error Marshal
-	//result, err = validateJSON(schema, []byte(getInvalidTypeYAMLFixture()))
-	//assert.Error(t, err)
-	//assert.Equal(t, "", result)
-	//assert.Contains(t, err.Error(), "invalid character 'l' looking for beginning of value")
+	assert.Equal(t, "", result)
+	assert.Contains(t, err.Error(), "The document is not valid:\n[field '(root)' is required field '(root)' is required]")
 
 	// Test error marshal
-	type invalidConfig2 struct {
-		Name    string
-		Channel chan struct{}
-	}
-
-	iC2 := invalidConfig2{}
-	result, err = validateSchema([]byte{}, iC2)
+	iCM := getInvalidConfigFixture()
+	result, err = validateSchema([]byte{}, iCM)
 	assert.Error(t, err)
 	assert.Equal(t, "", result)
-	//assert.Contains(t, err.Error(), "json: error calling Marshal: json: unsupported type: struct")
+	assert.Contains(t, err.Error(), "error marshaling input to JSON")
 }
 
-//func Test_validateSchema(t *testing.T) {
-//	//t.Skipf("skipping test")
-//	schema := getJSONSchemaFixture()
-//	validJSON := getValidJSONFixture()
-//	invalidJSON := getInvalidJSONFixture()
-//
-//	//input, err := validateYAML(schema, []byte(validYAML))
-//
-//	// Test valid schema
-//	result, err := validateSchema(schema, ContentConfiguration{})
-//	assert.NoError(t, err)
-//	assert.Equal(t, validJSON, result)
-//
-//	// Test invalid schema
-//	result, err = validateSchema(schema, ContentConfiguration{})
-//	assert.NoError(t, err)
-//	assert.Equal(t, invalidJSON, result)
-//}
+func Test_validateSchema_invalidType(t *testing.T) {
+	// Example JSON schema
+	schema := []byte(`{
+		"$schema": "http://json-schema.org/draft-07/schema#",
+		"type": "object",
+		"properties": {
+			"name": {
+				"type": "string"
+			},
+			"age": {
+				"type": "integer"
+			}
+		},
+		"required": ["name", "age"]
+	}`)
+
+	// Example input with invalid type for 'age' (should be integer, but is string)
+	invalidTypeConfig := struct {
+		Name string `json:"name"`
+		Age  string `json:"age"`
+	}{
+		Name: "John Doe",
+		Age:  "twenty-five",
+	}
+
+	// Validate the schema
+	result, err := validateSchema(schema, invalidTypeConfig)
+	fmt.Printf("Invalid type test: result=%s, err=%v\n", result, err)
+	assert.Error(t, err)
+	//expectedError := fmt.Sprintf(ErrorDocumentInvalid, []string{
+	//	fmt.Sprintf(ErrorInvalidFieldType, "age", "string", "integer"),
+	//})
+	//assert.EqualError(t, err, expectedError)
+	assert.Equal(t, "", result)
+}
 
 func getJSONSchemaFixture() []byte {
 	schemaFilePath := "./example_schema.json"
@@ -345,4 +332,34 @@ luigiConfigFragment:
 	}
 
 	return string(compactYAML)
+}
+
+func getValidConfigFixture() ContentConfiguration {
+	return ContentConfiguration{
+		Name: "overview",
+		LuigiConfigFragment: []LuigiConfigFragment{
+			{
+				Data: LuigiConfigData{
+					Nodes: []Node{
+						{
+							EntityType:  "global",
+							PathSegment: "home",
+							Label:       "Overview",
+							Icon:        "home",
+						},
+					},
+				},
+			},
+		},
+	}
+}
+
+type ContentConfigurationMock struct {
+	Channel chan struct{}
+}
+
+func getInvalidConfigFixture() ContentConfigurationMock {
+	return ContentConfigurationMock{
+		Channel: make(chan struct{}),
+	}
 }
