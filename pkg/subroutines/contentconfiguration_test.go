@@ -1,14 +1,18 @@
 package subroutines
 
 import (
+	"bytes"
 	"context"
+	"encoding/json"
 	"errors"
+	"log"
 	"net/http"
 	"testing"
 
 	"github.com/jarcoal/httpmock"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
+	"gopkg.in/yaml.v3"
 
 	cachev1alpha1 "github.com/openmfp/extension-content-operator/api/v1alpha1"
 	"github.com/openmfp/extension-content-operator/pkg/subroutines/mocks"
@@ -59,8 +63,6 @@ func (suite *ContentConfigurationSubroutineTestSuite) TestFinalize_OK() {
 
 func (suite *ContentConfigurationSubroutineTestSuite) TestProcessingConfig() {
 	remoteURL := "https://this-address-should-be-mocked-by-httpmock"
-	inlineContent := "inline content"
-	remoteContent := "remote content"
 
 	tests := []struct {
 		name                 string
@@ -71,24 +73,62 @@ func (suite *ContentConfigurationSubroutineTestSuite) TestProcessingConfig() {
 		expectedConfigResult string
 	}{
 		{
-			name: "InlineConfig_OK",
+			name: "InlineConfigYAML_OK",
 			spec: cachev1alpha1.ContentConfigurationSpec{
 				InlineConfiguration: cachev1alpha1.InlineConfiguration{
-					Content: inlineContent,
+					Content:     getValidYAMLFixture(),
+					ContentType: "yaml",
 				},
 			},
-			expectedConfigResult: inlineContent,
+			expectedConfigResult: getValidJSONFixture(),
+		},
+		{
+			name: "InlineConfigYAML_ValidationError",
+			spec: cachev1alpha1.ContentConfigurationSpec{
+				InlineConfiguration: cachev1alpha1.InlineConfiguration{
+					Content:     "I am not a valid yaml",
+					ContentType: "yaml",
+				},
+			},
+			expectedError: golangCommonErrors.NewOperatorError(
+				errors.New(
+					"yaml: unmarshal errors:\n  line 1: cannot unmarshal !!str `I am no...` into validation.ContentConfiguration"),
+				false, true,
+			),
+		},
+		{
+			name: "InlineConfigJSON_OK",
+			spec: cachev1alpha1.ContentConfigurationSpec{
+				InlineConfiguration: cachev1alpha1.InlineConfiguration{
+					Content:     getValidJSONFixture(),
+					ContentType: "json",
+				},
+			},
+			expectedConfigResult: getValidJSONFixture(),
+		},
+		{
+			name: "InlineConfigJSON_ValidationError",
+			spec: cachev1alpha1.ContentConfigurationSpec{
+				InlineConfiguration: cachev1alpha1.InlineConfiguration{
+					Content:     "I am not a valid json",
+					ContentType: "json",
+				},
+			},
+			expectedError: golangCommonErrors.NewOperatorError(
+				errors.New("invalid character 'I' looking for beginning of value"), false, true,
+			),
 		},
 		{
 			name: "RemoteConfig_OK",
 			spec: cachev1alpha1.ContentConfigurationSpec{
 				RemoteConfiguration: cachev1alpha1.RemoteConfiguration{
-					URL: remoteURL,
+					ContentType: "json",
+					URL:         remoteURL,
 				},
 			},
 			remoteURL:            remoteURL,
 			statusCode:           http.StatusOK,
-			expectedConfigResult: remoteContent,
+			expectedConfigResult: `{"name":"overview","luigiConfigFragment":[{"data":{"nodes":[{"entityType":"global","pathSegment":"home","label":"Overview","icon":"home"}]}}]}`, // nolint: lll
 		},
 		{
 			name: "RemoteConfig_http_error",
@@ -115,7 +155,7 @@ func (suite *ContentConfigurationSubroutineTestSuite) TestProcessingConfig() {
 				defer httpmock.DeactivateAndReset()
 
 				httpmock.RegisterResponder(
-					"GET", tt.remoteURL, httpmock.NewStringResponder(tt.statusCode, remoteContent),
+					"GET", tt.remoteURL, httpmock.NewStringResponder(tt.statusCode, getValidRemoteContentJSONFixture()),
 				)
 			}
 
@@ -127,6 +167,9 @@ func (suite *ContentConfigurationSubroutineTestSuite) TestProcessingConfig() {
 
 			// Then
 			if tt.expectedError != nil {
+				if err == nil {
+					suite.Fail("expected error, but got nil")
+				}
 				suite.Require().Equal(tt.expectedError.Err().Error(), err.Err().Error())
 			} else {
 				suite.Nil(err)
@@ -211,7 +254,6 @@ func TestService_Do(t *testing.T) {
 			}
 
 			r := NewContentConfigurationSubroutine()
-			r.WithClient(http.DefaultClient)
 
 			body, err, _ := r.getRemoteConfig(tt.url)
 			if tt.expectError {
@@ -222,4 +264,104 @@ func TestService_Do(t *testing.T) {
 			}
 		})
 	}
+}
+
+func getValidYAMLFixture() string {
+	validYAML := `
+name: overview
+luigiConfigFragment:
+- data:
+    nodes:
+    - entityType: global
+      pathSegment: home
+      label: Overview
+      icon: home
+      hideFromNav: true
+      defineEntity:
+        id: example
+      children:
+      - pathSegment: overview
+        label: Overview
+        icon: home
+        url: https://fiddle.luigi-project.io/examples/microfrontends/multipurpose.html
+        context:
+          title: Welcome to OpenMFP Portal
+          content: " "
+`
+
+	var data interface{}
+	err := yaml.Unmarshal([]byte(validYAML), &data)
+	if err != nil {
+		log.Fatalf("failed to unmarshal YAML: %v", err)
+	}
+
+	compactYAML, err := yaml.Marshal(&data)
+	if err != nil {
+		log.Fatalf("failed to marshal YAML: %v", err)
+	}
+
+	return string(compactYAML)
+}
+
+func getValidJSONFixture() string {
+	validJSON := `{
+		"name": "overview",
+		"luigiConfigFragment": [
+			{
+				"data": {
+					"nodes": [
+						{
+							"entityType": "global",
+							"pathSegment": "home",
+							"label": "Overview",
+							"icon": "home"
+						}
+					]
+				}
+			}
+		]
+	}`
+
+	var buf bytes.Buffer
+	if err := json.Compact(&buf, []byte(validJSON)); err != nil {
+		return ""
+	}
+
+	return buf.String()
+}
+
+func getValidRemoteContentJSONFixture() string {
+	return `{
+  "name": "overview",
+  "luigiConfigFragment": [
+    {
+      "data": {
+        "nodes": [
+          {
+            "entityType": "global",
+            "pathSegment": "home",
+            "label": "Overview",
+            "icon": "home",
+            "hideFromNav": true,            
+            "defineEntity": {
+              "id": "example"
+            },
+            "children": [
+              {
+                "pathSegment": "overview",
+                "label": "Overview",
+                "icon": "home",
+                "url": "https://fiddle.luigi-project.io/examples/microfrontends/multipurpose.html",
+                "context": {
+                  "title": "Welcome to OpenMFP Portal",
+                  "content": " "
+                }
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}`
 }

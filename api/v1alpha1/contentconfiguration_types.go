@@ -42,6 +42,7 @@ type InlineConfiguration struct {
 }
 
 type RemoteConfiguration struct {
+	ContentType    string         `json:"contentType,omitempty"` // "yaml" or "json"
 	URL            string         `json:"url,omitempty"`
 	Authentication Authentication `json:"authentication,omitempty"`
 }

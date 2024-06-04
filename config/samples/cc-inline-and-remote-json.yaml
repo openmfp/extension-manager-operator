@@ -1,0 +1,48 @@
+apiVersion: core.openmfp.io/v1alpha1
+kind: ContentConfiguration
+metadata:
+  name: inline-and-remote-json
+  namespace: default
+spec:
+  remoteConfiguration:
+    authentication:
+      secretRef:
+        name: "your-secret-name"
+      type: "Bearer"
+    url: "we will never go there since the inlineConfiguration has higher priority than remoteConfiguration"
+  inlineConfiguration:
+    content: |
+      {
+        "name": "overview",
+        "luigiConfigFragment": [
+          {
+            "data": {
+              "nodes": [
+                {
+                  "entityType": "global",
+                  "pathSegment": "home",
+                  "label": "Overview",
+                  "icon": "home",
+                  "hideFromNav": true,
+                  "defineEntity": {
+                    "id": "example"
+                  },
+                  "children": [
+                    {
+                      "pathSegment": "overview",
+                      "label": "Overview",
+                      "icon": "home",
+                      "url": "https://fiddle.luigi-project.io/examples/microfrontends/multipurpose.html",
+                      "context": {
+                        "title": "Welcome to OpenMFP Portal",
+                        "content": " "
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      }
+    contentType: "json"
