@@ -59,7 +59,8 @@ func validateYAML(schema, input []byte) (string, error) {
 
 }
 
-func validateSchema(schema []byte, input ContentConfiguration) (string, error) {
+// func validateSchema(schema []byte, input ContentConfiguration) (string, error) {
+func validateSchema(schema []byte, input interface{}) (string, error) {
 	jsonBytes, err := json.Marshal(input)
 	if err != nil {
 		return "", errors.New(ErrorMarshalJSON)
