@@ -24,7 +24,7 @@ type ContentConfigurationSubroutine struct {
 
 func NewContentConfigurationSubroutine() *ContentConfigurationSubroutine {
 	return &ContentConfigurationSubroutine{
-		client: &http.Client{},
+		client: http.DefaultClient,
 	}
 }
 
@@ -107,7 +107,7 @@ func (r *ContentConfigurationSubroutine) getRemoteConfig(url string) (res []byte
 
 	// TODO
 	// we need to check the size of the received body before loading it to memory.
-	//In case it exceeds a certain size we should reject it.
+	// In case it exceeds a certain size we should reject it.
 	// https://github.com/openmfp/extension-content-operator/pull/23#discussion_r1622598363
 
 	return body, nil, false
