@@ -64,6 +64,14 @@ func TestValidate(t *testing.T) {
 	assert.Error(t, err)
 	assert.Equal(t, expected, result)
 	assert.Contains(t, err.Error(), "empty input provided")
+
+	// Test error Marshal
+	result, err = cC.Validate(schema, []byte(getInvalidTypeYAMLFixture()), "yaml")
+	assert.Error(t, err)
+	assert.Equal(t, expected, result)
+	assert.Contains(t, err.Error(), "yaml: unmarshal errors:\n  line 3: "+
+		"cannot unmarshal !!str `string` into []validation.Node")
+
 }
 
 func getJSONSchemaFixture() []byte {
@@ -179,54 +187,24 @@ luigiConfigFragment:
 	return string(compactYAML)
 }
 
-func Test_validateJSON(t *testing.T) {
-	schema := getJSONSchemaFixture()
-	validJSON := getValidJSONFixture()
-	invalidJSON := getInvalidJSONFixture()
+func getInvalidTypeYAMLFixture() string {
+	invalidYAML := `
+name: overview
+luigiConfigFragment:
+ - data:
+     nodes: "string"
+`
 
-	// Test valid JSON
-	result, err := validateJSON(schema, []byte(validJSON))
-	assert.NoError(t, err)
-	assert.Equal(t, validJSON, result)
+	var data interface{}
+	err := yaml.Unmarshal([]byte(invalidYAML), &data)
+	if err != nil {
+		log.Fatalf("failed to unmarshal YAML: %v", err)
+	}
 
-	// Test invalid JSON
-	result, err = validateJSON(schema, []byte(invalidJSON))
-	assert.Error(t, err)
-	assert.Equal(t, "", result)
-	assert.Contains(t, err.Error(), "The document is not valid:")
-}
+	compactYAML, err := yaml.Marshal(&data)
+	if err != nil {
+		log.Fatalf("failed to marshal YAML: %v", err)
+	}
 
-func Test_validateYAML(t *testing.T) {
-	t.Skipf("skipping test")
-	schema := getJSONSchemaFixture()
-	validYAML := getValidYAMLFixture()
-	invalidYAML := getInvalidYAMLFixture()
-
-	// Test valid YAML
-	result, err := validateYAML(schema, []byte(validYAML))
-	assert.NoError(t, err)
-	assert.Equal(t, validYAML, result)
-
-	// Test invalid YAML
-	result, err = validateYAML(schema, []byte(invalidYAML))
-	assert.Error(t, err)
-	assert.Equal(t, "", result)
-	assert.Contains(t, err.Error(), "The document is not valid:")
-}
-
-func Test_validateSchema(t *testing.T) {
-	t.Skipf("skipping test")
-	schema := getJSONSchemaFixture()
-	validJSON := getValidJSONFixture()
-	invalidJSON := getInvalidJSONFixture()
-
-	// Test valid schema
-	result, err := validateSchema(schema, ContentConfiguration{})
-	assert.NoError(t, err)
-	assert.Equal(t, validJSON, result)
-
-	// Test invalid schema
-	result, err = validateSchema(schema, ContentConfiguration{})
-	assert.NoError(t, err)
-	assert.Equal(t, invalidJSON, result)
+	return string(compactYAML)
 }
