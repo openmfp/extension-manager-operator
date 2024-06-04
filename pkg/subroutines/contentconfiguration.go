@@ -6,6 +6,7 @@ import (
 	"io"
 	"net/http"
 
+	"github.com/openmfp/extension-content-operator/pkg/validation"
 	ctrl "sigs.k8s.io/controller-runtime"
 
 	"github.com/openmfp/extension-content-operator/api/v1alpha1"
@@ -18,10 +19,18 @@ const (
 	ContentConfigurationSubroutineName = "ContentConfigurationSubroutine"
 )
 
-type ContentConfigurationSubroutine struct{}
+type ContentConfigurationSubroutine struct {
+	validator validation.ContentConfigurationInterface
+}
 
 func NewContentConfigurationSubroutine() *ContentConfigurationSubroutine {
-	return &ContentConfigurationSubroutine{}
+	return &ContentConfigurationSubroutine{
+		validator: validation.NewContentConfiguration(),
+	}
+}
+
+func (r *ContentConfigurationSubroutine) SetValidator(validator validation.ContentConfigurationInterface) {
+	r.validator = validator
 }
 
 func (r *ContentConfigurationSubroutine) GetName() string {
@@ -46,10 +55,12 @@ func (r *ContentConfigurationSubroutine) Process(
 	instance := runtimeObj.(*v1alpha1.ContentConfiguration)
 
 	var rawConfig []byte
+	var contentType string
 	// InlineConfiguration has higher priority than RemoteConfiguration
 	switch {
 	case instance.Spec.InlineConfiguration.Content != "":
 		rawConfig = []byte(instance.Spec.InlineConfiguration.Content)
+		contentType = instance.Spec.InlineConfiguration.ContentType
 	case instance.Spec.RemoteConfiguration.URL != "":
 		bytes, err, retry := getRemoteConfig(instance.Spec.RemoteConfiguration.URL)
 		if err != nil {
@@ -58,14 +69,19 @@ func (r *ContentConfigurationSubroutine) Process(
 			return ctrl.Result{}, errors.NewOperatorError(err, retry, true)
 		}
 		rawConfig = bytes
+		contentType = instance.Spec.RemoteConfiguration.ContentType
 	default:
 		return ctrl.Result{}, errors.NewOperatorError(errors.New("no configuration provided"), false, true)
 	}
 
-	// TODO replace it with validation function
-	validatedConfig := string(rawConfig)
+	configResult, err := r.validator.Validate(getSchema(), rawConfig, contentType)
+	if err != nil {
+		log.Err(err).Msg("failed to validate configuration")
 
-	instance.Status.ConfigurationResult = validatedConfig
+		return ctrl.Result{}, errors.NewOperatorError(err, false, true)
+	}
+
+	instance.Status.ConfigurationResult = configResult
 
 	return ctrl.Result{}, nil
 }
@@ -99,4 +115,69 @@ func getRemoteConfig(url string) (res []byte, err error, retry bool) {
 	}
 
 	return body, nil, false
+}
+
+func getSchema() []byte {
+	return []byte(`{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/openmfp/extension-content-operator/pkg/validation/content-configuration",
+  "$defs": {
+    "LuigiConfigData": {
+      "properties": {
+        "nodes": {
+          "items": {
+            "$ref": "#/$defs/Node"
+          },
+          "type": "array"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": ["nodes"]
+    },
+    "LuigiConfigFragment": {
+      "properties": {
+        "data": {
+          "$ref": "#/$defs/LuigiConfigData"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": ["data"]
+    },
+    "Node": {
+      "properties": {
+        "entityType": {
+          "type": "string"
+        },
+        "pathSegment": {
+          "type": "string"
+        },
+        "label": {
+          "type": "string"
+        },
+        "icon": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": ["entityType", "pathSegment", "label", "icon"]
+    }
+  },
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "luigiConfigFragment": {
+      "items": {
+        "$ref": "#/$defs/LuigiConfigFragment"
+      },
+      "type": "array"
+    }
+  },
+  "additionalProperties": false,
+  "type": "object",
+  "required": ["name", "luigiConfigFragment"]
+}`)
 }
