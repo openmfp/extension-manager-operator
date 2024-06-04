@@ -18,10 +18,18 @@ const (
 	ContentConfigurationSubroutineName = "ContentConfigurationSubroutine"
 )
 
-type ContentConfigurationSubroutine struct{}
+type ContentConfigurationSubroutine struct {
+	client *http.Client
+}
 
 func NewContentConfigurationSubroutine() *ContentConfigurationSubroutine {
-	return &ContentConfigurationSubroutine{}
+	return &ContentConfigurationSubroutine{
+		client: http.DefaultClient,
+	}
+}
+
+func (r *ContentConfigurationSubroutine) WithClient(client *http.Client) {
+	r.client = client
 }
 
 func (r *ContentConfigurationSubroutine) GetName() string {
@@ -51,7 +59,7 @@ func (r *ContentConfigurationSubroutine) Process(
 	case instance.Spec.InlineConfiguration.Content != "":
 		rawConfig = []byte(instance.Spec.InlineConfiguration.Content)
 	case instance.Spec.RemoteConfiguration.URL != "":
-		bytes, err, retry := getRemoteConfig(instance.Spec.RemoteConfiguration.URL)
+		bytes, err, retry := r.getRemoteConfig(instance.Spec.RemoteConfiguration.URL)
 		if err != nil {
 			log.Err(err).Msg("failed to fetch remote configuration")
 
@@ -71,14 +79,13 @@ func (r *ContentConfigurationSubroutine) Process(
 }
 
 // Do makes an HTTP request to the specified URL.
-func getRemoteConfig(url string) (res []byte, err error, retry bool) {
+func (r *ContentConfigurationSubroutine) getRemoteConfig(url string) (res []byte, err error, retry bool) {
 	req, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create request: %v", err), false
 	}
 
-	client := &http.Client{}
-	resp, err := client.Do(req)
+	resp, err := r.client.Do(req)
 	if err != nil {
 		return nil, fmt.Errorf("request failed: %v", err), false
 	}
@@ -97,6 +104,11 @@ func getRemoteConfig(url string) (res []byte, err error, retry bool) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to read response body: %v", err), false
 	}
+
+	// TODO
+	// we need to check the size of the received body before loading it to memory.
+	// In case it exceeds a certain size we should reject it.
+	// https://github.com/openmfp/extension-content-operator/pull/23#discussion_r1622598363
 
 	return body, nil, false
 }

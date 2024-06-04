@@ -11,6 +11,8 @@ spec:
     kind: ContentConfiguration
     listKind: ContentConfigurationList
     plural: contentconfigurations
+    shortNames:
+    - cc
     singular: contentconfiguration
   scope: Namespaced
   versions:

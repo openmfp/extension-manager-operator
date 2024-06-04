@@ -71,7 +71,6 @@ task undeploy
 ### Run tests
 ```sh
 task test
-task test-e2e
 task cover
 ```
 ### Debug locally
