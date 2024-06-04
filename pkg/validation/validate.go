@@ -56,7 +56,6 @@ func validateYAML(schema, input []byte) (string, error) {
 		return "", err
 	}
 	return validateSchema(schema, config)
-
 }
 
 // func validateSchema(schema []byte, input ContentConfiguration) (string, error) {

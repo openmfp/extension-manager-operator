@@ -115,28 +115,9 @@ func Test_validateJSON(t *testing.T) {
 	assert.Contains(t, err.Error(), "invalid character 'l' looking for beginning of value")
 }
 
-func Test_validateYAML(t *testing.T) {
-	t.Skipf("skipping test")
-	schema := getJSONSchemaFixture()
-	validYAML := getValidYAMLFixture()
-	invalidYAML := getInvalidYAMLFixture()
-
-	// Test valid YAML
-	result, err := validateYAML(schema, []byte(validYAML))
-	assert.NoError(t, err)
-	assert.Equal(t, validYAML, result)
-
-	// Test invalid YAML
-	result, err = validateYAML(schema, []byte(invalidYAML))
-	assert.Error(t, err)
-	assert.Equal(t, "", result)
-	assert.Contains(t, err.Error(), "The document is not valid:")
-}
-
 func Test_validateSchema(t *testing.T) {
 	schema := getJSONSchemaFixture()
 	validJSON := getValidJSONFixture()
-	//invalidJSON := getInvalidJSONFixture()
 	validConfig := getValidConfigFixture()
 
 	// Example of invalid ContentConfiguration
@@ -164,29 +145,32 @@ func Test_validateSchema(t *testing.T) {
 }
 
 func Test_validateSchema_invalidType(t *testing.T) {
-	// Example JSON schema
-	schema := []byte(`{
-		"$schema": "http://json-schema.org/draft-07/schema#",
-		"type": "object",
-		"properties": {
-			"name": {
-				"type": "string"
-			},
-			"age": {
-				"type": "integer"
-			}
-		},
-		"required": ["name", "age"]
-	}`)
+	//// Example JSON schema
+	//schema := []byte(`{
+	//	"$schema": "http://json-schema.org/draft-07/schema#",
+	//	"type": "object",
+	//	"properties": {
+	//		"name": {
+	//			"type": "string"
+	//		},
+	//		"age": {
+	//			"type": "integer"
+	//		}
+	//	},
+	//	"required": ["name", "age"]
+	//}`)
+	//
+	//// Example input with invalid type for 'age' (should be integer, but is string)
+	//invalidTypeConfig := struct {
+	//	Name string `json:"name"`
+	//	Age  string `json:"age"`
+	//}{
+	//	Name: "John Doe",
+	//	Age:  "twenty-five",
+	//}
 
-	// Example input with invalid type for 'age' (should be integer, but is string)
-	invalidTypeConfig := struct {
-		Name string `json:"name"`
-		Age  string `json:"age"`
-	}{
-		Name: "John Doe",
-		Age:  "twenty-five",
-	}
+	schema := getJSONSchemaFixture()
+	invalidTypeConfig := getInvalidContentConfigurationTypeFixture()
 
 	// Validate the schema
 	result, err := validateSchema(schema, invalidTypeConfig)
@@ -361,5 +345,30 @@ type ContentConfigurationMock struct {
 func getInvalidConfigFixture() ContentConfigurationMock {
 	return ContentConfigurationMock{
 		Channel: make(chan struct{}),
+	}
+}
+
+type ContentConfigurationTypeMock struct {
+	Name int `json:"name"`
+	//LuigiConfigFragment []LuigiConfigFragment `json:"luigiConfigFragment"`
+}
+
+func getInvalidContentConfigurationTypeFixture() ContentConfigurationTypeMock {
+	return ContentConfigurationTypeMock{
+		Name: 1,
+		//LuigiConfigFragment: []LuigiConfigFragment{
+		//	{
+		//		Data: LuigiConfigData{
+		//			Nodes: []Node{
+		//				{
+		//					EntityType:  "global",
+		//					PathSegment: "home",
+		//					Label:       "Overview",
+		//					Icon:        "home",
+		//				},
+		//			},
+		//		},
+		//	},
+		//},
 	}
 }
