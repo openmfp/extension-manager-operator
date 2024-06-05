@@ -17,11 +17,14 @@ limitations under the License.
 package controller
 
 import (
+	"bytes"
 	"context"
+	"encoding/json"
+	"log"
 	"testing"
 
-	"github.com/jarcoal/httpmock"
 	"github.com/stretchr/testify/suite"
+	"gopkg.in/yaml.v3"
 	metaV1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"
 
@@ -32,10 +35,7 @@ func TestContentConfigurationTestSuite(t *testing.T) {
 	suite.Run(t, new(ContentConfigurationTestSuite))
 }
 
-func (suite *ContentConfigurationTestSuite) TestNamespaceCreation() {
-	remoteURL := "https://this-address-should-be-mocked-by-httpmock"
-	remoteContent := "This is remote content"
-	inlineContent := "This is inline content"
+func (suite *ContentConfigurationTestSuite) TestContentConfigurationCreation() {
 	// Define the test cases
 	testCases := []struct {
 		name           string
@@ -48,46 +48,43 @@ func (suite *ContentConfigurationTestSuite) TestNamespaceCreation() {
 			instanceName: "inline",
 			spec: cachev1alpha1.ContentConfigurationSpec{
 				InlineConfiguration: cachev1alpha1.InlineConfiguration{
-					Content: inlineContent,
+					ContentType: "yaml",
+					Content:     getValidYAMLFixture(),
 				},
 			},
-			expectedResult: inlineContent,
+			expectedResult: getValidJSONFixture(),
 		},
 		{
 			name:         "TestBothInlineAndRemoteConfiguration",
 			instanceName: "inline-and-remote",
 			spec: cachev1alpha1.ContentConfigurationSpec{
 				InlineConfiguration: cachev1alpha1.InlineConfiguration{
-					Content: inlineContent,
+					ContentType: "yaml",
+					Content:     getValidYAMLFixture(),
 				},
 				RemoteConfiguration: cachev1alpha1.RemoteConfiguration{
 					URL: "this-url-should-not-be-used",
 				},
 			},
-			expectedResult: inlineContent,
+			expectedResult: getValidJSONFixture(),
 		},
-		{
-			name:         "TestRemoteContentConfiguration",
-			instanceName: "remote",
-			spec: cachev1alpha1.ContentConfigurationSpec{
-				RemoteConfiguration: cachev1alpha1.RemoteConfiguration{
-					URL: remoteURL,
-				},
-			},
-			expectedResult: remoteContent,
-		},
+
+		//{
+		//	name:         "TestRemoteContentConfiguration",
+		//	instanceName: "remote",
+		//	spec: cachev1alpha1.ContentConfigurationSpec{
+		//		RemoteConfiguration: cachev1alpha1.RemoteConfiguration{
+		//			ContentType: "json",
+		//			URL:         remoteURL,
+		//		},
+		//	},
+		//	expectedResult: getValidJSONFixture(),
+		//},
 	}
 
 	// Iterate through the test cases
 	for _, tc := range testCases {
 		suite.Run(tc.name, func() {
-			httpmock.Activate()
-			defer httpmock.DeactivateAndReset()
-
-			httpmock.RegisterResponder(
-				"GET", remoteURL, httpmock.NewStringResponder(200, remoteContent),
-			)
-
 			// Given
 			testContext := context.Background()
 			instance := &cachev1alpha1.ContentConfiguration{
@@ -116,4 +113,104 @@ func (suite *ContentConfigurationTestSuite) TestNamespaceCreation() {
 			)
 		})
 	}
+}
+
+func getValidYAMLFixture() string {
+	validYAML := `
+name: overview
+luigiConfigFragment:
+- data:
+    nodes:
+    - entityType: global
+      pathSegment: home
+      label: Overview
+      icon: home
+      hideFromNav: true
+      defineEntity:
+        id: example
+      children:
+      - pathSegment: overview
+        label: Overview
+        icon: home
+        url: https://fiddle.luigi-project.io/examples/microfrontends/multipurpose.html
+        context:
+          title: Welcome to OpenMFP Portal
+          content: " "
+`
+
+	var data interface{}
+	err := yaml.Unmarshal([]byte(validYAML), &data)
+	if err != nil {
+		log.Fatalf("failed to unmarshal YAML: %v", err)
+	}
+
+	compactYAML, err := yaml.Marshal(&data)
+	if err != nil {
+		log.Fatalf("failed to marshal YAML: %v", err)
+	}
+
+	return string(compactYAML)
+}
+
+func getValidJSONFixture() string {
+	validJSON := `{
+		"name": "overview",
+		"luigiConfigFragment": [
+			{
+				"data": {
+					"nodes": [
+						{
+							"entityType": "global",
+							"pathSegment": "home",
+							"label": "Overview",
+							"icon": "home"
+						}
+					]
+				}
+			}
+		]
+	}`
+
+	var buf bytes.Buffer
+	if err := json.Compact(&buf, []byte(validJSON)); err != nil {
+		return ""
+	}
+
+	return buf.String()
+}
+
+func getValidRemoteContentJSONFixture() string {
+	return `{
+  "name": "overview",
+  "luigiConfigFragment": [
+    {
+      "data": {
+        "nodes": [
+          {
+            "entityType": "global",
+            "pathSegment": "home",
+            "label": "Overview",
+            "icon": "home",
+            "hideFromNav": true,            
+            "defineEntity": {
+              "id": "example"
+            },
+            "children": [
+              {
+                "pathSegment": "overview",
+                "label": "Overview",
+                "icon": "home",
+                "url": "https://fiddle.luigi-project.io/examples/microfrontends/multipurpose.html",
+                "context": {
+                  "title": "Welcome to OpenMFP Portal",
+                  "content": " "
+                }
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}`
 }

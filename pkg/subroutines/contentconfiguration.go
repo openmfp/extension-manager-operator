@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"os"
 
 	"github.com/openmfp/extension-content-operator/pkg/validation"
 	ctrl "sigs.k8s.io/controller-runtime"
@@ -81,14 +80,7 @@ func (r *ContentConfigurationSubroutine) Process(
 		return ctrl.Result{}, errors.NewOperatorError(errors.New("no configuration provided"), false, true)
 	}
 
-	schema, err := readSchemaFromFile()
-	if err != nil {
-		log.Err(err).Msg("failed to read schema")
-
-		return ctrl.Result{}, errors.NewOperatorError(err, false, true)
-	}
-
-	validatedConfig, err := r.validator.Validate(schema, rawConfig, contentType)
+	validatedConfig, err := r.validator.Validate(getSchema(), rawConfig, contentType)
 	if err != nil {
 		log.Err(err).Msg("failed to validate configuration")
 
@@ -135,11 +127,69 @@ func (r *ContentConfigurationSubroutine) getRemoteConfig(url string) (res []byte
 	return body, nil, false
 }
 
-func readSchemaFromFile() ([]byte, error) {
-	fileContent, err := os.ReadFile("../validation/example_schema.json")
-	if err != nil {
-		return nil, err
-	}
+func getSchema() []byte {
+	s := `{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/openmfp/extension-content-operator/pkg/validation/content-configuration",
+  "$defs": {
+    "LuigiConfigData": {
+      "properties": {
+        "nodes": {
+          "items": {
+            "$ref": "#/$defs/Node"
+          },
+          "type": "array"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": ["nodes"]
+    },
+    "LuigiConfigFragment": {
+      "properties": {
+        "data": {
+          "$ref": "#/$defs/LuigiConfigData"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": ["data"]
+    },
+    "Node": {
+      "properties": {
+        "entityType": {
+          "type": "string"
+        },
+        "pathSegment": {
+          "type": "string"
+        },
+        "label": {
+          "type": "string"
+        },
+        "icon": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": ["entityType", "pathSegment", "label", "icon"]
+    }
+  },
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "luigiConfigFragment": {
+      "items": {
+        "$ref": "#/$defs/LuigiConfigFragment"
+      },
+      "type": "array"
+    }
+  },
+  "additionalProperties": false,
+  "type": "object",
+  "required": ["name", "luigiConfigFragment"]
+}`
 
-	return fileContent, nil
+	return []byte(s)
 }
