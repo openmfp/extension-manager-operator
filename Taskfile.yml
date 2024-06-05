@@ -52,7 +52,7 @@ tasks:
         sh: $(pwd)/{{.LOCAL_BIN}}/setup-envtest use {{.ENVTEST_K8S_VERSION}} --bin-dir $(pwd)/{{.LOCAL_BIN}} -p path
       GO111MODULE: on
     cmds:
-      - go test ./... {{.ADDITIONAL_COMMAND_ARGS}}
+      - go test -count=1  ./... {{.ADDITIONAL_COMMAND_ARGS}}
   test:
     deps: [setup:envtest]
     cmds:
