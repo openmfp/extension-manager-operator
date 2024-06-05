@@ -10,6 +10,7 @@ import (
 	"testing"
 
 	"github.com/jarcoal/httpmock"
+	"github.com/openmfp/extension-content-operator/pkg/validation"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 	"gopkg.in/yaml.v3"
@@ -46,6 +47,17 @@ func (suite *ContentConfigurationSubroutineTestSuite) TestGetName_OK() {
 
 	// Then
 	suite.Equal(ContentConfigurationSubroutineName, result)
+}
+
+func (suite *ContentConfigurationSubroutineTestSuite) TestConstructor_OK() {
+	// Given
+	defaultClient := http.DefaultClient
+
+	// When
+	suite.testObj.WithClient(defaultClient)
+	suite.testObj.WithValidator(validation.NewContentConfiguration())
+	// Then
+	suite.Equal(defaultClient, suite.testObj.client)
 }
 
 func (suite *ContentConfigurationSubroutineTestSuite) TestFinalize_OK() {

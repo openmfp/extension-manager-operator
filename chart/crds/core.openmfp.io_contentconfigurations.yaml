@@ -77,6 +77,8 @@ spec:
                       type:
                         type: string
                     type: object
+                  contentType:
+                    type: string
                   url:
                     type: string
                 type: object

@@ -23,6 +23,7 @@ import (
 	"log"
 	"testing"
 
+	"github.com/jarcoal/httpmock"
 	"github.com/stretchr/testify/suite"
 	"gopkg.in/yaml.v3"
 	metaV1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -36,6 +37,8 @@ func TestContentConfigurationTestSuite(t *testing.T) {
 }
 
 func (suite *ContentConfigurationTestSuite) TestContentConfigurationCreation() {
+	remoteURL := "https://this-address-should-be-mocked-by-httpmock"
+
 	// Define the test cases
 	testCases := []struct {
 		name           string
@@ -68,23 +71,29 @@ func (suite *ContentConfigurationTestSuite) TestContentConfigurationCreation() {
 			},
 			expectedResult: getValidJSONFixture(),
 		},
-
-		//{
-		//	name:         "TestRemoteContentConfiguration",
-		//	instanceName: "remote",
-		//	spec: cachev1alpha1.ContentConfigurationSpec{
-		//		RemoteConfiguration: cachev1alpha1.RemoteConfiguration{
-		//			ContentType: "json",
-		//			URL:         remoteURL,
-		//		},
-		//	},
-		//	expectedResult: getValidJSONFixture(),
-		//},
+		{
+			name:         "TestRemoteContentConfiguration",
+			instanceName: "remote",
+			spec: cachev1alpha1.ContentConfigurationSpec{
+				RemoteConfiguration: cachev1alpha1.RemoteConfiguration{
+					ContentType: "json",
+					URL:         remoteURL,
+				},
+			},
+			expectedResult: getValidJSONFixture(),
+		},
 	}
 
 	// Iterate through the test cases
 	for _, tc := range testCases {
 		suite.Run(tc.name, func() {
+			httpmock.Activate()
+			defer httpmock.DeactivateAndReset()
+
+			httpmock.RegisterResponder(
+				"GET", remoteURL, httpmock.NewStringResponder(200, getValidJSONFixture()),
+			)
+
 			// Given
 			testContext := context.Background()
 			instance := &cachev1alpha1.ContentConfiguration{
