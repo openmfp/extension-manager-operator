@@ -13,39 +13,22 @@ spec:
   inlineConfiguration:
     contentType: yaml # can be yaml or json
     content: |
-      version: "3.0"
-      nodeConfiguration:
-        nodeDefaults:
-          baseUrl: https://{context.serviceProviderConfig.domain}
-          entityType: example
-        nodes:
-          - entityType: account
-            visibleForContext: contains(entityContext.account.permissions, 'example-permission')
-            luigiNodeConfig:
-              pathSegment: example-extension
-              label: {{exampleName}}
-              viewUrl: /example-path
-              virtualTree: false
-              isolateView: true
-              loadingIndicator:
-                enabled: false
-              icon: {{exampleIcon}}
-              category:
-                id: community-extensions
-                order: 200
-      texts:
-        - locale: ""
-          textDictionary:
-            exampleName: Example Extension
-            deployment: Deployment
-            exampleIcon: https://example.com/example-icon.svg
-        - locale: en
-          textDictionary:
-            example:  Example Extension
-            deployment: Deployment
-            exampleIcon: https://example.com/example-icon.svg
-        - locale: de
-          textDictionary:
-            example:  Example Extension
-            deployment: Deployment.md
-            exampleIcon: https://example.com/example-icon.svg
+      name: overview
+      luigiConfigFragment:
+      - data:
+          nodes:
+          - entityType: global
+            pathSegment: mysegment
+            label: Overview
+            icon: mysegment
+            hideFromNav: true
+            defineEntity:
+              id: example
+            children:
+            - pathSegment: overview
+              label: Overview
+              icon: mysegment
+              url: https://fiddle.luigi-project.io/examples/microfrontends/multipurpose.html
+              context:
+                title: Welcome to OpenMFP Portal
+                content: " "
