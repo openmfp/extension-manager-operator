@@ -6,10 +6,10 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/openmfp/extension-content-operator/pkg/validation"
 	ctrl "sigs.k8s.io/controller-runtime"
 
 	"github.com/openmfp/extension-content-operator/api/v1alpha1"
+	"github.com/openmfp/extension-content-operator/pkg/validation"
 	"github.com/openmfp/golang-commons/controller/lifecycle"
 	"github.com/openmfp/golang-commons/errors"
 	"github.com/openmfp/golang-commons/logger"

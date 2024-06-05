@@ -10,13 +10,13 @@ import (
 	"testing"
 
 	"github.com/jarcoal/httpmock"
-	"github.com/openmfp/extension-content-operator/pkg/validation"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 	"gopkg.in/yaml.v3"
 
 	cachev1alpha1 "github.com/openmfp/extension-content-operator/api/v1alpha1"
 	"github.com/openmfp/extension-content-operator/pkg/subroutines/mocks"
+	"github.com/openmfp/extension-content-operator/pkg/validation"
 	golangCommonErrors "github.com/openmfp/golang-commons/errors"
 )
 
