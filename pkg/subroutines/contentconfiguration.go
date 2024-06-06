@@ -80,7 +80,7 @@ func (r *ContentConfigurationSubroutine) Process(
 		return ctrl.Result{}, errors.NewOperatorError(errors.New("no configuration provided"), false, true)
 	}
 
-	validatedConfig, err := r.validator.Validate(getSchema(), rawConfig, contentType)
+	validatedConfig, err := r.validator.Validate(rawConfig, contentType)
 	if err != nil {
 		log.Err(err).Msg("failed to validate configuration")
 
@@ -125,71 +125,4 @@ func (r *ContentConfigurationSubroutine) getRemoteConfig(url string) (res []byte
 	// https://github.com/openmfp/extension-content-operator/pull/23#discussion_r1622598363
 
 	return body, nil, false
-}
-
-func getSchema() []byte {
-	s := `{
-  "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/openmfp/extension-content-operator/pkg/validation/content-configuration",
-  "$defs": {
-    "LuigiConfigData": {
-      "properties": {
-        "nodes": {
-          "items": {
-            "$ref": "#/$defs/Node"
-          },
-          "type": "array"
-        }
-      },
-      "additionalProperties": false,
-      "type": "object",
-      "required": ["nodes"]
-    },
-    "LuigiConfigFragment": {
-      "properties": {
-        "data": {
-          "$ref": "#/$defs/LuigiConfigData"
-        }
-      },
-      "additionalProperties": false,
-      "type": "object",
-      "required": ["data"]
-    },
-    "Node": {
-      "properties": {
-        "entityType": {
-          "type": "string"
-        },
-        "pathSegment": {
-          "type": "string"
-        },
-        "label": {
-          "type": "string"
-        },
-        "icon": {
-          "type": "string"
-        }
-      },
-      "additionalProperties": false,
-      "type": "object",
-      "required": ["entityType", "pathSegment", "label", "icon"]
-    }
-  },
-  "properties": {
-    "name": {
-      "type": "string"
-    },
-    "luigiConfigFragment": {
-      "items": {
-        "$ref": "#/$defs/LuigiConfigFragment"
-      },
-      "type": "array"
-    }
-  },
-  "additionalProperties": false,
-  "type": "object",
-  "required": ["name", "luigiConfigFragment"]
-}`
-
-	return []byte(s)
 }

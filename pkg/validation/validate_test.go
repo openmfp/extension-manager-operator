@@ -13,7 +13,6 @@ import (
 
 func TestValidate(t *testing.T) {
 	cC := NewContentConfiguration()
-	schema := getJSONSchemaFixture()
 	validJSON := getValidJSONFixture()
 	invalidJSON := getInvalidJSONFixture()
 	validYAML := getValidYAMLFixture()
@@ -21,13 +20,13 @@ func TestValidate(t *testing.T) {
 
 	// Test valid JSON
 	expected := validJSON
-	result, err := cC.Validate(schema, []byte(validJSON), "json")
+	result, err := cC.Validate([]byte(validJSON), "json")
 	assert.NoError(t, err)
 	assert.Equal(t, expected, result)
 
 	// Test invalid JSON
 	expected = ""
-	result, err = cC.Validate(schema, []byte(invalidJSON), "json")
+	result, err = cC.Validate([]byte(invalidJSON), "json")
 	if err == nil {
 		t.Error("expected invalid JSON to fail validation, but it passed")
 	}
@@ -37,37 +36,37 @@ func TestValidate(t *testing.T) {
 
 	// Test valid YAML
 	expected = validJSON
-	result, err = cC.Validate(schema, []byte(validYAML), "yaml")
+	result, err = cC.Validate([]byte(validYAML), "yaml")
 	assert.NoError(t, err)
 	assert.Equal(t, expected, result)
 
 	// Test invalid YAML
 	expected = ""
-	result, err = cC.Validate(schema, []byte(invalidYAML), "yaml")
+	result, err = cC.Validate([]byte(invalidYAML), "yaml")
 	assert.Error(t, err)
 	assert.Equal(t, expected, result)
 	assert.Contains(t, err.Error(), "The document is not valid:")
 
 	// Test unsupported content type
-	result, err = cC.Validate(schema, []byte(validJSON), "xml")
+	result, err = cC.Validate([]byte(validJSON), "xml")
 	assert.Error(t, err)
 	assert.Equal(t, expected, result)
 	assert.Contains(t, err.Error(), "no validator found for content type")
 
 	// Test invalid content type
-	result, err = cC.Validate(schema, []byte(validJSON), "invalid")
+	result, err = cC.Validate([]byte(validJSON), "invalid")
 	assert.Error(t, err)
 	assert.Equal(t, expected, result)
 	assert.Contains(t, err.Error(), "no validator found for content type")
 
 	// Test empty input
-	result, err = cC.Validate(schema, []byte{}, "json")
+	result, err = cC.Validate([]byte{}, "json")
 	assert.Error(t, err)
 	assert.Equal(t, expected, result)
 	assert.Contains(t, err.Error(), "empty input provided")
 
 	// Test error Marshal
-	result, err = cC.Validate(schema, []byte(getInvalidTypeYAMLFixture()), "yaml")
+	result, err = cC.Validate([]byte(getInvalidTypeYAMLFixture()), "yaml")
 	assert.Error(t, err)
 	assert.Equal(t, expected, result)
 	assert.Contains(t, err.Error(), "yaml: unmarshal errors:\n  line 3: "+
@@ -153,6 +152,18 @@ func Test_validateSchema_invalidType(t *testing.T) {
 	result, err := validateSchema(schema, invalidTypeConfig)
 	fmt.Printf("Invalid type test: result=%s, err=%v\n", result, err)
 	assert.Error(t, err)
+	assert.Equal(t, expected, result)
+}
+
+func Test_validateSchema_customSchema(t *testing.T) {
+	cC := NewContentConfiguration()
+	cC.LoadSchema(getJSONSchemaFixture())
+	validJSON := getValidJSONFixture()
+
+	// Test valid JSON
+	expected := validJSON
+	result, err := cC.Validate([]byte(validJSON), "json")
+	assert.NoError(t, err)
 	assert.Equal(t, expected, result)
 }
 

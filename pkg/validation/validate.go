@@ -1,6 +1,7 @@
 package validation
 
 import (
+	"embed"
 	"encoding/json"
 	"fmt"
 
@@ -20,22 +21,44 @@ const (
 	ErrorInvalidFieldType = "field '%s' is invalid, got '%s', expected '%s'"
 )
 
-type contentConfiguration struct{}
-
-func NewContentConfiguration() ContentConfigurationInterface {
-	return &contentConfiguration{}
+type contentConfiguration struct {
+	schema []byte
 }
 
-func (cC *contentConfiguration) Validate(schema, input []byte, contentType string) (string, error) {
+//go:embed default_schema_core.openmfp.io_contentconfigurations_gen1.json
+var schemaFile embed.FS
+
+func NewContentConfiguration() ContentConfigurationInterface {
+
+	schemaJSON, err := schemaFile.ReadFile("default_schema_core.openmfp.io_contentconfigurations_gen1.json")
+
+	if err != nil {
+		return nil
+	}
+
+	return &contentConfiguration{
+		schema: schemaJSON,
+	}
+}
+
+func (cC *contentConfiguration) LoadSchema(schema []byte) error {
+	if len(schema) == 0 {
+		return errors.New(ErrorEmptyInput)
+	}
+	cC.schema = schema
+	return nil
+}
+
+func (cC *contentConfiguration) Validate(input []byte, contentType string) (string, error) {
 	if len(input) == 0 {
 		return "", errors.New(ErrorEmptyInput)
 	}
 
 	switch contentType {
 	case "json":
-		return validateJSON(schema, input)
+		return validateJSON(cC.schema, input)
 	case "yaml":
-		return validateYAML(schema, input)
+		return validateYAML(cC.schema, input)
 	default:
 
 		return "", errors.New(ErrorNoValidator)
