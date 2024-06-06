@@ -24,7 +24,8 @@ type ContentConfigurationSubroutine struct {
 	validator validation.ExtensionConfiguration
 }
 
-func NewContentConfigurationSubroutine(validator validation.ExtensionConfiguration, client *http.Client) *ContentConfigurationSubroutine {
+func NewContentConfigurationSubroutine(validator validation.ExtensionConfiguration,
+	client *http.Client) *ContentConfigurationSubroutine {
 	return &ContentConfigurationSubroutine{
 		client:    client,
 		validator: validator,
