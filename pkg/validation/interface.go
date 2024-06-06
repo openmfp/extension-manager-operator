@@ -1,6 +1,6 @@
 package validation
 
-type ContentConfigurationInterface interface {
+type ExtensionConfiguration interface {
 	Validate([]byte, string) (string, error)
 	LoadSchema([]byte) error
 }

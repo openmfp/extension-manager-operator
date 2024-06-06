@@ -21,22 +21,14 @@ const (
 
 type ContentConfigurationSubroutine struct {
 	client    *http.Client
-	validator validation.ContentConfigurationInterface
+	validator validation.ExtensionConfiguration
 }
 
-func NewContentConfigurationSubroutine() *ContentConfigurationSubroutine {
+func NewContentConfigurationSubroutine(validator validation.ExtensionConfiguration, client *http.Client) *ContentConfigurationSubroutine {
 	return &ContentConfigurationSubroutine{
-		client:    http.DefaultClient,
-		validator: validation.NewContentConfiguration(),
+		client:    client,
+		validator: validator,
 	}
-}
-
-func (r *ContentConfigurationSubroutine) WithClient(client *http.Client) {
-	r.client = client
-}
-
-func (r *ContentConfigurationSubroutine) WithValidator(validator validation.ContentConfigurationInterface) {
-	r.validator = validator
 }
 
 func (r *ContentConfigurationSubroutine) GetName() string {

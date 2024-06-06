@@ -9,4 +9,4 @@ spec:
       secretRef:
         name: "your-secret-name"
       type: "Bearer"
-    url: "https://raw.githubusercontent.com/openmfp/portal/main/backend/src/provider-jsons/service-provider1.json?token=GHSAT0AAAAAACSINQKM7WYNKNN3IRSMJTAAZS65NRA"
+    url: "https://example.com/fetch-configuration"

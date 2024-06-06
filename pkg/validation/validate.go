@@ -1,7 +1,7 @@
 package validation
 
 import (
-	"embed"
+	_ "embed"
 	"encoding/json"
 	"fmt"
 
@@ -26,15 +26,9 @@ type contentConfiguration struct {
 }
 
 //go:embed default_schema_core.openmfp.io_contentconfigurations_gen1.json
-var schemaFile embed.FS
+var schemaJSON []byte
 
-func NewContentConfiguration() ContentConfigurationInterface {
-
-	schemaJSON, err := schemaFile.ReadFile("default_schema_core.openmfp.io_contentconfigurations_gen1.json")
-
-	if err != nil {
-		return nil
-	}
+func NewContentConfiguration() ExtensionConfiguration {
 
 	return &contentConfiguration{
 		schema: schemaJSON,

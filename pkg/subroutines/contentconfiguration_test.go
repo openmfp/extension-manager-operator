@@ -38,7 +38,7 @@ func (suite *ContentConfigurationSubroutineTestSuite) SetupTest() {
 	suite.clientMock = new(mocks.Client)
 
 	// create new test object
-	suite.testObj = NewContentConfigurationSubroutine()
+	suite.testObj = NewContentConfigurationSubroutine(validation.NewContentConfiguration(), http.DefaultClient)
 }
 
 func (suite *ContentConfigurationSubroutineTestSuite) TestGetName_OK() {
@@ -47,17 +47,6 @@ func (suite *ContentConfigurationSubroutineTestSuite) TestGetName_OK() {
 
 	// Then
 	suite.Equal(ContentConfigurationSubroutineName, result)
-}
-
-func (suite *ContentConfigurationSubroutineTestSuite) TestConstructor_OK() {
-	// Given
-	defaultClient := http.DefaultClient
-
-	// When
-	suite.testObj.WithClient(defaultClient)
-	suite.testObj.WithValidator(validation.NewContentConfiguration())
-	// Then
-	suite.Equal(defaultClient, suite.testObj.client)
 }
 
 func (suite *ContentConfigurationSubroutineTestSuite) TestFinalize_OK() {
@@ -265,7 +254,7 @@ func TestService_Do(t *testing.T) {
 					httpmock.NewStringResponder(tt.mockStatusCode, tt.mockResponse))
 			}
 
-			r := NewContentConfigurationSubroutine()
+			r := NewContentConfigurationSubroutine(validation.NewContentConfiguration(), http.DefaultClient)
 
 			body, err, _ := r.getRemoteConfig(tt.url)
 			if tt.expectError {

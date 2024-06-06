@@ -18,6 +18,7 @@ package controller
 
 import (
 	"context"
+	"net/http"
 
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/predicate"
@@ -25,6 +26,7 @@ import (
 	cachev1alpha1 "github.com/openmfp/extension-content-operator/api/v1alpha1"
 	"github.com/openmfp/extension-content-operator/internal/config"
 	"github.com/openmfp/extension-content-operator/pkg/subroutines"
+	"github.com/openmfp/extension-content-operator/pkg/validation"
 	"github.com/openmfp/golang-commons/controller/lifecycle"
 	"github.com/openmfp/golang-commons/logger"
 )
@@ -42,7 +44,7 @@ type ContentConfigurationReconciler struct {
 func NewContentConfigurationReconciler(log *logger.Logger, mgr ctrl.Manager, cfg config.Config) *ContentConfigurationReconciler {
 	subs := []lifecycle.Subroutine{}
 	if cfg.Subroutines.ContentConfiguration.Enabled {
-		subs = append(subs, subroutines.NewContentConfigurationSubroutine())
+		subs = append(subs, subroutines.NewContentConfigurationSubroutine(validation.NewContentConfiguration(), http.DefaultClient))
 	}
 	return &ContentConfigurationReconciler{
 		lifecycle: lifecycle.NewLifecycleManager(log, operatorName, contentConfigurationReconcilerName, mgr.GetClient(), subs).WithSpreadingReconciles().WithConditionManagement(),

@@ -78,6 +78,9 @@ spec:
                         type: string
                     type: object
                   contentType:
+                    enum:
+                    - yaml
+                    - json
                     type: string
                   url:
                     type: string

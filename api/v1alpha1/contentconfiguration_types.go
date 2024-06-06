@@ -37,12 +37,13 @@ type ContentConfigurationSpec struct {
 
 type InlineConfiguration struct {
 	// +kubebuilder:validation:Enum=yaml;json
-	ContentType string `json:"contentType,omitempty"` // "yaml" or "json"
+	ContentType string `json:"contentType,omitempty"`
 	Content     string `json:"content,omitempty"`
 }
 
 type RemoteConfiguration struct {
-	ContentType    string         `json:"contentType,omitempty"` // "yaml" or "json"
+	// +kubebuilder:validation:Enum=yaml;json
+	ContentType    string         `json:"contentType,omitempty"`
 	URL            string         `json:"url,omitempty"`
 	Authentication Authentication `json:"authentication,omitempty"`
 }
