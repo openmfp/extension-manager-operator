@@ -157,14 +157,20 @@ func Test_validateSchema_invalidType(t *testing.T) {
 
 func Test_validateSchema_customSchema(t *testing.T) {
 	cC := NewContentConfiguration()
-	cC.LoadSchema(getJSONSchemaFixture())
+	errLoadschema := cC.LoadSchema(getJSONSchemaFixture())
 	validJSON := getValidJSONFixture()
+
+	assert.NoError(t, errLoadschema)
 
 	// Test valid JSON
 	expected := validJSON
 	result, err := cC.Validate([]byte(validJSON), "json")
 	assert.NoError(t, err)
 	assert.Equal(t, expected, result)
+
+	// Test with empty schema
+	errLoadschema = cC.LoadSchema([]byte{})
+	assert.Error(t, errLoadschema)
 }
 
 func getJSONSchemaFixture() []byte {
