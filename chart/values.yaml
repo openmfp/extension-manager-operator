@@ -1,5 +1,5 @@
 image:
-  name: ghcr.io/openmfp/extension-content-operator/helm/extension-content-operator
+  name: ghcr.io/openmfp/extension-content-operator
   tag: latest
 
 imagePullSecrets: "github"
