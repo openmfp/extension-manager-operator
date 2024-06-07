@@ -107,7 +107,7 @@ func RunController(cmd *cobra.Command, args []string) { // coverage-ignore
 		WebhookServer:                 webhookServer,
 		HealthProbeBindAddress:        probeAddr,
 		LeaderElection:                enableLeaderElection,
-		LeaderElectionID:              "8c290d9a.openmfp.io",
+		LeaderElectionID:              "eengiex4.openmfp.io",
 		LeaderElectionReleaseOnCancel: true,
 	})
 	if err != nil {
