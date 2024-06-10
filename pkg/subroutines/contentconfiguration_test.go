@@ -59,18 +59,12 @@ func (suite *ContentConfigurationSubroutineTestSuite) TestCreateAndUpdate_OK() {
 	suite.Require().Nil(err)
 	suite.Require().Equal(getValidJSONFixture(), contentConfiguration.Status.ConfigurationResult)
 
+	// Now lets take the same object and update it
 	// Given
-	contentConfiguration2 := &cachev1alpha1.ContentConfiguration{
-		Spec: cachev1alpha1.ContentConfigurationSpec{
-			InlineConfiguration: cachev1alpha1.InlineConfiguration{
-				Content:     getValidYAMLFixture2(),
-				ContentType: "yaml",
-			},
-		},
-	}
+	contentConfiguration.Spec.InlineConfiguration.Content = getValidYAMLFixture2()
 
 	// When
-	_, err2 := suite.testObj.Process(context.Background(), contentConfiguration2)
+	_, err2 := suite.testObj.Process(context.Background(), contentConfiguration)
 
 	// Then
 	suite.Require().Nil(err2)
@@ -342,7 +336,7 @@ luigiConfigFragment:
 
 func getValidYAMLFixture2() string {
 	validYAML := `
-name: overview
+name: overview2
 luigiConfigFragment:
 - data:
     nodes:
