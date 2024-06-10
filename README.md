@@ -137,11 +137,13 @@ nodes:
 EOF
 kind create cluster --config ./kind-config.yaml
 
+IMG_TAG=0.16.0
+
 # build docker local chart image
-docker build . --no-cache --tag local-extension-content-operator:test
+docker build . --no-cache --tag local-extension-content-operator:$IMG_TAG
 
 # load image to kind
-kind load docker-image local-extension-content-operator:test
+kind load docker-image local-extension-content-operator:$IMG_TAG
 
 # apply CRDS
 kubectl apply -f chart/crds/core.openmfp.io_contentconfigurations.yaml

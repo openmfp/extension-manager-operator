@@ -41,6 +41,42 @@ func (suite *ContentConfigurationSubroutineTestSuite) SetupTest() {
 	suite.testObj = NewContentConfigurationSubroutine(validation.NewContentConfiguration(), http.DefaultClient)
 }
 
+func (suite *ContentConfigurationSubroutineTestSuite) TestCreateAndUpdate_OK() {
+	// Given
+	contentConfiguration := &cachev1alpha1.ContentConfiguration{
+		Spec: cachev1alpha1.ContentConfigurationSpec{
+			InlineConfiguration: cachev1alpha1.InlineConfiguration{
+				Content:     getValidYAMLFixture(),
+				ContentType: "yaml",
+			},
+		},
+	}
+
+	// When
+	_, err := suite.testObj.Process(context.Background(), contentConfiguration)
+
+	// Then
+	suite.Require().Nil(err)
+	suite.Require().Equal(getValidJSONFixture(), contentConfiguration.Status.ConfigurationResult)
+
+	// Given
+	contentConfiguration2 := &cachev1alpha1.ContentConfiguration{
+		Spec: cachev1alpha1.ContentConfigurationSpec{
+			InlineConfiguration: cachev1alpha1.InlineConfiguration{
+				Content:     getValidYAMLFixture2(),
+				ContentType: "yaml",
+			},
+		},
+	}
+
+	// When
+	_, err2 := suite.testObj.Process(context.Background(), contentConfiguration2)
+
+	// Then
+	suite.Require().Nil(err2)
+	suite.Require().Equal(getValidJSONFixture2(), contentConfiguration.Status.ConfigurationResult)
+}
+
 func (suite *ContentConfigurationSubroutineTestSuite) TestGetName_OK() {
 	// When
 	result := suite.testObj.GetName()
@@ -304,6 +340,43 @@ luigiConfigFragment:
 	return string(compactYAML)
 }
 
+func getValidYAMLFixture2() string {
+	validYAML := `
+name: overview
+luigiConfigFragment:
+- data:
+    nodes:
+    - entityType: global
+      pathSegment: home
+      label: Overview2
+      icon: home
+      hideFromNav: true
+      defineEntity:
+        id: example
+      children:
+      - pathSegment: overview2
+        label: Overview2
+        icon: home
+        url: https://fiddle.luigi-project.io/examples/microfrontends/multipurpose.html
+        context:
+          title: Welcome to OpenMFP Portal
+          content: " "
+`
+
+	var data interface{}
+	err := yaml.Unmarshal([]byte(validYAML), &data)
+	if err != nil {
+		log.Fatalf("failed to unmarshal YAML: %v", err)
+	}
+
+	compactYAML, err := yaml.Marshal(&data)
+	if err != nil {
+		log.Fatalf("failed to marshal YAML: %v", err)
+	}
+
+	return string(compactYAML)
+}
+
 func getValidJSONFixture() string {
 	validJSON := `{
 		"name": "overview",
@@ -315,6 +388,33 @@ func getValidJSONFixture() string {
 							"entityType": "global",
 							"pathSegment": "home",
 							"label": "Overview",
+							"icon": "home"
+						}
+					]
+				}
+			}
+		]
+	}`
+
+	var buf bytes.Buffer
+	if err := json.Compact(&buf, []byte(validJSON)); err != nil {
+		return ""
+	}
+
+	return buf.String()
+}
+
+func getValidJSONFixture2() string {
+	validJSON := `{
+		"name": "overview2",
+		"luigiConfigFragment": [
+			{
+				"data": {
+					"nodes": [
+						{
+							"entityType": "global",
+							"pathSegment": "home",
+							"label": "Overview2",
 							"icon": "home"
 						}
 					]

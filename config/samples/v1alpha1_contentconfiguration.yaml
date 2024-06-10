@@ -8,6 +8,7 @@ metadata:
     app.kubernetes.io/managed-by: kustomize
     app.kubernetes.io/created-by: extension-content-operator
   name: contentconfiguration-sample
+  namespace: default
   generation: 1
 spec:
   inlineConfiguration:

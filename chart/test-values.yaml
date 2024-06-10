@@ -3,7 +3,7 @@ a: b
 
 image:
   name: local-extension-content-operator
-  tag: 0.13.0
+  tag: 0.16.0
 
 imagePullSecrets: "github"
 
