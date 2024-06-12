@@ -59,7 +59,7 @@ require (
 	github.com/sosodev/duration v1.3.1 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/stretchr/objx v0.5.2 // indirect
-	github.com/vektah/gqlparser/v2 v2.5.12 // indirect
+	github.com/vektah/gqlparser/v2 v2.5.14 // indirect
 	github.com/xeipuuv/gojsonpointer v0.0.0-20180127040702-4e3ac2762d5f // indirect
 	github.com/xeipuuv/gojsonreference v0.0.0-20180127040603-bd5ef7bd5415 // indirect
 	go.opentelemetry.io/otel v1.27.0 // indirect
