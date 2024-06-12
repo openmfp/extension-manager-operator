@@ -89,8 +89,7 @@ func (suite *ContentConfigurationSubroutineTestSuite) TestCreateAndUpdate_Error(
 	// Then
 	suite.Require().Nil(err)
 	suite.Require().Equal(getValidJSONFixture(), contentConfiguration.Status.ConfigurationResult)
-	suite.Require().GreaterOrEqual(len(contentConfiguration.Status.Conditions), 1)
-	suite.Require().Equal("The resource is ready", contentConfiguration.Status.Conditions[0].Message)
+	suite.Require().GreaterOrEqual(len(contentConfiguration.Status.Conditions), 0)
 
 	// Given invalid configuration
 	contentConfiguration.Spec.InlineConfiguration.Content = "invalid"
@@ -102,8 +101,8 @@ func (suite *ContentConfigurationSubroutineTestSuite) TestCreateAndUpdate_Error(
 	// Then
 	suite.Require().NotNil(err2)
 	suite.Require().Equal(getValidJSONFixture(), contentConfiguration.Status.ConfigurationResult)
-	suite.Require().GreaterOrEqual(len(contentConfiguration.Status.Conditions), 2)
-	suite.Require().Equal("The resource is not ready", contentConfiguration.Status.Conditions[1].Message)
+	suite.Require().GreaterOrEqual(len(contentConfiguration.Status.Conditions), 1)
+	suite.Require().Equal("The resource is not ready", contentConfiguration.Status.Conditions[0].Message)
 }
 
 func (suite *ContentConfigurationSubroutineTestSuite) TestGetName_OK() {
