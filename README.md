@@ -152,14 +152,14 @@ kubectl apply -f chart/crds/core.openmfp.io_contentconfigurations.yaml
 imagePullPolicy: IfNotPresent
 
 # apply chart with test configuration
-helm template -f ./chart/test-values.yaml extension-content-operator ./chart/ | kubectl apply -f -
+helm template -f ./chart/test-values.yaml extension-content-operator --include-crds ./chart/ | kubectl apply -f -
 
 # create sample resources
 kubectl apply -f config/samples/v1alpha1_contentconfiguration.yaml
 
 # cleanup
 kubectl delete -f config/samples/v1alpha1_contentconfiguration.yaml
-helm template -f ./chart/test-values.yaml extension-content-operator ./chart/ | kubectl delete -f -
+helm template -f ./chart/test-values.yaml extension-content-operator ./chart/ --include-crds | kubectl delete -f -
 kubectl delete -f chart/crds/core.openmfp.io_contentconfigurations.yaml
 docker image rm local-extension-content-operator:test
 kind delete cluster

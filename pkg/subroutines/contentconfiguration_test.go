@@ -8,6 +8,7 @@ import (
 	"log"
 	"net/http"
 	"testing"
+	"time"
 
 	"github.com/jarcoal/httpmock"
 	"github.com/stretchr/testify/assert"
@@ -69,6 +70,39 @@ func (suite *ContentConfigurationSubroutineTestSuite) TestCreateAndUpdate_OK() {
 	// Then
 	suite.Require().Nil(err2)
 	suite.Require().Equal(getValidJSONFixture2(), contentConfiguration.Status.ConfigurationResult)
+}
+
+func (suite *ContentConfigurationSubroutineTestSuite) TestCreateAndUpdate_Error() {
+	// Given
+	contentConfiguration := &cachev1alpha1.ContentConfiguration{
+		Spec: cachev1alpha1.ContentConfigurationSpec{
+			InlineConfiguration: cachev1alpha1.InlineConfiguration{
+				Content:     getValidYAMLFixture(),
+				ContentType: "yaml",
+			},
+		},
+	}
+
+	// When
+	_, err := suite.testObj.Process(context.Background(), contentConfiguration)
+
+	// Then
+	suite.Require().Nil(err)
+	suite.Require().Equal(getValidJSONFixture(), contentConfiguration.Status.ConfigurationResult)
+	suite.Require().GreaterOrEqual(len(contentConfiguration.Status.Conditions), 1)
+
+	// Given invalid configuration
+	contentConfiguration.Spec.InlineConfiguration.Content = "invalid"
+
+	// When
+	_, err2 := suite.testObj.Process(context.Background(), contentConfiguration)
+	time.Sleep(1 * time.Second)
+
+	// Then
+	suite.Require().NotNil(err2)
+	suite.Require().Equal(getValidJSONFixture(), contentConfiguration.Status.ConfigurationResult)
+	suite.Require().GreaterOrEqual(len(contentConfiguration.Status.Conditions), 2)
+	suite.Require().Equal("The resource is not ready", contentConfiguration.Status.Conditions[1].Message)
 }
 
 func (suite *ContentConfigurationSubroutineTestSuite) TestGetName_OK() {
