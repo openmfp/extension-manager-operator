@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"time"
 
 	ctrl "sigs.k8s.io/controller-runtime"
 
@@ -13,6 +14,7 @@ import (
 	"github.com/openmfp/golang-commons/controller/lifecycle"
 	"github.com/openmfp/golang-commons/errors"
 	"github.com/openmfp/golang-commons/logger"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 const (
@@ -65,6 +67,16 @@ func (r *ContentConfigurationSubroutine) Process(
 		if err != nil {
 			log.Err(err).Msg("failed to fetch remote configuration")
 
+			instance.Status.Conditions = append(instance.Status.Conditions, metav1.Condition{
+				Type:    "ContentConfigurationSubroutine_Ready",
+				Status:  metav1.ConditionFalse,
+				Reason:  "Error",
+				Message: "failed to fetch remote configuration",
+				LastTransitionTime: metav1.Time{
+					Time: time.Now(),
+				},
+			})
+
 			return ctrl.Result{}, errors.NewOperatorError(err, retry, true)
 		}
 		contentType = instance.Spec.RemoteConfiguration.ContentType
@@ -77,10 +89,29 @@ func (r *ContentConfigurationSubroutine) Process(
 	if err != nil {
 		log.Err(err).Msg("failed to validate configuration")
 
+		instance.Status.Conditions = append(instance.Status.Conditions, metav1.Condition{
+			Type:    "ContentConfigurationSubroutine_Ready",
+			Status:  metav1.ConditionFalse,
+			Reason:  "Error",
+			Message: "The resource is not ready",
+			LastTransitionTime: metav1.Time{
+				Time: time.Now(),
+			},
+		})
+
 		return ctrl.Result{}, errors.NewOperatorError(err, false, true)
 	}
 
 	instance.Status.ConfigurationResult = validatedConfig
+	instance.Status.Conditions = append(instance.Status.Conditions, metav1.Condition{
+		Type:    "Ready",
+		Status:  metav1.ConditionTrue,
+		Reason:  "Complete",
+		Message: "The resource is ready",
+		LastTransitionTime: metav1.Time{
+			Time: time.Now(),
+		},
+	})
 
 	return ctrl.Result{}, nil
 }

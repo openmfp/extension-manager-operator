@@ -90,6 +90,7 @@ func (suite *ContentConfigurationSubroutineTestSuite) TestCreateAndUpdate_Error(
 	suite.Require().Nil(err)
 	suite.Require().Equal(getValidJSONFixture(), contentConfiguration.Status.ConfigurationResult)
 	suite.Require().GreaterOrEqual(len(contentConfiguration.Status.Conditions), 1)
+	suite.Require().Equal("The resource is ready", contentConfiguration.Status.Conditions[0].Message)
 
 	// Given invalid configuration
 	contentConfiguration.Spec.InlineConfiguration.Content = "invalid"
