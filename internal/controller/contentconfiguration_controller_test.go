@@ -21,12 +21,12 @@ import (
 	"testing"
 
 	"github.com/jarcoal/httpmock"
-	"github.com/openmfp/extension-content-operator/pkg/validation"
 	"github.com/stretchr/testify/suite"
 	metaV1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"
 
 	cachev1alpha1 "github.com/openmfp/extension-content-operator/api/v1alpha1"
+	"github.com/openmfp/extension-content-operator/pkg/validation"
 )
 
 func TestContentConfigurationTestSuite(t *testing.T) {
@@ -120,69 +120,3 @@ func (suite *ContentConfigurationTestSuite) TestContentConfigurationCreation() {
 		})
 	}
 }
-
-//
-//func getValidYAMLFixture() string {
-//	validYAML := `
-//name: overview
-//luigiConfigFragment:
-//- data:
-//    nodes:
-//    - entityType: global
-//      pathSegment: home
-//      label: Overview
-//      icon: home
-//      hideFromNav: true
-//      defineEntity:
-//        id: example
-//      children:
-//      - pathSegment: overview
-//        label: Overview
-//        icon: home
-//        url: https://fiddle.luigi-project.io/examples/microfrontends/multipurpose.html
-//        context:
-//          title: Welcome to OpenMFP Portal
-//          content: " "
-//`
-//
-//	var data interface{}
-//	err := yaml.Unmarshal([]byte(validYAML), &data)
-//	if err != nil {
-//		log.Fatalf("failed to unmarshal YAML: %v", err)
-//	}
-//
-//	compactYAML, err := yaml.Marshal(&data)
-//	if err != nil {
-//		log.Fatalf("failed to marshal YAML: %v", err)
-//	}
-//
-//	return string(compactYAML)
-//}
-
-//
-//func getValidJSONFixture() string {
-//	validJSON := `{
-//		"name": "overview",
-//		"luigiConfigFragment": [
-//			{
-//				"data": {
-//					"nodes": [
-//						{
-//							"entityType": "global",
-//							"pathSegment": "home",
-//							"label": "Overview",
-//							"icon": "home"
-//						}
-//					]
-//				}
-//			}
-//		]
-//	}`
-//
-//	var buf bytes.Buffer
-//	if err := json.Compact(&buf, []byte(validJSON)); err != nil {
-//		return ""
-//	}
-//
-//	return buf.String()
-//}

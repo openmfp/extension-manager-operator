@@ -8,12 +8,13 @@ import (
 	"time"
 
 	"github.com/jarcoal/httpmock"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/suite"
+
 	cachev1alpha1 "github.com/openmfp/extension-content-operator/api/v1alpha1"
 	"github.com/openmfp/extension-content-operator/pkg/subroutines/mocks"
 	"github.com/openmfp/extension-content-operator/pkg/validation"
 	golangCommonErrors "github.com/openmfp/golang-commons/errors"
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/suite"
 )
 
 type ContentConfigurationSubroutineTestSuite struct {
@@ -60,7 +61,7 @@ func (suite *ContentConfigurationSubroutineTestSuite) TestCreateAndUpdate_OK() {
 
 	// Now lets take the same object and update it
 	// Given
-	contentConfiguration.Spec.InlineConfiguration.Content = validation.GetYAMLFixture(getValidYAMLFixture2())
+	contentConfiguration.Spec.InlineConfiguration.Content = validation.GetYAMLFixture(validation.GetValidYAMLFixture2())
 
 	// When
 	_, err2 := suite.testObj.Process(context.Background(), contentConfiguration)
@@ -68,7 +69,7 @@ func (suite *ContentConfigurationSubroutineTestSuite) TestCreateAndUpdate_OK() {
 	// Then
 	suite.Require().Nil(err2)
 	suite.Require().Equal(
-		validation.GetJSONFixture(getValidJSONFixture2()),
+		validation.GetJSONFixture(validation.GetValidJSONFixture2()),
 		contentConfiguration.Status.ConfigurationResult,
 	)
 }
@@ -334,58 +335,4 @@ func TestService_Do(t *testing.T) {
 			}
 		})
 	}
-}
-
-func getValidJSONFixture2() string {
-	return `{
-		"iAmOptionalCustomFieldThatShouldBeStored": "iAmOptionalCustomValue",
-		"luigiConfigFragment": [
-			{
-				"data": {
-					"nodeDefaults": {
-						"entityType": "global",
-						"isolateView": true
-					},
-					"nodes": [
-						{
-							"entityType": "global",
-							"icon": "home",
-							"label": "Overview",
-							"pathSegment": "home"
-						}
-					],
-					"texts": [
-						{
-							"locale": "de",
-							"textDictionary": {
-								"hello": "Hallo"
-							}
-						}
-					]
-				}
-			}
-		],
-		"name": "overview2"
-	}`
-}
-
-func getValidYAMLFixture2() string {
-	return `
-iAmOptionalCustomFieldThatShouldBeStored: iAmOptionalCustomValue
-name: overview2
-luigiConfigFragment:
-- data:
-   nodeDefaults:
-     entityType: global
-     isolateView: true
-   nodes:
-   - entityType: global
-     pathSegment: home
-     label: Overview
-     icon: home
-   texts:
-   - locale: de
-     textDictionary:
-       hello: Hallo
-`
 }
