@@ -10,7 +10,8 @@
           },
           "isolateView": {
             "type": "boolean"
-          }
+          },
+          "required": ["entityType", "isolateView"]
         },
         "nodes": {
           "items": {
@@ -64,7 +65,8 @@
       },
       "textDictionary": {
         "type": "object"
-      }
+      },
+      "required": ["locale", "textDictionary"]
     }
   },
   "properties": {
