@@ -29,13 +29,12 @@ type contentConfiguration struct {
 var schemaJSON []byte
 
 func NewContentConfiguration() ExtensionConfiguration {
-
 	return &contentConfiguration{
 		schema: schemaJSON,
 	}
 }
 
-func (cC *contentConfiguration) LoadSchema(schema []byte) error {
+func (cC *contentConfiguration) WithSchema(schema []byte) error {
 	if len(schema) == 0 {
 		return ErrorEmptyInput
 	}
@@ -43,20 +42,33 @@ func (cC *contentConfiguration) LoadSchema(schema []byte) error {
 	return nil
 }
 
+// Validate does the validation against strict schema
+// and includes any optional field that is not defined there:
+// Steps:
+// 1. Gets raw JSON or YAML data from the input
+// 2. In case of YAML it converts data to raw JSON
+// 3. Passes the raw JSON to the schema validator
+// 4. In case of success returns the original raw JSON
 func (cC *contentConfiguration) Validate(input []byte, contentType string) (string, error) {
 	if len(input) == 0 {
 		return "", ErrorEmptyInput
 	}
 
+	var rawJSON []byte
+	var err error
 	switch contentType {
 	case "json":
-		return validateJSON(cC.schema, input)
+		rawJSON = input
 	case "yaml":
-		return validateYAML(cC.schema, input)
+		rawJSON, err = convertYAMLToJSON(input)
+		if err != nil {
+			return "", err
+		}
 	default:
-
 		return "", ErrorNoValidator
 	}
+
+	return validateJSON(cC.schema, rawJSON)
 }
 
 func validateJSON(schema, input []byte) (string, error) {
@@ -64,22 +76,19 @@ func validateJSON(schema, input []byte) (string, error) {
 	if err := json.Unmarshal(input, &config); err != nil {
 		return "", err
 	}
-	return validateSchema(schema, config)
-}
 
-func validateYAML(schema, input []byte) (string, error) {
-	var config ContentConfiguration
-	if err := yaml.Unmarshal(input, &config); err != nil {
+	if err := validateSchema(schema, config); err != nil {
 		return "", err
 	}
-	return validateSchema(schema, config)
+
+	return string(input), nil
 }
 
 // func validateSchema(schema []byte, input ContentConfiguration) (string, error) {
-func validateSchema(schema []byte, input interface{}) (string, error) {
+func validateSchema(schema []byte, input interface{}) error {
 	jsonBytes, err := json.Marshal(input)
 	if err != nil {
-		return "", ErrorMarshalJSON
+		return ErrorMarshalJSON
 	}
 
 	schemaLoader := gojsonschema.NewBytesLoader(schema)
@@ -87,7 +96,7 @@ func validateSchema(schema []byte, input interface{}) (string, error) {
 
 	result, err := gojsonschema.Validate(schemaLoader, documentLoader)
 	if err != nil {
-		return "", ErrorValidatingJSON
+		return ErrorValidatingJSON
 	}
 
 	if !result.Valid() {
@@ -106,8 +115,26 @@ func validateSchema(schema []byte, input interface{}) (string, error) {
 				errorsAccumulator = append(errorsAccumulator, desc.String())
 			}
 		}
-		return "", errors.Errorf(ErrorDocumentInvalid.Error(), fmt.Sprint(errorsAccumulator))
+		return errors.Errorf(ErrorDocumentInvalid.Error(), fmt.Sprint(errorsAccumulator))
 	}
 
-	return string(jsonBytes), nil
+	return nil
+}
+
+// ConvertYAMLToJSON converts a YAML byte array to a JSON byte array
+func convertYAMLToJSON(yamlData []byte) ([]byte, error) {
+	// Unmarshal YAML into a map
+	var data map[string]interface{}
+	err := yaml.Unmarshal(yamlData, &data)
+	if err != nil {
+		return nil, fmt.Errorf("error unmarshalling YAML: %w", err)
+	}
+
+	// Marshal the map into JSON
+	jsonData, err := json.Marshal(data)
+	if err != nil {
+		return nil, fmt.Errorf("error marshalling JSON: %w", err)
+	}
+
+	return jsonData, nil
 }

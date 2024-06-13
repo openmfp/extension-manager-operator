@@ -4,9 +4,23 @@
   "$defs": {
     "LuigiConfigData": {
       "properties": {
+        "nodeDefaults": {
+          "entityType": {
+            "type": "string"
+          },
+          "isolateView": {
+            "type": "boolean"
+          }
+        },
         "nodes": {
           "items": {
             "$ref": "#/$defs/Node"
+          },
+          "type": "array"
+        },
+        "texts": {
+          "items" : {
+            "$ref": "#/$defs/Text"
           },
           "type": "array"
         }
@@ -43,6 +57,14 @@
       "additionalProperties": false,
       "type": "object",
       "required": ["entityType", "pathSegment", "label", "icon"]
+    },
+    "Text": {
+      "locale": {
+        "type": "string"
+      },
+      "textDictionary": {
+        "type": "object"
+      }
     }
   },
   "properties": {

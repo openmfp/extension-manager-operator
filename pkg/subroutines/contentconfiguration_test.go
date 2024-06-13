@@ -1,24 +1,19 @@
 package subroutines
 
 import (
-	"bytes"
 	"context"
-	"encoding/json"
 	"errors"
-	"log"
 	"net/http"
 	"testing"
 	"time"
 
 	"github.com/jarcoal/httpmock"
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/suite"
-	"gopkg.in/yaml.v3"
-
 	cachev1alpha1 "github.com/openmfp/extension-content-operator/api/v1alpha1"
 	"github.com/openmfp/extension-content-operator/pkg/subroutines/mocks"
 	"github.com/openmfp/extension-content-operator/pkg/validation"
 	golangCommonErrors "github.com/openmfp/golang-commons/errors"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/suite"
 )
 
 type ContentConfigurationSubroutineTestSuite struct {
@@ -47,7 +42,7 @@ func (suite *ContentConfigurationSubroutineTestSuite) TestCreateAndUpdate_OK() {
 	contentConfiguration := &cachev1alpha1.ContentConfiguration{
 		Spec: cachev1alpha1.ContentConfigurationSpec{
 			InlineConfiguration: cachev1alpha1.InlineConfiguration{
-				Content:     getValidYAMLFixture(),
+				Content:     validation.GetYAMLFixture(validation.GetValidYAML()),
 				ContentType: "yaml",
 			},
 		},
@@ -58,18 +53,24 @@ func (suite *ContentConfigurationSubroutineTestSuite) TestCreateAndUpdate_OK() {
 
 	// Then
 	suite.Require().Nil(err)
-	suite.Require().Equal(getValidJSONFixture(), contentConfiguration.Status.ConfigurationResult)
+	suite.Require().Equal(
+		validation.GetJSONFixture(validation.GetValidJSON()),
+		contentConfiguration.Status.ConfigurationResult,
+	)
 
 	// Now lets take the same object and update it
 	// Given
-	contentConfiguration.Spec.InlineConfiguration.Content = getValidYAMLFixture2()
+	contentConfiguration.Spec.InlineConfiguration.Content = validation.GetYAMLFixture(getValidYAMLFixture2())
 
 	// When
 	_, err2 := suite.testObj.Process(context.Background(), contentConfiguration)
 
 	// Then
 	suite.Require().Nil(err2)
-	suite.Require().Equal(getValidJSONFixture2(), contentConfiguration.Status.ConfigurationResult)
+	suite.Require().Equal(
+		validation.GetJSONFixture(getValidJSONFixture2()),
+		contentConfiguration.Status.ConfigurationResult,
+	)
 }
 
 func (suite *ContentConfigurationSubroutineTestSuite) TestCreateAndUpdate_Error() {
@@ -77,7 +78,7 @@ func (suite *ContentConfigurationSubroutineTestSuite) TestCreateAndUpdate_Error(
 	contentConfiguration := &cachev1alpha1.ContentConfiguration{
 		Spec: cachev1alpha1.ContentConfigurationSpec{
 			InlineConfiguration: cachev1alpha1.InlineConfiguration{
-				Content:     getValidYAMLFixture(),
+				Content:     validation.GetYAMLFixture(validation.GetValidYAML()),
 				ContentType: "yaml",
 			},
 		},
@@ -88,7 +89,10 @@ func (suite *ContentConfigurationSubroutineTestSuite) TestCreateAndUpdate_Error(
 
 	// Then
 	suite.Require().Nil(err)
-	suite.Require().Equal(getValidJSONFixture(), contentConfiguration.Status.ConfigurationResult)
+	suite.Require().Equal(
+		validation.GetJSONFixture(validation.GetValidJSON()),
+		contentConfiguration.Status.ConfigurationResult,
+	)
 
 	// Given invalid configuration
 	contentConfiguration.Spec.InlineConfiguration.Content = "invalid"
@@ -99,7 +103,10 @@ func (suite *ContentConfigurationSubroutineTestSuite) TestCreateAndUpdate_Error(
 
 	// Then
 	suite.Require().NotNil(err2)
-	suite.Require().Equal(getValidJSONFixture(), contentConfiguration.Status.ConfigurationResult)
+	suite.Require().Equal(
+		validation.GetJSONFixture(validation.GetValidJSON()),
+		contentConfiguration.Status.ConfigurationResult,
+	)
 }
 
 func (suite *ContentConfigurationSubroutineTestSuite) TestGetName_OK() {
@@ -138,11 +145,11 @@ func (suite *ContentConfigurationSubroutineTestSuite) TestProcessingConfig() {
 			name: "InlineConfigYAML_OK",
 			spec: cachev1alpha1.ContentConfigurationSpec{
 				InlineConfiguration: cachev1alpha1.InlineConfiguration{
-					Content:     getValidYAMLFixture(),
+					Content:     validation.GetYAMLFixture(validation.GetValidYAML()),
 					ContentType: "yaml",
 				},
 			},
-			expectedConfigResult: getValidJSONFixture(),
+			expectedConfigResult: validation.GetJSONFixture(validation.GetValidJSON()),
 		},
 		{
 			name: "InlineConfigYAML_ValidationError",
@@ -154,7 +161,8 @@ func (suite *ContentConfigurationSubroutineTestSuite) TestProcessingConfig() {
 			},
 			expectedError: golangCommonErrors.NewOperatorError(
 				errors.New(
-					"yaml: unmarshal errors:\n  line 1: cannot unmarshal !!str `I am no...` into validation.ContentConfiguration"),
+					"error unmarshalling YAML: yaml: unmarshal errors:\n  line 1: "+
+						"cannot unmarshal !!str `I am no...` into map[string]interface {}"),
 				false, true,
 			),
 		},
@@ -162,11 +170,11 @@ func (suite *ContentConfigurationSubroutineTestSuite) TestProcessingConfig() {
 			name: "InlineConfigJSON_OK",
 			spec: cachev1alpha1.ContentConfigurationSpec{
 				InlineConfiguration: cachev1alpha1.InlineConfiguration{
-					Content:     getValidJSONFixture(),
+					Content:     validation.GetJSONFixture(validation.GetValidJSON()),
 					ContentType: "json",
 				},
 			},
-			expectedConfigResult: getValidJSONFixture(),
+			expectedConfigResult: validation.GetJSONFixture(validation.GetValidJSON()),
 		},
 		{
 			name: "InlineConfigJSON_ValidationError",
@@ -190,7 +198,7 @@ func (suite *ContentConfigurationSubroutineTestSuite) TestProcessingConfig() {
 			},
 			remoteURL:            remoteURL,
 			statusCode:           http.StatusOK,
-			expectedConfigResult: `{"name":"overview","luigiConfigFragment":[{"data":{"nodes":[{"entityType":"global","pathSegment":"home","label":"Overview","icon":"home"}]}}]}`, // nolint: lll
+			expectedConfigResult: validation.GetValidJSON(),
 		},
 		{
 			name: "RemoteConfig_http_error",
@@ -217,7 +225,7 @@ func (suite *ContentConfigurationSubroutineTestSuite) TestProcessingConfig() {
 				defer httpmock.DeactivateAndReset()
 
 				httpmock.RegisterResponder(
-					"GET", tt.remoteURL, httpmock.NewStringResponder(tt.statusCode, getValidRemoteContentJSONFixture()),
+					"GET", tt.remoteURL, httpmock.NewStringResponder(tt.statusCode, validation.GetValidJSON()),
 				)
 			}
 
@@ -328,166 +336,56 @@ func TestService_Do(t *testing.T) {
 	}
 }
 
-func getValidYAMLFixture() string {
-	validYAML := `
-name: overview
-luigiConfigFragment:
-- data:
-    nodes:
-    - entityType: global
-      pathSegment: home
-      label: Overview
-      icon: home
-      hideFromNav: true
-      defineEntity:
-        id: example
-      children:
-      - pathSegment: overview
-        label: Overview
-        icon: home
-        url: https://fiddle.luigi-project.io/examples/microfrontends/multipurpose.html
-        context:
-          title: Welcome to OpenMFP Portal
-          content: " "
-`
-
-	var data interface{}
-	err := yaml.Unmarshal([]byte(validYAML), &data)
-	if err != nil {
-		log.Fatalf("failed to unmarshal YAML: %v", err)
-	}
-
-	compactYAML, err := yaml.Marshal(&data)
-	if err != nil {
-		log.Fatalf("failed to marshal YAML: %v", err)
-	}
-
-	return string(compactYAML)
+func getValidJSONFixture2() string {
+	return `{
+		"iAmOptionalCustomFieldThatShouldBeStored": "iAmOptionalCustomValue",
+		"luigiConfigFragment": [
+			{
+				"data": {
+					"nodeDefaults": {
+						"entityType": "global",
+						"isolateView": true
+					},
+					"nodes": [
+						{
+							"entityType": "global",
+							"icon": "home",
+							"label": "Overview",
+							"pathSegment": "home"
+						}
+					],
+					"texts": [
+						{
+							"locale": "de",
+							"textDictionary": {
+								"hello": "Hallo"
+							}
+						}
+					]
+				}
+			}
+		],
+		"name": "overview2"
+	}`
 }
 
 func getValidYAMLFixture2() string {
-	validYAML := `
+	return `
+iAmOptionalCustomFieldThatShouldBeStored: iAmOptionalCustomValue
 name: overview2
 luigiConfigFragment:
 - data:
-    nodes:
-    - entityType: global
-      pathSegment: home
-      label: Overview2
-      icon: home
-      hideFromNav: true
-      defineEntity:
-        id: example
-      children:
-      - pathSegment: overview2
-        label: Overview2
-        icon: home
-        url: https://fiddle.luigi-project.io/examples/microfrontends/multipurpose.html
-        context:
-          title: Welcome to OpenMFP Portal
-          content: " "
+   nodeDefaults:
+     entityType: global
+     isolateView: true
+   nodes:
+   - entityType: global
+     pathSegment: home
+     label: Overview
+     icon: home
+   texts:
+   - locale: de
+     textDictionary:
+       hello: Hallo
 `
-
-	var data interface{}
-	err := yaml.Unmarshal([]byte(validYAML), &data)
-	if err != nil {
-		log.Fatalf("failed to unmarshal YAML: %v", err)
-	}
-
-	compactYAML, err := yaml.Marshal(&data)
-	if err != nil {
-		log.Fatalf("failed to marshal YAML: %v", err)
-	}
-
-	return string(compactYAML)
-}
-
-func getValidJSONFixture() string {
-	validJSON := `{
-		"name": "overview",
-		"luigiConfigFragment": [
-			{
-				"data": {
-					"nodes": [
-						{
-							"entityType": "global",
-							"pathSegment": "home",
-							"label": "Overview",
-							"icon": "home"
-						}
-					]
-				}
-			}
-		]
-	}`
-
-	var buf bytes.Buffer
-	if err := json.Compact(&buf, []byte(validJSON)); err != nil {
-		return ""
-	}
-
-	return buf.String()
-}
-
-func getValidJSONFixture2() string {
-	validJSON := `{
-		"name": "overview2",
-		"luigiConfigFragment": [
-			{
-				"data": {
-					"nodes": [
-						{
-							"entityType": "global",
-							"pathSegment": "home",
-							"label": "Overview2",
-							"icon": "home"
-						}
-					]
-				}
-			}
-		]
-	}`
-
-	var buf bytes.Buffer
-	if err := json.Compact(&buf, []byte(validJSON)); err != nil {
-		return ""
-	}
-
-	return buf.String()
-}
-
-func getValidRemoteContentJSONFixture() string {
-	return `{
-  "name": "overview",
-  "luigiConfigFragment": [
-    {
-      "data": {
-        "nodes": [
-          {
-            "entityType": "global",
-            "pathSegment": "home",
-            "label": "Overview",
-            "icon": "home",
-            "hideFromNav": true,            
-            "defineEntity": {
-              "id": "example"
-            },
-            "children": [
-              {
-                "pathSegment": "overview",
-                "label": "Overview",
-                "icon": "home",
-                "url": "https://fiddle.luigi-project.io/examples/microfrontends/multipurpose.html",
-                "context": {
-                  "title": "Welcome to OpenMFP Portal",
-                  "content": " "
-                }
-              }
-            ]
-          }
-        ]
-      }
-    }
-  ]
-}`
 }
