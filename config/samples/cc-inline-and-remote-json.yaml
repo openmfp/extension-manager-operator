@@ -13,36 +13,33 @@ spec:
   inlineConfiguration:
     content: |
       {
-        "name": "overview",
-        "luigiConfigFragment": [
-          {
-            "data": {
-              "nodes": [
-                {
-                  "entityType": "global",
-                  "pathSegment": "home",
-                  "label": "Overview",
-                  "icon": "home",
-                  "hideFromNav": true,
-                  "defineEntity": {
-                    "id": "example"
-                  },
-                  "children": [
-                    {
-                      "pathSegment": "overview",
-                      "label": "Overview",
-                      "icon": "home",
-                      "url": "https://fiddle.luigi-project.io/examples/microfrontends/multipurpose.html",
-                      "context": {
-                        "title": "Welcome to OpenMFP Portal",
-                        "content": " "
-                      }
-                    }
-                  ]
-                }
-              ]
-            }
-          }
-        ]
-      }
+      		"iAmOptionalCustomFieldThatShouldBeStored": "iAmOptionalCustomValue",
+      		"luigiConfigFragment": [
+      			{
+      				"data": {
+      					"nodeDefaults": {
+      						"entityType": "global",
+      						"isolateView": true
+      					},
+      					"nodes": [
+      						{
+      							"entityType": "global",
+      							"icon": "home",
+      							"label": "Overview",
+      							"pathSegment": "home"
+      						}
+      					],
+      					"texts": [
+      						{
+      							"locale": "de",
+      							"textDictionary": {
+      								"hello": "Hallo"
+      							}
+      						}
+      					]
+      				}
+      			}
+      		],
+      		"name": "overview"
+      	}
     contentType: "json"

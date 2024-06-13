@@ -6,23 +6,20 @@ metadata:
 spec:
   inlineConfiguration:
     content: |
+      iAmOptionalCustomFieldThatShouldBeStored: iAmOptionalCustomValue
       name: overview
       luigiConfigFragment:
       - data:
-          nodes:
-          - entityType: global
-            pathSegment: home
-            label: Overview
-            icon: home
-            hideFromNav: true
-            defineEntity:
-              id: example
-            children:
-            - pathSegment: overview
-              label: Overview
-              icon: home
-              url: https://fiddle.luigi-project.io/examples/microfrontends/multipurpose.html
-              context:
-                title: Welcome to OpenMFP Portal
-                content: " "
+         nodeDefaults:
+           entityType: global
+           isolateView: true
+         nodes:
+         - entityType: global
+           pathSegment: home
+           label: Overview
+           icon: home
+         texts:
+         - locale: de
+           textDictionary:
+             hello: Hallo
     contentType: "yaml"  # or "json"

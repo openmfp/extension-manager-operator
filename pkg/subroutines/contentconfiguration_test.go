@@ -61,7 +61,8 @@ func (suite *ContentConfigurationSubroutineTestSuite) TestCreateAndUpdate_OK() {
 
 	// Now lets take the same object and update it
 	// Given
-	contentConfiguration.Spec.InlineConfiguration.Content = validation.GetYAMLFixture(validation.GetValidYAMLFixture2())
+	contentConfiguration.Spec.InlineConfiguration.Content = validation.GetYAMLFixture(
+		validation.GetValidYAMLFixtureButDifferentName())
 
 	// When
 	_, err2 := suite.testObj.Process(context.Background(), contentConfiguration)
@@ -69,7 +70,7 @@ func (suite *ContentConfigurationSubroutineTestSuite) TestCreateAndUpdate_OK() {
 	// Then
 	suite.Require().Nil(err2)
 	suite.Require().Equal(
-		validation.GetJSONFixture(validation.GetValidJSONFixture2()),
+		validation.GetJSONFixture(validation.GetValidJSONButDifferentName()),
 		contentConfiguration.Status.ConfigurationResult,
 	)
 }

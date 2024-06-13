@@ -125,7 +125,7 @@ luigiConfigFragment:
 `
 }
 
-func GetValidJSONFixture2() string {
+func GetValidJSONButDifferentName() string {
 	return `{
 		"iAmOptionalCustomFieldThatShouldBeStored": "iAmOptionalCustomValue",
 		"luigiConfigFragment": [
@@ -158,7 +158,7 @@ func GetValidJSONFixture2() string {
 	}`
 }
 
-func GetValidYAMLFixture2() string {
+func GetValidYAMLFixtureButDifferentName() string {
 	return `
 iAmOptionalCustomFieldThatShouldBeStored: iAmOptionalCustomValue
 name: overview2
