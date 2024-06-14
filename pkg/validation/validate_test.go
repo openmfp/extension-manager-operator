@@ -5,6 +5,8 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+
+	"github.com/openmfp/extension-content-operator/pkg/validation/validation_test"
 )
 
 func TestValidate(t *testing.T) {
@@ -19,14 +21,14 @@ func TestValidate(t *testing.T) {
 	}{
 		{
 			name:        "valid_JSON",
-			input:       GetJSONFixture(GetValidJSON()),
+			input:       validation_test.GetJSONFixture(validation_test.GetValidJSON()),
 			contentType: "json",
-			expected:    GetJSONFixture(GetValidJSON()),
+			expected:    validation_test.GetJSONFixture(validation_test.GetValidJSON()),
 			expectError: false,
 		},
 		{
 			name:        "invalid_JSON_ERROR",
-			input:       GetJSONFixture(GetInvalidJSON()),
+			input:       validation_test.GetJSONFixture(validation_test.GetInvalidJSON()),
 			contentType: "json",
 			expected:    "",
 			expectError: true,
@@ -34,14 +36,14 @@ func TestValidate(t *testing.T) {
 		},
 		{
 			name:        "valid_YAML",
-			input:       GetYAMLFixture(GetValidYAML()),
+			input:       validation_test.GetYAMLFixture(validation_test.GetValidYAML()),
 			contentType: "yaml",
-			expected:    GetJSONFixture(GetValidJSON()),
+			expected:    validation_test.GetJSONFixture(validation_test.GetValidJSON()),
 			expectError: false,
 		},
 		{
 			name:        "unmarshalling_YAML_ERROR",
-			input:       GetYAMLFixture("!2"),
+			input:       validation_test.GetYAMLFixture("!2"),
 			contentType: "yaml",
 			expected:    "",
 			expectError: true,
@@ -49,7 +51,7 @@ func TestValidate(t *testing.T) {
 		},
 		{
 			name:        "the_document_is_not_valid_ERROR",
-			input:       GetYAMLFixture(getInvalidYAML()),
+			input:       validation_test.GetYAMLFixture(validation_test.GetInvalidYAML()),
 			contentType: "yaml",
 			expected:    "",
 			expectError: true,
@@ -57,7 +59,7 @@ func TestValidate(t *testing.T) {
 		},
 		{
 			name:        "unsupported_content_type_ERROR",
-			input:       GetJSONFixture(GetValidJSON()),
+			input:       validation_test.GetJSONFixture(validation_test.GetValidJSON()),
 			contentType: "xml",
 			expected:    "",
 			expectError: true,
@@ -75,7 +77,7 @@ func TestValidate(t *testing.T) {
 			name:        "validating_JSON_data_ERROR",
 			schema:      []byte("123"),
 			contentType: "json",
-			input:       GetJSONFixture(GetValidJSON()),
+			input:       validation_test.GetJSONFixture(validation_test.GetValidJSON()),
 			expected:    "",
 			expectError: true,
 			errorMsg:    "error validating JSON data",
@@ -83,7 +85,7 @@ func TestValidate(t *testing.T) {
 		{
 			name:        "unmarshal_string_into_Go_struct_ERROR",
 			schema:      getJSONSchemaFixture(),
-			input:       GetYAMLFixture(GetInvalidTypeYAML()),
+			input:       validation_test.GetYAMLFixture(validation_test.GetInvalidTypeYAML()),
 			contentType: "yaml",
 			expected:    "",
 			expectError: true,

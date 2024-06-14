@@ -14,6 +14,7 @@ import (
 	cachev1alpha1 "github.com/openmfp/extension-content-operator/api/v1alpha1"
 	"github.com/openmfp/extension-content-operator/pkg/subroutines/mocks"
 	"github.com/openmfp/extension-content-operator/pkg/validation"
+	"github.com/openmfp/extension-content-operator/pkg/validation/validation_test"
 	golangCommonErrors "github.com/openmfp/golang-commons/errors"
 )
 
@@ -43,7 +44,7 @@ func (suite *ContentConfigurationSubroutineTestSuite) TestCreateAndUpdate_OK() {
 	contentConfiguration := &cachev1alpha1.ContentConfiguration{
 		Spec: cachev1alpha1.ContentConfigurationSpec{
 			InlineConfiguration: cachev1alpha1.InlineConfiguration{
-				Content:     validation.GetYAMLFixture(validation.GetValidYAML()),
+				Content:     validation_test.GetYAMLFixture(validation_test.GetValidYAML()),
 				ContentType: "yaml",
 			},
 		},
@@ -55,14 +56,14 @@ func (suite *ContentConfigurationSubroutineTestSuite) TestCreateAndUpdate_OK() {
 	// Then
 	suite.Require().Nil(err)
 	suite.Require().Equal(
-		validation.GetJSONFixture(validation.GetValidJSON()),
+		validation_test.GetJSONFixture(validation_test.GetValidJSON()),
 		contentConfiguration.Status.ConfigurationResult,
 	)
 
 	// Now lets take the same object and update it
 	// Given
-	contentConfiguration.Spec.InlineConfiguration.Content = validation.GetYAMLFixture(
-		validation.GetValidYAMLFixtureButDifferentName())
+	contentConfiguration.Spec.InlineConfiguration.Content = validation_test.GetYAMLFixture(
+		validation_test.GetValidYAMLFixtureButDifferentName())
 
 	// When
 	_, err2 := suite.testObj.Process(context.Background(), contentConfiguration)
@@ -70,7 +71,7 @@ func (suite *ContentConfigurationSubroutineTestSuite) TestCreateAndUpdate_OK() {
 	// Then
 	suite.Require().Nil(err2)
 	suite.Require().Equal(
-		validation.GetJSONFixture(validation.GetValidJSONButDifferentName()),
+		validation_test.GetJSONFixture(validation_test.GetValidJSONButDifferentName()),
 		contentConfiguration.Status.ConfigurationResult,
 	)
 }
@@ -80,7 +81,7 @@ func (suite *ContentConfigurationSubroutineTestSuite) TestCreateAndUpdate_Error(
 	contentConfiguration := &cachev1alpha1.ContentConfiguration{
 		Spec: cachev1alpha1.ContentConfigurationSpec{
 			InlineConfiguration: cachev1alpha1.InlineConfiguration{
-				Content:     validation.GetYAMLFixture(validation.GetValidYAML()),
+				Content:     validation_test.GetYAMLFixture(validation_test.GetValidYAML()),
 				ContentType: "yaml",
 			},
 		},
@@ -92,7 +93,7 @@ func (suite *ContentConfigurationSubroutineTestSuite) TestCreateAndUpdate_Error(
 	// Then
 	suite.Require().Nil(err)
 	suite.Require().Equal(
-		validation.GetJSONFixture(validation.GetValidJSON()),
+		validation_test.GetJSONFixture(validation_test.GetValidJSON()),
 		contentConfiguration.Status.ConfigurationResult,
 	)
 
@@ -106,7 +107,7 @@ func (suite *ContentConfigurationSubroutineTestSuite) TestCreateAndUpdate_Error(
 	// Then
 	suite.Require().NotNil(err2)
 	suite.Require().Equal(
-		validation.GetJSONFixture(validation.GetValidJSON()),
+		validation_test.GetJSONFixture(validation_test.GetValidJSON()),
 		contentConfiguration.Status.ConfigurationResult,
 	)
 }
@@ -147,11 +148,11 @@ func (suite *ContentConfigurationSubroutineTestSuite) TestProcessingConfig() {
 			name: "InlineConfigYAML_OK",
 			spec: cachev1alpha1.ContentConfigurationSpec{
 				InlineConfiguration: cachev1alpha1.InlineConfiguration{
-					Content:     validation.GetYAMLFixture(validation.GetValidYAML()),
+					Content:     validation_test.GetYAMLFixture(validation_test.GetValidYAML()),
 					ContentType: "yaml",
 				},
 			},
-			expectedConfigResult: validation.GetJSONFixture(validation.GetValidJSON()),
+			expectedConfigResult: validation_test.GetJSONFixture(validation_test.GetValidJSON()),
 		},
 		{
 			name: "InlineConfigYAML_ValidationError",
@@ -172,11 +173,11 @@ func (suite *ContentConfigurationSubroutineTestSuite) TestProcessingConfig() {
 			name: "InlineConfigJSON_OK",
 			spec: cachev1alpha1.ContentConfigurationSpec{
 				InlineConfiguration: cachev1alpha1.InlineConfiguration{
-					Content:     validation.GetJSONFixture(validation.GetValidJSON()),
+					Content:     validation_test.GetJSONFixture(validation_test.GetValidJSON()),
 					ContentType: "json",
 				},
 			},
-			expectedConfigResult: validation.GetJSONFixture(validation.GetValidJSON()),
+			expectedConfigResult: validation_test.GetJSONFixture(validation_test.GetValidJSON()),
 		},
 		{
 			name: "InlineConfigJSON_ValidationError",
@@ -200,7 +201,7 @@ func (suite *ContentConfigurationSubroutineTestSuite) TestProcessingConfig() {
 			},
 			remoteURL:            remoteURL,
 			statusCode:           http.StatusOK,
-			expectedConfigResult: validation.GetValidJSON(),
+			expectedConfigResult: validation_test.GetValidJSON(),
 		},
 		{
 			name: "RemoteConfig_http_error",
@@ -227,7 +228,7 @@ func (suite *ContentConfigurationSubroutineTestSuite) TestProcessingConfig() {
 				defer httpmock.DeactivateAndReset()
 
 				httpmock.RegisterResponder(
-					"GET", tt.remoteURL, httpmock.NewStringResponder(tt.statusCode, validation.GetValidJSON()),
+					"GET", tt.remoteURL, httpmock.NewStringResponder(tt.statusCode, validation_test.GetValidJSON()),
 				)
 			}
 

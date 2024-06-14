@@ -26,7 +26,7 @@ import (
 	"k8s.io/apimachinery/pkg/types"
 
 	cachev1alpha1 "github.com/openmfp/extension-content-operator/api/v1alpha1"
-	"github.com/openmfp/extension-content-operator/pkg/validation"
+	"github.com/openmfp/extension-content-operator/pkg/validation/validation_test"
 )
 
 func TestContentConfigurationTestSuite(t *testing.T) {
@@ -49,10 +49,10 @@ func (suite *ContentConfigurationTestSuite) TestContentConfigurationCreation() {
 			spec: cachev1alpha1.ContentConfigurationSpec{
 				InlineConfiguration: cachev1alpha1.InlineConfiguration{
 					ContentType: "yaml",
-					Content:     validation.GetYAMLFixture(validation.GetValidYAML()),
+					Content:     validation_test.GetYAMLFixture(validation_test.GetValidYAML()),
 				},
 			},
-			expectedResult: validation.GetJSONFixture(validation.GetValidJSON()),
+			expectedResult: validation_test.GetJSONFixture(validation_test.GetValidJSON()),
 		},
 		{
 			name:         "TestBothInlineAndRemoteConfiguration",
@@ -60,13 +60,13 @@ func (suite *ContentConfigurationTestSuite) TestContentConfigurationCreation() {
 			spec: cachev1alpha1.ContentConfigurationSpec{
 				InlineConfiguration: cachev1alpha1.InlineConfiguration{
 					ContentType: "yaml",
-					Content:     validation.GetYAMLFixture(validation.GetValidYAML()),
+					Content:     validation_test.GetYAMLFixture(validation_test.GetValidYAML()),
 				},
 				RemoteConfiguration: cachev1alpha1.RemoteConfiguration{
 					URL: "this-url-should-not-be-used",
 				},
 			},
-			expectedResult: validation.GetJSONFixture(validation.GetValidJSON()),
+			expectedResult: validation_test.GetJSONFixture(validation_test.GetValidJSON()),
 		},
 		{
 			name:         "TestRemoteContentConfiguration",
@@ -77,7 +77,7 @@ func (suite *ContentConfigurationTestSuite) TestContentConfigurationCreation() {
 					URL:         remoteURL,
 				},
 			},
-			expectedResult: validation.GetJSONFixture(validation.GetValidJSON()),
+			expectedResult: validation_test.GetJSONFixture(validation_test.GetValidJSON()),
 		},
 	}
 
@@ -88,7 +88,7 @@ func (suite *ContentConfigurationTestSuite) TestContentConfigurationCreation() {
 			defer httpmock.DeactivateAndReset()
 
 			httpmock.RegisterResponder(
-				"GET", remoteURL, httpmock.NewStringResponder(200, validation.GetJSONFixture(validation.GetValidJSON())),
+				"GET", remoteURL, httpmock.NewStringResponder(200, validation_test.GetJSONFixture(validation_test.GetValidJSON())),
 			)
 
 			// Given

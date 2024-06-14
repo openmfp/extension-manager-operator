@@ -1,4 +1,4 @@
-package validation
+package validation_test
 
 import (
 	"bytes"
@@ -105,7 +105,7 @@ luigiConfigFragment:
 `
 }
 
-func getInvalidYAML() string {
+func GetInvalidYAML() string {
 	return `
 name: overview
 luigiConfigFragment:
