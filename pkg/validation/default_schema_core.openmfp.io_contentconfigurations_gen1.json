@@ -10,8 +10,7 @@
           },
           "isolateView": {
             "type": "boolean"
-          },
-          "required": ["entityType", "isolateView"]
+          }
         },
         "nodes": {
           "items": {
@@ -56,8 +55,7 @@
         }
       },
       "additionalProperties": false,
-      "type": "object",
-      "required": ["entityType", "pathSegment", "label", "icon"]
+      "type": "object"
     },
     "Text": {
       "locale": {

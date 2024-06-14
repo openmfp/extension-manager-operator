@@ -27,12 +27,12 @@ func TestValidate(t *testing.T) {
 			expectError: false,
 		},
 		{
-			name:        "invalid_JSON_ERROR",
-			input:       validation_test.GetJSONFixture(validation_test.GetInvalidJSON()),
+			name:        "invalid_JSON_empty_input_ERROR",
+			input:       validation_test.GetJSONFixture(`{"name": "overview",`),
 			contentType: "json",
 			expected:    "",
 			expectError: true,
-			errorMsg:    "The document is not valid:",
+			errorMsg:    "empty input provided",
 		},
 		{
 			name:        "valid_YAML",
@@ -51,11 +51,12 @@ func TestValidate(t *testing.T) {
 		},
 		{
 			name:        "the_document_is_not_valid_ERROR",
-			input:       validation_test.GetYAMLFixture(validation_test.GetInvalidYAML()),
+			input:       validation_test.GetYAMLFixture(`2!`),
 			contentType: "yaml",
 			expected:    "",
 			expectError: true,
-			errorMsg:    "The document is not valid:",
+			errorMsg: "error unmarshalling YAML: yaml: unmarshal errors:\n  line 1: " +
+				"cannot unmarshal !!str `2!` into map[string]interface {}",
 		},
 		{
 			name:        "unsupported_content_type_ERROR",
@@ -124,23 +125,92 @@ func Test_validateSchema(t *testing.T) {
 
 	tests := []struct {
 		name           string
-		input          ContentConfigurationTypeMock
+		input          interface{}
 		expectedErrMsg string
 	}{
 		{
-			name: "Invalid Type",
+			name: "Invalid_Type",
 			input: ContentConfigurationTypeMock{
 				Name: 1, // wrong type
 			},
-			expectedErrMsg: "The document is not valid:",
+			expectedErrMsg: "The document is not valid:\n[luigiConfigFragment is required (root): " +
+				"Additional property surname is not allowed field 'name' is invalid, got '%!s(<nil>)', expected 'string']",
 		},
 		{
-			name: "Invalid JSON",
+			name: "Invalid_JSON",
 			input: ContentConfigurationTypeMock{
 				Name:    "John",
 				Surname: make(chan int), // invalid type for JSON marshaling
 			},
 			expectedErrMsg: "error marshaling input to JSON",
+		},
+		{
+			name: "luigiConfigFragment_is_required",
+			input: ContentConfiguration{
+				Name: "overview",
+			},
+			expectedErrMsg: "The document is not valid:\n[luigiConfigFragment is required]",
+		},
+		{
+			name: "name_is_required",
+			input: ContentConfiguration{
+				LuigiConfigFragment: []LuigiConfigFragment{{
+					Data: LuigiConfigData{
+						Nodes: []Node{
+							{
+								EntityType: "global",
+							},
+						},
+					},
+				}},
+			},
+			expectedErrMsg: "The document is not valid:\n[name is required]",
+		},
+		{
+			name: "nodes_is_required",
+			input: ContentConfiguration{
+				Name:                "overview",
+				LuigiConfigFragment: []LuigiConfigFragment{{}},
+			},
+			expectedErrMsg: "The document is not valid:\n[nodes is required]",
+		},
+		{
+			name: "textDictionary_is_required",
+			input: ContentConfiguration{
+				Name: "overview",
+				LuigiConfigFragment: []LuigiConfigFragment{{
+					Data: LuigiConfigData{
+						Nodes: []Node{
+							{
+								EntityType: "global",
+							},
+						},
+						Texts: []Text{{
+							Locale: "de",
+						}},
+					},
+				}},
+			},
+			expectedErrMsg: "The document is not valid:\n[textDictionary is required]",
+		},
+		{
+			name: "locale_is_required",
+			input: ContentConfiguration{
+				Name: "overview",
+				LuigiConfigFragment: []LuigiConfigFragment{{
+					Data: LuigiConfigData{
+						Nodes: []Node{
+							{
+								EntityType: "global",
+							},
+						},
+						Texts: []Text{{
+							TextDictionary: map[string]string{"hello": "Hallo"},
+						}},
+					},
+				}},
+			},
+			expectedErrMsg: "The document is not valid:\n[locale is required]",
 		},
 	}
 
