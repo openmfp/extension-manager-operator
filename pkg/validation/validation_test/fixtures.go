@@ -65,25 +65,6 @@ func GetValidJSON() string {
 	}`
 }
 
-func GetInvalidJSON() string {
-	return `{
-			"name": "overview",
-			"luigiConfigFragment": [
-				{
-					"data": {
-						"nodes": [
-							{
-								"entityType": "global",
-								"pathSegment": "home",
-								"label": "Overview"
-							}
-						]
-					}
-				}
-			]
-		}`
-}
-
 func GetValidYAML() string {
 	return `
 iAmOptionalCustomFieldThatShouldBeStored: iAmOptionalCustomValue
@@ -102,17 +83,6 @@ luigiConfigFragment:
    - locale: de
      textDictionary:
        hello: Hallo
-`
-}
-
-func GetInvalidYAML() string {
-	return `
-name: overview
-luigiConfigFragment:
- - data:
-     nodes:
-       - entityType: global
-         pathSegment: home
 `
 }
 

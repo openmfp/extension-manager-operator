@@ -104,7 +104,7 @@ func validateSchema(schema []byte, input interface{}) error {
 		for _, desc := range result.Errors() {
 			switch desc.Type() {
 			case "required":
-				errorsAccumulator = append(errorsAccumulator, fmt.Sprintf(ErrorRequiredField.Error(), desc.Field()))
+				errorsAccumulator = append(errorsAccumulator, desc.Description())
 			case "invalid_type":
 				errorsAccumulator = append(errorsAccumulator, fmt.Sprintf(
 					ErrorInvalidFieldType.Error(),
