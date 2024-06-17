@@ -16,10 +16,10 @@ jobs:
       - name: kube-score check
         uses: piraces/kube-score-ga@v0.1.3
         with:
-          args: score ${{ inputs.kube_score_target }}
+          args: "score ./**/*.y*ml"
 
       - name: kube-linter
         uses: stackrox/kube-linter-action@v1.0.5
         with:
-          args: lint ${{ inputs.kube_score_target }}
+          args: "lint ./"
 
