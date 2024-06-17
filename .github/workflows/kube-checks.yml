@@ -15,11 +15,11 @@ jobs:
 
       - name: kube-score check
         uses: piraces/kube-score-ga@v0.1.3
-        run: |
-          kube-score score ${{ inputs.kube_score_target }}
+        with:
+          args: score ${{ inputs.kube_score_target }}
 
       - name: kube-linter
         uses: stackrox/kube-linter-action@v1.0.5
-        run: |
-          kube-linter lint ${{ inputs.kube_lint_target }}
+        with:
+          args: lint ${{ inputs.kube_score_target }}
 
