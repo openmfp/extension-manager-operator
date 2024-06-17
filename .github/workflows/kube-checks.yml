@@ -1,0 +1,34 @@
+# This workflow performs static code analysis of your Kubernetes object definitions
+# using kube-score and kube-linter tools.
+name: Kube Checks
+
+on:
+  push:
+
+jobs:
+  kube-checks:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install Kube-Linter
+        run: |
+          curl -LO https://github.com/stackrox/kube-linter/releases/download/v0.6.8/kube-linter-linux.tar.gz
+          tar -xzf kube-linter-linux.tar.gz
+          sudo mv kube-linter /usr/local/bin/
+
+      - name: Install Kube-Score
+        run: |
+          curl -LO https://github.com/zegl/kube-score/releases/download/v1.18.0/kube-score_1.18.0_linux_amd64.tar.gz
+          tar -xzf kube-score_1.18.0_linux_amd64
+          sudo mv kube-score /usr/local/bin/
+
+      - name: Run Kube-Linter
+        run: |
+          kube-linter lint ./
+
+      - name: Run Kube-Score
+        run: |
+          kube-score score ./**/*.y*ml
