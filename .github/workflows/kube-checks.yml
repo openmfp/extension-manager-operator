@@ -13,23 +13,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Install Kube-Linter
+      - name: kube-score check
+        uses: piraces/kube-score-ga@v0.1.3
         run: |
-          curl -LO https://github.com/stackrox/kube-linter/releases/download/v0.6.8/kube-linter-linux.tar.gz
-          tar -xzf kube-linter-linux.tar.gz
-          sudo mv kube-linter /usr/local/bin/
+          kube-score score ${{ inputs.kube_score_target }}
 
-      - name: Install Kube-Score
+      - name: kube-linter
+        uses: stackrox/kube-linter-action@v1.0.5
         run: |
-          curl -LO https://github.com/zegl/kube-score/releases/download/v1.18.0/kube-score_1.18.0_linux_amd64.tar.gz
-          tar -xzf kube-score_1.18.0_linux_amd64.tar.gz
-          sudo mv kube-score /usr/local/bin/
-
-      - name: Run Kube-Score
-        run: |
-          kube-score score ./**/*.y*ml
-
-      - name: Run Kube-Linter
-        run: |
-          kube-linter lint ./
+          kube-linter lint ${{ inputs.kube_lint_target }}
 
