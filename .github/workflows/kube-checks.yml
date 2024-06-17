@@ -16,10 +16,10 @@ jobs:
       - name: kube-score check
         uses: piraces/kube-score-ga@v0.1.3
         with:
-          args: "score ./**/*.y*ml"
+          manifests-folders: "./**/*.y*ml"
 
       - name: kube-linter
         uses: stackrox/kube-linter-action@v1.0.5
         with:
-          args: "lint ./"
+          directory: "./"
 
