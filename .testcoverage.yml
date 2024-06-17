@@ -5,3 +5,4 @@ exclude:
     - api/v1alpha1 # skipping generated files and crd type definitions
     - main\.go$ # skip covering main.go
     - test/utils/
+    - ^pkg/validation/validation_test/fixtures.go # skip fixtures file
