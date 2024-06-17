@@ -25,10 +25,11 @@ jobs:
           tar -xzf kube-score_1.18.0_linux_amd64.tar.gz
           sudo mv kube-score /usr/local/bin/
 
+      - name: Run Kube-Score
+        run: |
+          kube-score score ./**/*.y*ml
+
       - name: Run Kube-Linter
         run: |
           kube-linter lint ./
 
-      - name: Run Kube-Score
-        run: |
-          kube-score score ./**/*.y*ml
