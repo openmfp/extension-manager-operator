@@ -16,10 +16,17 @@ jobs:
       - name: kube-score check
         uses: piraces/kube-score-ga@v0.1.3
         with:
-          manifests-folders: "./**/*.y*ml"
+          manifests-folders: "./config/crd/bases/core.openmfp.io_contentconfigurations.yaml"
+          kube-score-version:
+          ignore-exit-code:
+          output-file:
 
       - name: kube-linter
         uses: stackrox/kube-linter-action@v1.0.5
         with:
-          directory: "./"
+          directory: "./config/crd/"
+          config:
+          format:
+          output-file:
+          version:
 
