@@ -22,7 +22,7 @@ jobs:
       - name: Install Kube-Score
         run: |
           curl -LO https://github.com/zegl/kube-score/releases/download/v1.18.0/kube-score_1.18.0_linux_amd64.tar.gz
-          tar -xzf kube-score_1.18.0_linux_amd64
+          tar -xzf kube-score_1.18.0_linux_amd64.tar.gz
           sudo mv kube-score /usr/local/bin/
 
       - name: Run Kube-Linter
