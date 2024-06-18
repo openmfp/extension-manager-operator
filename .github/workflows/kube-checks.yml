@@ -7,13 +7,7 @@ on:
 
 jobs:
   kube-checks:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-      - name: kube-checks
-        uses: openmfp/gha/.github/workflows/pipeline-k8s-checks.yml@feat/DXPFRAME-1342/vulnerability-scans
+    uses: openmfp/gha/.github/workflows/pipeline-k8s-checks.yml@feat/DXPFRAME-1342/vulnerability-scans
     with:
       kube_lint_target_directory: './'
       kube_score_target_manifests: './config/**/*.y*ml'
