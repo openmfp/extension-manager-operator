@@ -14,5 +14,3 @@ jobs:
       kube_score_version: 'v1.17.0'
       kube_score_args: '--disable-ignore-checks-annotations --disable-optional-checks-annotations'
       kube_lint_version: 'v0.6.6'
-      kube_score_continue_on_error: true
-      kube_lint_continue_on_error: true
