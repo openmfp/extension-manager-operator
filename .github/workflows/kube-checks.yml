@@ -20,7 +20,7 @@ jobs:
 
       - name: kube-score run
         run: |
-          kube-score score "./config/crd/bases/core.openmfp.io_contentconfigurations.yaml
+          kube-score score ./config/crd/bases/core.openmfp.io_contentconfigurations.yaml
 
       - name: kube-linter
         uses: stackrox/kube-linter-action@v1.0.5
