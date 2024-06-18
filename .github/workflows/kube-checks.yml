@@ -19,12 +19,12 @@ jobs:
           kube-score: 'v1.18.0'
 
       - name: kube-score run
+        if: always()
         run: |
           kube-score score ./config/**/*.y*ml
-        continue-on-error: true
 
       - name: kube-linter
+        if: always()
         uses: stackrox/kube-linter-action@v1.0.5
         with:
           directory: "./"
-        continue-on-error: true
