@@ -1,6 +1,6 @@
 # This workflow performs static code analysis of your Kubernetes object definitions
 # using kube-score and kube-linter tools.
-name: Kube Checks
+name: K8S checks
 
 on:
   push:
@@ -12,19 +12,13 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
-      - name: kube-score install
-        uses: yokawasa/action-setup-kube-tools@v0.11.1
+      - name: kube-checks
+        uses: openmfp/gha/.github/workflows/pipeline-k8s-checks.yml@feat/DXPFRAME-1342/vulnerability-scans
         with:
-          kube-score: 'v1.18.0'
-
-      - name: kube-score run
-        if: always()
-        run: |
-          kube-score score ./config/**/*.y*ml
-
-      - name: kube-linter
-        if: always()
-        uses: stackrox/kube-linter-action@v1.0.5
-        with:
-          directory: "./"
+          kube_lint_target_directory: './'
+          kube_score_target_manifests: './config/**/*.y*ml'
+          kube_score_version: 'v1.17.0'
+          kube_score_args: '--disable-ignore-checks-annotations --disable-optional-checks-annotations'
+          kube_lint_version: 'v0.6.6'
+          kube_score_continue_on_error: true
+          kube_lint_continue_on_error: true
