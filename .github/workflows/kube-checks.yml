@@ -17,11 +17,9 @@ jobs:
         uses: piraces/kube-score-ga@v0.1.3
         with:
           manifests-folders: "./config/crd/bases/core.openmfp.io_contentconfigurations.yaml"
-          kube-score-version: "latest"
 
       - name: kube-linter
         uses: stackrox/kube-linter-action@v1.0.5
         with:
           directory: "./config/crd/"
-          version: "latest"
 
