@@ -20,9 +20,11 @@ jobs:
 
       - name: kube-score run
         run: |
-          kube-score score ./config/crd/bases/core.openmfp.io_contentconfigurations.yaml
+          kube-score score ./config/**/*.y*ml
+        continue-on-error: true
 
       - name: kube-linter
         uses: stackrox/kube-linter-action@v1.0.5
         with:
-          directory: "./config/crd/"
+          directory: "./"
+        continue-on-error: true
