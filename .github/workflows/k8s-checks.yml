@@ -7,7 +7,7 @@ on:
 
 jobs:
   kube-checks:
-    uses: openmfp/gha/.github/workflows/pipeline-k8s-checks.yml@feat/DXPFRAME-1342/vulnerability-scans
+    uses: openmfp/gha/.github/workflows/pipeline-k8s-checks.yml
     with:
       kube_lint_target_directory: './'
       kube_score_target_manifests: './config/**/*.y*ml'
