@@ -1,10 +1,11 @@
 module github.com/openmfp/extension-content-operator
 
 go 1.22.0
+toolchain go1.22.4
 
 require (
 	github.com/jarcoal/httpmock v1.3.1
-	github.com/openmfp/golang-commons v0.37.0
+	github.com/openmfp/golang-commons v0.39.0
 	github.com/pkg/errors v0.9.1
 	github.com/rs/zerolog v1.33.0
 	github.com/spf13/cobra v1.8.1
