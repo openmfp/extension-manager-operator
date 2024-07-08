@@ -1,7 +1,6 @@
 module github.com/openmfp/extension-content-operator
 
 go 1.22.0
-toolchain go1.22.4
 
 require (
 	github.com/jarcoal/httpmock v1.3.1
