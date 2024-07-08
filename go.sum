@@ -104,8 +104,8 @@ github.com/onsi/ginkgo/v2 v2.17.2 h1:7eMhcy3GimbsA3hEnVKdw/PQM9XN9krpKVXsZdph0/g
 github.com/onsi/ginkgo/v2 v2.17.2/go.mod h1:nP2DPOQoNsQmsVyv5rDA8JkXQoCs6goXIvr/PRJ1eCc=
 github.com/onsi/gomega v1.33.1 h1:dsYjIxxSR755MDmKVsaFQTE22ChNBcuuTWgkUDSubOk=
 github.com/onsi/gomega v1.33.1/go.mod h1:U4R44UsT+9eLIaYRB2a5qajjtQYn0hauxvRm16AVYg0=
-github.com/openmfp/golang-commons v0.39.0 h1:3hmbRlLgg2jZ0MmtWu0bsg1a+EsAqYgwRrttG4tezf0=
-github.com/openmfp/golang-commons v0.39.0/go.mod h1:V+IVBwzCifLwW6ygzWbwrBdy6ztyUEkPfBPA+YJNK/s=
+github.com/openmfp/golang-commons v0.37.0 h1:SlDXDFXFa2wuo8eo33LzGlTdOVu/PTM7zcZ80r/9HCc=
+github.com/openmfp/golang-commons v0.37.0/go.mod h1:FOaKSqVKf+qPv0myrVtpyoSeBinYuoeIwD1hYMNiGuA=
 github.com/pingcap/errors v0.11.4 h1:lFuQV/oaUMGcD2tqt+01ROSmJs75VG1ToEOkZIZ4nE4=
 github.com/pingcap/errors v0.11.4/go.mod h1:Oi8TUi2kEtXXLMJk9l1cGmz20kV3TaQ0usTwv5KuLY8=
 github.com/pkg/errors v0.9.1 h1:FEBLx1zS214owpjy7qsBeixbURkuhQAwrK5UwLGTwt4=
