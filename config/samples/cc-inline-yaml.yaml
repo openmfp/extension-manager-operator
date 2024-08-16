@@ -9,17 +9,17 @@ spec:
       iAmOptionalCustomFieldThatShouldBeStored: iAmOptionalCustomValue
       name: overview
       luigiConfigFragment:
-      - data:
-         nodeDefaults:
-           entityType: global
-           isolateView: true
-         nodes:
-         - entityType: global
-           pathSegment: home
-           label: Overview
-           icon: home
-         texts:
-         - locale: de
-           textDictionary:
-             hello: Hallo
+       data:
+        nodeDefaults:
+          entityType: global
+          isolateView: true
+        nodes:
+        - entityType: global
+          pathSegment: home
+          label: Overview
+          icon: home
+        texts:
+        - locale: de
+          textDictionary:
+            hello: Hallo
     contentType: "yaml"  # or "json"

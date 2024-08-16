@@ -75,7 +75,7 @@
       "items": {
         "$ref": "#/$defs/LuigiConfigFragment"
       },
-      "type": "array"
+      "type": "object"
     }
   },
   "additionalProperties": false,

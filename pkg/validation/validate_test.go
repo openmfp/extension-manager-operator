@@ -154,7 +154,7 @@ func Test_validateSchema(t *testing.T) {
 		{
 			name: "name_is_required",
 			input: ContentConfiguration{
-				LuigiConfigFragment: []LuigiConfigFragment{{
+				LuigiConfigFragment: LuigiConfigFragment{
 					Data: LuigiConfigData{
 						Nodes: []Node{
 							{
@@ -162,7 +162,7 @@ func Test_validateSchema(t *testing.T) {
 							},
 						},
 					},
-				}},
+				},
 			},
 			expectedErrMsg: "The document is not valid:\n[name is required]",
 		},
@@ -170,7 +170,7 @@ func Test_validateSchema(t *testing.T) {
 			name: "nodes_is_required",
 			input: ContentConfiguration{
 				Name:                "overview",
-				LuigiConfigFragment: []LuigiConfigFragment{{}},
+				LuigiConfigFragment: LuigiConfigFragment{},
 			},
 			expectedErrMsg: "The document is not valid:\n[nodes is required]",
 		},
@@ -178,7 +178,7 @@ func Test_validateSchema(t *testing.T) {
 			name: "textDictionary_is_required",
 			input: ContentConfiguration{
 				Name: "overview",
-				LuigiConfigFragment: []LuigiConfigFragment{{
+				LuigiConfigFragment: LuigiConfigFragment{
 					Data: LuigiConfigData{
 						Nodes: []Node{
 							{
@@ -189,7 +189,7 @@ func Test_validateSchema(t *testing.T) {
 							Locale: "de",
 						}},
 					},
-				}},
+				},
 			},
 			expectedErrMsg: "The document is not valid:\n[textDictionary is required]",
 		},
@@ -197,7 +197,7 @@ func Test_validateSchema(t *testing.T) {
 			name: "locale_is_required",
 			input: ContentConfiguration{
 				Name: "overview",
-				LuigiConfigFragment: []LuigiConfigFragment{{
+				LuigiConfigFragment: LuigiConfigFragment{
 					Data: LuigiConfigData{
 						Nodes: []Node{
 							{
@@ -208,7 +208,7 @@ func Test_validateSchema(t *testing.T) {
 							TextDictionary: map[string]string{"hello": "Hallo"},
 						}},
 					},
-				}},
+				},
 			},
 			expectedErrMsg: "The document is not valid:\n[locale is required]",
 		},

@@ -1,8 +1,8 @@
 package validation
 
 type ContentConfiguration struct {
-	Name                string                `json:"name,omitempty" yaml:"name,omitempty"`
-	LuigiConfigFragment []LuigiConfigFragment `json:"luigiConfigFragment,omitempty" yaml:"luigiConfigFragment,omitempty"`
+	Name                string              `json:"name,omitempty" yaml:"name,omitempty"`
+	LuigiConfigFragment LuigiConfigFragment `json:"luigiConfigFragment,omitempty" yaml:"luigiConfigFragment,omitempty"`
 }
 
 type LuigiConfigFragment struct {

@@ -35,32 +35,30 @@ func GetYAMLFixture(input string) string {
 func GetValidJSON() string {
 	return `{
 		"iAmOptionalCustomFieldThatShouldBeStored": "iAmOptionalCustomValue",
-		"luigiConfigFragment": [
-			{
-				"data": {
-					"nodeDefaults": {
+		"luigiConfigFragment": {
+			"data": {
+				"nodeDefaults": {
+					"entityType": "global",
+					"isolateView": true
+				},
+				"nodes": [
+					{
 						"entityType": "global",
-						"isolateView": true
-					},
-					"nodes": [
-						{
-							"entityType": "global",
-							"icon": "home",
-							"label": "Overview",
-							"pathSegment": "home"
+						"icon": "home",
+						"label": "Overview",
+						"pathSegment": "home"
+					}
+				],
+				"texts": [
+					{
+						"locale": "de",
+						"textDictionary": {
+							"hello": "Hallo"
 						}
-					],
-					"texts": [
-						{
-							"locale": "de",
-							"textDictionary": {
-								"hello": "Hallo"
-							}
-						}
-					]
-				}
+					}
+				]
 			}
-		],
+		},
 		"name": "overview"
 	}`
 }
@@ -70,19 +68,19 @@ func GetValidYAML() string {
 iAmOptionalCustomFieldThatShouldBeStored: iAmOptionalCustomValue
 name: overview
 luigiConfigFragment:
-- data:
-   nodeDefaults:
-     entityType: global
-     isolateView: true
-   nodes:
-   - entityType: global
-     pathSegment: home
-     label: Overview
-     icon: home
-   texts:
-   - locale: de
-     textDictionary:
-       hello: Hallo
+ data:
+  nodeDefaults:
+    entityType: global
+    isolateView: true
+  nodes:
+  - entityType: global
+    pathSegment: home
+    label: Overview
+    icon: home
+  texts:
+  - locale: de
+    textDictionary:
+      hello: Hallo
 `
 }
 
@@ -90,40 +88,38 @@ func GetInvalidTypeYAML() string {
 	return `
 name: overview
 luigiConfigFragment:
- - data:
-     nodes: "string"
+  data:
+    nodes: "string"
 `
 }
 
 func GetValidJSONButDifferentName() string {
 	return `{
 		"iAmOptionalCustomFieldThatShouldBeStored": "iAmOptionalCustomValue",
-		"luigiConfigFragment": [
-			{
-				"data": {
-					"nodeDefaults": {
+		"luigiConfigFragment": {
+			"data": {
+				"nodeDefaults": {
+					"entityType": "global",
+					"isolateView": true
+				},
+				"nodes": [
+					{
 						"entityType": "global",
-						"isolateView": true
-					},
-					"nodes": [
-						{
-							"entityType": "global",
-							"icon": "home",
-							"label": "Overview",
-							"pathSegment": "home"
+						"icon": "home",
+						"label": "Overview",
+						"pathSegment": "home"
+					}
+				],
+				"texts": [
+					{
+						"locale": "de",
+						"textDictionary": {
+							"hello": "Hallo"
 						}
-					],
-					"texts": [
-						{
-							"locale": "de",
-							"textDictionary": {
-								"hello": "Hallo"
-							}
-						}
-					]
-				}
+					}
+				]
 			}
-		],
+		},
 		"name": "overview2"
 	}`
 }
@@ -133,18 +129,18 @@ func GetValidYAMLFixtureButDifferentName() string {
 iAmOptionalCustomFieldThatShouldBeStored: iAmOptionalCustomValue
 name: overview2
 luigiConfigFragment:
-- data:
-   nodeDefaults:
-     entityType: global
-     isolateView: true
-   nodes:
-   - entityType: global
-     pathSegment: home
-     label: Overview
-     icon: home
-   texts:
-   - locale: de
-     textDictionary:
-       hello: Hallo
+ data:
+  nodeDefaults:
+    entityType: global
+    isolateView: true
+  nodes:
+  - entityType: global
+    pathSegment: home
+    label: Overview
+    icon: home
+  texts:
+  - locale: de
+    textDictionary:
+      hello: Hallo
 `
 }

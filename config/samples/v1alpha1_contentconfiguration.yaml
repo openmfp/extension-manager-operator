@@ -16,20 +16,20 @@ spec:
     content: |
       name: overview
       luigiConfigFragment:
-      - data:
-          nodes:
-          - entityType: global
-            pathSegment: mysegment
-            label: Overview
-            icon: mysegment
-            hideFromNav: true
-            defineEntity:
-              id: example
-            children:
-            - pathSegment: overview
-              label: Overview
-              icon: mysegment
-              url: https://fiddle.luigi-project.io/examples/microfrontends/multipurpose.html
-              context:
-                title: Welcome to OpenMFP Portal
-                content: " "
+       data:
+         nodes:
+         - entityType: global
+           pathSegment: mysegment
+           label: Overview
+           icon: mysegment
+           hideFromNav: true
+           defineEntity:
+             id: example
+           children:
+           - pathSegment: overview
+             label: Overview
+             icon: mysegment
+             url: https://fiddle.luigi-project.io/examples/microfrontends/multipurpose.html
+             context:
+               title: Welcome to OpenMFP Portal
+               content: " "
