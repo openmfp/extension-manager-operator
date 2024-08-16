@@ -146,10 +146,10 @@ func Test_validateSchema(t *testing.T) {
 		},
 		{
 			name: "luigiConfigFragment_is_required",
-			input: ContentConfiguration{
-				Name: "overview",
-			},
-			expectedErrMsg: "The document is not valid:\n[luigiConfigFragment is required]",
+			input: []byte(`{
+				"name": "overview"
+			}`),
+			expectedErrMsg: "The document is not valid:\n[field '(root)' is invalid",
 		},
 		{
 			name: "name_is_required",
