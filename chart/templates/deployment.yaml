@@ -17,6 +17,8 @@ spec:
         sidecar.istio.io/inject: "false"
     spec:
       serviceAccountName: {{ .Release.Name }}
+      imagePullSecrets:
+        - name: {{ .Values.imagePullSecrets }}
       containers:
         - args:
           - operator
@@ -55,6 +57,3 @@ spec:
               cpu: {{ .Values.deployment.resources.requests.cpu }}
               memory: {{ .Values.deployment.resources.requests.memory }}
       terminationGracePeriodSeconds: 10
-
-
-
