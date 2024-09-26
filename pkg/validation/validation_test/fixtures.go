@@ -63,6 +63,43 @@ func GetValidJSON() string {
 	}`
 }
 
+func GetValidJSON_withEmptyLocale() string {
+	return `{
+		"iAmOptionalCustomFieldThatShouldBeStored": "iAmOptionalCustomValue",
+		"luigiConfigFragment": {
+			"data": {
+				"nodeDefaults": {
+					"entityType": "global",
+					"isolateView": true
+				},
+				"nodes": [
+					{
+						"entityType": "global",
+						"icon": "home",
+						"label": "Overview",
+						"pathSegment": "home"
+					}
+				],
+				"texts": [
+					{
+						"locale": "",
+						"textDictionary": {
+							"hello": "Hello"
+						}
+					},
+					{
+						"locale": "de",
+						"textDictionary": {
+							"hello": "Hallo"
+						}
+					}
+				]
+			}
+		},
+		"name": "overview"
+	}`
+}
+
 func GetValidYAML() string {
 	return `
 iAmOptionalCustomFieldThatShouldBeStored: iAmOptionalCustomValue

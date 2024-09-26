@@ -102,20 +102,10 @@ import (
 func main() {
     cC := validation.NewContentConfiguration()
 
-    schema := []byte(`{
-        "$schema": "https://json-schema.org/draft/2020-12/schema",
-        "$id": "https://example.com/schema.json",
-        "type": "object",
-        "properties": {
-            "name": { "type": "string" }
-        },
-        "required": ["name"]
-    }`)
-
     input := []byte(`{ "name": "example" }`)
     contentType := "json"
 
-    result, err := cC.Validate(schema, input, contentType)
+    result, err := cC.Validate(input, contentType)
     if err != nil {
         fmt.Println("Validation failed:", err)
     } else {

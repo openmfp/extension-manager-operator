@@ -27,6 +27,13 @@ func TestValidate(t *testing.T) {
 			expectError: false,
 		},
 		{
+			name:        "valid_JSON_empty_locale",
+			input:       validation_test.GetJSONFixture(validation_test.GetValidJSON_withEmptyLocale()),
+			contentType: "json",
+			expected:    validation_test.GetJSONFixture(validation_test.GetValidJSON_withEmptyLocale()),
+			expectError: false,
+		},
+		{
 			name:        "invalid_JSON_empty_input_ERROR",
 			input:       validation_test.GetJSONFixture(`{"name": "overview",`),
 			contentType: "json",
