@@ -65,7 +65,7 @@
       "textDictionary": {
         "type": "object"
       },
-      "required": ["textDictionary"]
+      "required": ["locale", "textDictionary"]
     }
   },
   "properties": {
@@ -76,7 +76,7 @@
       "$ref": "#/$defs/LuigiConfigFragment"
     }
   },
-  "additionalProperties": false,
+  "additionalProperties": true,
   "type": "object",
   "required": ["name", "luigiConfigFragment"]
 }

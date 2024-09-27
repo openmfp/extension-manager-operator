@@ -68,31 +68,21 @@ func (cC *contentConfiguration) Validate(input []byte, contentType string) (stri
 		return "", ErrorNoValidator
 	}
 
-	return validateJSON(cC.schema, rawJSON)
-}
-
-func validateJSON(schema, input []byte) (string, error) {
-	var config ContentConfiguration
-	if err := json.Unmarshal(input, &config); err != nil {
+	err = validateSchemaBytes(cC.schema, rawJSON)
+	if err == nil {
+		return string(input), err
+	} else {
 		return "", err
 	}
-
-	if err := validateSchema(schema, config); err != nil {
-		return "", err
-	}
-
-	return string(input), nil
 }
 
-// func validateSchema(schema []byte, input ContentConfiguration) (string, error) {
-func validateSchema(schema []byte, input interface{}) error {
-	jsonBytes, err := json.Marshal(input)
-	if err != nil {
-		return ErrorMarshalJSON
-	}
-
+func validateSchemaBytes(schema []byte, input []byte) error {
 	schemaLoader := gojsonschema.NewBytesLoader(schema)
-	documentLoader := gojsonschema.NewBytesLoader(jsonBytes)
+	documentLoader := gojsonschema.NewBytesLoader(input)
+
+	// print json using documentLoader
+	documentLoaderBytes, _ := documentLoader.LoadJSON()
+	fmt.Printf("---- documentLoaderBytes: %s\n", documentLoaderBytes)
 
 	result, err := gojsonschema.Validate(schemaLoader, documentLoader)
 	if err != nil {

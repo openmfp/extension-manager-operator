@@ -63,7 +63,7 @@ func GetValidJSON() string {
 	}`
 }
 
-func GetValidJSON_withEmptyLocale() string {
+func GetValidJSONWithEmptyLocale() string {
 	return `{
 		"iAmOptionalCustomFieldThatShouldBeStored": "iAmOptionalCustomValue",
 		"luigiConfigFragment": {

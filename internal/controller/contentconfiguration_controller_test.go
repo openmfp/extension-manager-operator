@@ -52,7 +52,7 @@ func (suite *ContentConfigurationTestSuite) TestContentConfigurationCreation() {
 					Content:     validation_test.GetYAMLFixture(validation_test.GetValidYAML()),
 				},
 			},
-			expectedResult: validation_test.GetJSONFixture(validation_test.GetValidJSON()),
+			expectedResult: validation_test.GetYAMLFixture(validation_test.GetValidYAML()),
 		},
 		{
 			name:         "TestBothInlineAndRemoteConfiguration",
@@ -66,7 +66,7 @@ func (suite *ContentConfigurationTestSuite) TestContentConfigurationCreation() {
 					URL: "this-url-should-not-be-used",
 				},
 			},
-			expectedResult: validation_test.GetJSONFixture(validation_test.GetValidJSON()),
+			expectedResult: validation_test.GetYAMLFixture(validation_test.GetValidYAML()),
 		},
 		{
 			name:         "TestRemoteContentConfiguration",

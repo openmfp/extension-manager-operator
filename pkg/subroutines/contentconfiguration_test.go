@@ -4,12 +4,14 @@ import (
 	"context"
 	"errors"
 	"net/http"
+	"reflect"
 	"testing"
 	"time"
 
 	"github.com/jarcoal/httpmock"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
+	"gopkg.in/yaml.v2"
 
 	cachev1alpha1 "github.com/openmfp/extension-content-operator/api/v1alpha1"
 	"github.com/openmfp/extension-content-operator/pkg/subroutines/mocks"
@@ -55,10 +57,13 @@ func (suite *ContentConfigurationSubroutineTestSuite) TestCreateAndUpdate_OK() {
 
 	// Then
 	suite.Require().Nil(err)
-	suite.Require().Equal(
+
+	cmp, cmpErr := compareYAML(
 		validation_test.GetJSONFixture(validation_test.GetValidJSON()),
 		contentConfiguration.Status.ConfigurationResult,
 	)
+	suite.Require().Nil(cmpErr)
+	suite.Require().True(cmp)
 
 	// Now lets take the same object and update it
 	// Given
@@ -70,10 +75,12 @@ func (suite *ContentConfigurationSubroutineTestSuite) TestCreateAndUpdate_OK() {
 
 	// Then
 	suite.Require().Nil(err2)
-	suite.Require().Equal(
+	cmp, cmpErr = compareYAML(
 		validation_test.GetJSONFixture(validation_test.GetValidJSONButDifferentName()),
 		contentConfiguration.Status.ConfigurationResult,
 	)
+	suite.Require().Nil(cmpErr)
+	suite.Require().True(cmp)
 }
 
 func (suite *ContentConfigurationSubroutineTestSuite) TestCreateAndUpdate_Error() {
@@ -88,28 +95,33 @@ func (suite *ContentConfigurationSubroutineTestSuite) TestCreateAndUpdate_Error(
 	}
 
 	// When
-	_, err := suite.testObj.Process(context.Background(), contentConfiguration)
+	_, errCmp := suite.testObj.Process(context.Background(), contentConfiguration)
 
 	// Then
-	suite.Require().Nil(err)
-	suite.Require().Equal(
-		validation_test.GetJSONFixture(validation_test.GetValidJSON()),
+	suite.Require().Nil(errCmp)
+
+	// compare configuration and result YAMLs
+	cmp, cmpErr := compareYAML(
+		validation_test.GetYAMLFixture(validation_test.GetValidYAML()),
 		contentConfiguration.Status.ConfigurationResult,
 	)
+	suite.Require().Nil(cmpErr)
+	suite.Require().True(cmp)
 
 	// Given invalid configuration
 	contentConfiguration.Spec.InlineConfiguration.Content = "invalid"
 
 	// When
-	_, err2 := suite.testObj.Process(context.Background(), contentConfiguration)
+	_, errProcessInvalidConfig := suite.testObj.Process(context.Background(), contentConfiguration)
 	time.Sleep(1 * time.Second)
 
 	// Then
-	suite.Require().NotNil(err2)
-	suite.Require().Equal(
-		validation_test.GetJSONFixture(validation_test.GetValidJSON()),
-		contentConfiguration.Status.ConfigurationResult,
-	)
+	suite.Require().NotNil(errProcessInvalidConfig)
+	// result shoundn't change
+	equal, cmpErr := compareYAML(
+		validation_test.GetYAMLFixture(validation_test.GetValidYAML()), contentConfiguration.Status.ConfigurationResult)
+	suite.Require().Nil(cmpErr)
+	suite.Require().True(equal)
 }
 
 func (suite *ContentConfigurationSubroutineTestSuite) TestGetName_OK() {
@@ -152,7 +164,7 @@ func (suite *ContentConfigurationSubroutineTestSuite) TestProcessingConfig() {
 					ContentType: "yaml",
 				},
 			},
-			expectedConfigResult: validation_test.GetJSONFixture(validation_test.GetValidJSON()),
+			expectedConfigResult: validation_test.GetYAMLFixture(validation_test.GetValidYAML()),
 		},
 		{
 			name: "InlineConfigYAML_ValidationError",
@@ -188,7 +200,7 @@ func (suite *ContentConfigurationSubroutineTestSuite) TestProcessingConfig() {
 				},
 			},
 			expectedError: golangCommonErrors.NewOperatorError(
-				errors.New("invalid character 'I' looking for beginning of value"), false, true,
+				errors.New("error validating JSON data"), false, true,
 			),
 		},
 		{
@@ -248,7 +260,9 @@ func (suite *ContentConfigurationSubroutineTestSuite) TestProcessingConfig() {
 				suite.Nil(err)
 			}
 
-			suite.Require().Equal(tt.expectedConfigResult, contentConfiguration.Status.ConfigurationResult)
+			cmp, cmpErr := compareYAML(tt.expectedConfigResult, contentConfiguration.Status.ConfigurationResult)
+			suite.Require().Nil(cmpErr)
+			suite.Require().True(cmp)
 		})
 	}
 }
@@ -337,4 +351,18 @@ func TestService_Do(t *testing.T) {
 			}
 		})
 	}
+}
+
+func compareYAML(doc1 string, doc2 string) (bool, error) {
+	var obj1, obj2 map[string]interface{}
+	errConfig := yaml.Unmarshal([]byte(doc1), &obj1)
+	if errConfig != nil {
+		return false, errConfig
+	}
+	errResult := yaml.Unmarshal([]byte(doc2), &obj2)
+	if errResult != nil {
+		return false, errResult
+	}
+
+	return reflect.DeepEqual(obj1, obj2), nil
 }
