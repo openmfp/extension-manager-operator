@@ -244,3 +244,10 @@ func getJSONSchemaFixture() []byte {
 
 	return schemaJSON
 }
+
+func TestWithSchema(t *testing.T) {
+	cC := NewContentConfiguration()
+	empty := ""
+	err := cC.WithSchema([]byte(empty))
+	assert.Error(t, err)
+}
