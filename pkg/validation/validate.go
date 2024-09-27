@@ -80,10 +80,6 @@ func validateSchemaBytes(schema []byte, input []byte) error {
 	schemaLoader := gojsonschema.NewBytesLoader(schema)
 	documentLoader := gojsonschema.NewBytesLoader(input)
 
-	// print json using documentLoader
-	documentLoaderBytes, _ := documentLoader.LoadJSON()
-	fmt.Printf("---- documentLoaderBytes: %s\n", documentLoaderBytes)
-
 	result, err := gojsonschema.Validate(schemaLoader, documentLoader)
 	if err != nil {
 		return ErrorValidatingJSON
