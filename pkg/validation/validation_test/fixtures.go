@@ -181,3 +181,60 @@ luigiConfigFragment:
       hello: Hallo
 `
 }
+
+func GetluigiConfigFragment() string {
+	return ` {
+        "name": "accounts",
+        "creationTimestamp": "2022-05-17T11:37:17Z",
+        "luigiConfigFragment": {
+            "data": {
+              "nodes": [
+                {
+                  "pathSegment": "create",
+                  "hideFromNav": true,
+                  "entityType": "main",
+                  "loadingIndicator": {
+                    "enabled": false
+                  },
+                  "keepSelectedForChildren": true,
+                  "url": "https://portal.d1.openmfp.dxp.k8s.ondemand.com/ui/account-ui/modal/create",
+                  "children": []
+                },
+                {
+                  "pathSegment": "accounts",
+                  "label": "Accounts",
+                  "entityType": "main",
+                  "loadingIndicator": {
+                    "enabled": false
+                  },
+                  "keepSelectedForChildren": true,
+                  "url": "https://portal.d1.openmfp.dxp.k8s.ondemand.com/ui/account-ui/accounts",
+                  "children": [
+                    {
+                      "pathSegment": ":accountId",
+                      "hideFromNav": true,
+                      "keepSelectedForChildren": false,
+                      "defineEntity": {
+                        "id": "account"
+                      },
+                      "context": {
+                        "accountId": ":accountId"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "pathSegment": "overview",
+                  "label": "Overview",
+                  "entityType": "main.account",
+                  "loadingIndicator": {
+                    "enabled": false
+                  },
+                  "visibleForFeatureToggles": ["oldAccount"],
+                  "url": "https://portal.d1.openmfp.dxp.k8s.ondemand.com/ui/account-ui/accounts/:accountId"
+                }
+              ]
+            }
+          }
+      }`
+}

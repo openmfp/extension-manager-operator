@@ -100,6 +100,13 @@ func TestValidate(t *testing.T) {
 			expected:    validation_test.GetJSONFixture(validation_test.GetValidJSONWithEmptyLocale()),
 			expectError: false,
 		},
+		{
+			name:        "test_luigiConfigFragment",
+			input:       validation_test.GetJSONFixture(validation_test.GetluigiConfigFragment()),
+			contentType: "json",
+			expected:    validation_test.GetJSONFixture(validation_test.GetluigiConfigFragment()),
+			expectError: false,
+		},
 	}
 
 	cC := NewContentConfiguration()
