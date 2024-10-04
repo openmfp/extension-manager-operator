@@ -175,12 +175,6 @@ func (suite *ContentConfigurationSubroutineTestSuite) TestProcessingConfig() {
 					ContentType: "yaml",
 				},
 			},
-			// expectedError: golangCommonErrors.NewOperatorError(
-			// 	errors.New(
-			// 		"error unmarshalling YAML: yaml: unmarshal errors:\n  line 1: "+
-			// 			"cannot unmarshal !!str `I am no...` into map[string]interface {}"),
-			// 	false, true,
-			// ),
 		},
 		{
 			name: "InlineConfigJSON_OK",
@@ -200,9 +194,6 @@ func (suite *ContentConfigurationSubroutineTestSuite) TestProcessingConfig() {
 					ContentType: "json",
 				},
 			},
-			// expectedError: golangCommonErrors.NewOperatorError(
-			// 	errors.New("error validating JSON data"), false, true,
-			// ),
 		},
 		{
 			name: "RemoteConfig_OK",
