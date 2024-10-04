@@ -448,7 +448,7 @@ func (suite *ContentConfigurationSubroutineTestSuite) Test_IncompatibleSchemaUpd
 
 }
 
-func getCondition(conditions []apimachinery.Condition, conditionType string) apimachinery.Condition {
+func getCondition(conditions []apimachinery.Condition, conditionType string) apimachinery.Condition { // nolint: unparam
 	for _, condition := range conditions {
 		if condition.Type == conditionType {
 			return condition
