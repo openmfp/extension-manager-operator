@@ -77,7 +77,12 @@ func (r *ContentConfigurationSubroutine) Process(
 	validatedConfig, err := r.validator.Validate(rawConfig, contentType)
 	if err != nil {
 		log.Err(err).Msg("failed to validate configuration")
-		condition := apimachinery.Condition{Type: "InvalidConfiguration", Status: "True", Reason: "ValidationFailed", Message: err.Error()}
+		condition := apimachinery.Condition{
+			Type:    "InvalidConfiguration",
+			Status:  "True",
+			Reason:  "ValidationFailed",
+			Message: err.Error(),
+		}
 		instance.Status.Conditions = append(instance.Status.Conditions, condition)
 		return ctrl.Result{}, errors.NewOperatorError(err, false, true)
 	} else {

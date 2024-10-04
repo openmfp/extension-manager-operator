@@ -397,7 +397,9 @@ func (suite *ContentConfigurationSubroutineTestSuite) Test_IncompatibleSchemaUpd
 	}
 
 	// Simulate incompatible schema update
-	contentConfiguration.Spec.InlineConfiguration.Content = validation_test.GetYAMLFixture(validation_test.GetValidIncompatibleYAML())
+	contentConfiguration.Spec.InlineConfiguration.Content = validation_test.GetYAMLFixture(
+		validation_test.GetValidIncompatibleYAML(),
+	)
 
 	// When
 	result, err := suite.testObj.Process(context.Background(), contentConfiguration)
@@ -412,8 +414,12 @@ func (suite *ContentConfigurationSubroutineTestSuite) Test_IncompatibleSchemaUpd
 	)
 	suite.Require().Nil(cmpErr)
 	suite.Require().True(cmp)
-	suite.Require().True(getCondition(contentConfiguration.Status.Conditions, "InvalidConfiguration").Status == apimachinery.ConditionTrue)
-	suite.Require().Equal(getCondition(contentConfiguration.Status.Conditions, "InvalidConfiguration").Reason, "ValidationFailed")
+	suite.Require().True(
+		getCondition(contentConfiguration.Status.Conditions, "InvalidConfiguration").Status == apimachinery.ConditionTrue,
+	)
+	suite.Require().Equal(
+		getCondition(contentConfiguration.Status.Conditions, "InvalidConfiguration").Reason, "ValidationFailed",
+	)
 }
 
 func getCondition(conditions []apimachinery.Condition, conditionType string) apimachinery.Condition {
