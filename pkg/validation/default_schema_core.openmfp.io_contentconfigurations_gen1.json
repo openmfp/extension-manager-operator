@@ -52,9 +52,33 @@
         },
         "icon": {
           "type": "string"
+        },
+        "keepSelectedForChildren": {
+          "type": "boolean"
+        },
+        "url": {
+          "type": "string"
+        },
+        "children": {
+          "items": {
+            "$ref": "#/$defs/NodeChild"
+          },
+          "type": "array"
+        },
+        "loadingIndicator": {
+          "type": "object"
+        },
+        "hideFromNav": {
+          "type": "boolean"
+        },
+        "visibleForFeatureToggles": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
         }
       },
-      "additionalProperties": true,
+      "additionalProperties": false,
       "type": "object"
     },
     "Text": {
@@ -66,6 +90,23 @@
         "type": "object"
       },
       "required": ["locale", "textDictionary"]
+    },
+    "NodeChild": {
+      "pathSegment": {
+        "type": "string"
+      },
+      "hideFromNav": {
+        "type": "boolean"
+      },
+      "keepSelectedForChildren": {
+        "type": "boolean"
+      },
+      "defineEntity": {
+        "type": "object"
+      },
+      "context": {
+        "type": "object"
+      }
     }
   },
   "properties": {

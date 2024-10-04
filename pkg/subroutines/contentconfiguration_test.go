@@ -18,6 +18,7 @@ import (
 	"github.com/openmfp/extension-content-operator/pkg/validation"
 	"github.com/openmfp/extension-content-operator/pkg/validation/validation_test"
 	golangCommonErrors "github.com/openmfp/golang-commons/errors"
+	apimachinery "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 type ContentConfigurationSubroutineTestSuite struct {
@@ -365,4 +366,61 @@ func compareYAML(doc1 string, doc2 string) (bool, error) {
 	}
 
 	return reflect.DeepEqual(obj1, obj2), nil
+}
+
+func (suite *ContentConfigurationSubroutineTestSuite) Test_IncompatibleSchemaUpdate() {
+	// Given
+	contentConfiguration := &cachev1alpha1.ContentConfiguration{
+		Spec: cachev1alpha1.ContentConfigurationSpec{
+			InlineConfiguration: cachev1alpha1.InlineConfiguration{
+				Content:     validation_test.GetYAMLFixture(validation_test.GetValidYAML()),
+				ContentType: "yaml",
+			},
+		},
+		Status: cachev1alpha1.ContentConfigurationStatus{
+			Conditions: []apimachinery.Condition{
+				{
+					Type:    "Ready",
+					Status:  "True",
+					Message: "The resource is ready",
+					Reason:  "Complete",
+				},
+				{
+					Message: "The subroutine is complete",
+					Reason:  "Complete",
+					Status:  "True",
+					Type:    "ContentConfigurationSubroutine_Ready",
+				},
+			},
+			ConfigurationResult: validation_test.GetYAMLFixture(validation_test.GetValidYAML()),
+		},
+	}
+
+	// Simulate incompatible schema update
+	contentConfiguration.Spec.InlineConfiguration.Content = validation_test.GetYAMLFixture(validation_test.GetValidIncompatibleYAML())
+
+	// When
+	result, err := suite.testObj.Process(context.Background(), contentConfiguration)
+
+	// Then: should keep previously valid and currently invalid result
+	suite.Require().Error(err.Err())
+	suite.Require().Empty(result)
+
+	cmp, cmpErr := compareYAML(
+		validation_test.GetJSONFixture(validation_test.GetValidJSON()),
+		contentConfiguration.Status.ConfigurationResult,
+	)
+	suite.Require().Nil(cmpErr)
+	suite.Require().True(cmp)
+	suite.Require().True(getCondition(contentConfiguration.Status.Conditions, "InvalidConfiguration").Status == apimachinery.ConditionTrue)
+	suite.Require().Equal(getCondition(contentConfiguration.Status.Conditions, "InvalidConfiguration").Reason, "ValidationFailed")
+}
+
+func getCondition(conditions []apimachinery.Condition, conditionType string) apimachinery.Condition {
+	for _, condition := range conditions {
+		if condition.Type == conditionType {
+			return condition
+		}
+	}
+	return apimachinery.Condition{}
 }
