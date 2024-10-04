@@ -84,7 +84,7 @@ func (r *ContentConfigurationSubroutine) Process(
 			Message: err.Error(),
 		}
 		instance.Status.Conditions = append(instance.Status.Conditions, condition)
-		return ctrl.Result{}, errors.NewOperatorError(err, false, true)
+		return ctrl.Result{}, nil
 	} else {
 		var conditions []apimachinery.Condition
 		for _, condition := range instance.Status.Conditions {
