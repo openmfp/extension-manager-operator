@@ -197,7 +197,7 @@ func GetluigiConfigFragment() string {
                     "enabled": false
                   },
                   "keepSelectedForChildren": true,
-                  "url": "https://portal.d1.openmfp.dxp.k8s.ondemand.com/ui/account-ui/modal/create",
+                  "url": "https://some.url/modal/create",
                   "children": []
                 },
                 {
@@ -208,7 +208,7 @@ func GetluigiConfigFragment() string {
                     "enabled": false
                   },
                   "keepSelectedForChildren": true,
-                  "url": "https://portal.d1.openmfp.dxp.k8s.ondemand.com/ui/account-ui/accounts",
+                  "url": "https://some.url/accounts",
                   "children": [
                     {
                       "pathSegment": ":accountId",
@@ -231,7 +231,7 @@ func GetluigiConfigFragment() string {
                     "enabled": false
                   },
                   "visibleForFeatureToggles": ["oldAccount"],
-                  "url": "https://portal.d1.openmfp.dxp.k8s.ondemand.com/ui/account-ui/accounts/:accountId"
+                  "url": "https://some.url/accounts/:accountId"
                 }
               ]
             }
