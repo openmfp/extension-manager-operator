@@ -406,7 +406,7 @@ func (suite *ContentConfigurationSubroutineTestSuite) Test_IncompatibleSchemaUpd
 
 	// Then: should keep previously valid and currently invalid result
 	suite.Require().Error(err.Err())
-	suite.Require().Equal(result.RequeueAfter, 90*time.Second)
+	suite.Require().Empty(result)
 
 	cmp, cmpErr := compareYAML(
 		validation_test.GetJSONFixture(validation_test.GetValidJSON()),
@@ -414,6 +414,12 @@ func (suite *ContentConfigurationSubroutineTestSuite) Test_IncompatibleSchemaUpd
 	)
 	suite.Require().Nil(cmpErr)
 	suite.Require().True(cmp)
+	suite.Require().True(
+		getCondition(contentConfiguration.Status.Conditions, "InvalidConfiguration").Status == apimachinery.ConditionTrue,
+	)
+	suite.Require().Equal(
+		getCondition(contentConfiguration.Status.Conditions, "InvalidConfiguration").Reason, "ValidationFailed",
+	)
 
 	// make it valid and check if condition is removed
 	contentConfiguration.Spec.InlineConfiguration.Content = validation_test.GetYAMLFixture(validation_test.GetValidYAML())
@@ -429,4 +435,24 @@ func (suite *ContentConfigurationSubroutineTestSuite) Test_IncompatibleSchemaUpd
 	)
 	suite.Require().NoError(cmpErr)
 	suite.Require().True(cmp)
+
+	suite.Require().Equal(
+		getCondition(contentConfiguration.Status.Conditions, "InvalidConfiguration").Reason, "",
+	)
+	suite.Require().Equal(
+		getCondition(contentConfiguration.Status.Conditions, "InvalidConfiguration").Message, "",
+	)
+	suite.Require().Equal(
+		getCondition(contentConfiguration.Status.Conditions, "InvalidConfiguration").Type, "",
+	)
+
+}
+
+func getCondition(conditions []apimachinery.Condition, conditionType string) apimachinery.Condition { // nolint: unparam
+	for _, condition := range conditions {
+		if condition.Type == conditionType {
+			return condition
+		}
+	}
+	return apimachinery.Condition{}
 }
