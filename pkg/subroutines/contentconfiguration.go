@@ -129,7 +129,7 @@ func (r *ContentConfigurationSubroutine) getRemoteConfig(url string) (res []byte
 }
 
 func setValidatedConditionStatus(conditions []apimachinery.Condition, status string) []apimachinery.Condition {
-	var newConditions []apimachinery.Condition
+	var newConditions []apimachinery.Condition // nolint: prealloc
 	found := false
 	for _, condition := range conditions {
 		if condition.Type == "Validated" {
