@@ -121,6 +121,26 @@ luigiConfigFragment:
 `
 }
 
+func GetValidIncompatibleYAML() string {
+	return `
+iAmOptionalCustomFieldThatShouldBeStored: iAmOptionalCustomValue
+name: overview
+luigiConfigFragment:
+ data:
+  nodeDefaults:
+    entityType: global
+    isolateView: true
+  nodes:
+  - entityType: global
+    pathSegment: home
+    label: Overview
+    icon: home
+  texts:
+  - textDictionary:
+      hello: Hallo
+`
+}
+
 func GetInvalidTypeYAML() string {
 	return `
 name: overview
