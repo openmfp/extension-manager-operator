@@ -406,10 +406,10 @@ func (suite *ContentConfigurationSubroutineTestSuite) Test_IncompatibleSchemaUpd
 	suite.Require().Nil(cmpErr)
 	suite.Require().True(cmp)
 	suite.Require().True(
-		getCondition(contentConfiguration.Status.Conditions, "InvalidConfiguration").Status == apimachinery.ConditionTrue,
+		getCondition(contentConfiguration.Status.Conditions, "Validated").Status == apimachinery.ConditionFalse,
 	)
 	suite.Require().Equal(
-		getCondition(contentConfiguration.Status.Conditions, "InvalidConfiguration").Reason, "ValidationFailed",
+		getCondition(contentConfiguration.Status.Conditions, "Validated").Reason, "ValidationFailed",
 	)
 
 	// make it valid and check if condition is removed
@@ -428,13 +428,10 @@ func (suite *ContentConfigurationSubroutineTestSuite) Test_IncompatibleSchemaUpd
 	suite.Require().True(cmp)
 
 	suite.Require().Equal(
-		getCondition(contentConfiguration.Status.Conditions, "InvalidConfiguration").Reason, "",
+		getCondition(contentConfiguration.Status.Conditions, "Validated").Reason, "ValidationSucceeded",
 	)
 	suite.Require().Equal(
-		getCondition(contentConfiguration.Status.Conditions, "InvalidConfiguration").Message, "",
-	)
-	suite.Require().Equal(
-		getCondition(contentConfiguration.Status.Conditions, "InvalidConfiguration").Type, "",
+		getCondition(contentConfiguration.Status.Conditions, "Validated").Type, "Validated",
 	)
 
 }
@@ -446,4 +443,81 @@ func getCondition(conditions []apimachinery.Condition, conditionType string) api
 		}
 	}
 	return apimachinery.Condition{}
+}
+
+func (suite *ContentConfigurationSubroutineTestSuite) TestSetValidatedConditionStatus() {
+	tests := []struct {
+		name               string
+		initialConditions  []apimachinery.Condition
+		status             string
+		expectedConditions []apimachinery.Condition
+	}{
+		{
+			name: "ConditionExists_ValidationSucceeded",
+			initialConditions: []apimachinery.Condition{
+				{
+					Type:   "Validated",
+					Status: "False",
+					Reason: "ValidationFailed",
+				},
+			},
+			status: "True",
+			expectedConditions: []apimachinery.Condition{
+				{
+					Type:   "Validated",
+					Status: "True",
+					Reason: "ValidationSucceeded",
+				},
+			},
+		},
+		{
+			name: "ConditionExists_ValidationFailed",
+			initialConditions: []apimachinery.Condition{
+				{
+					Type:   "Validated",
+					Status: "True",
+					Reason: "ValidationSucceeded",
+				},
+			},
+			status: "False",
+			expectedConditions: []apimachinery.Condition{
+				{
+					Type:   "Validated",
+					Status: "False",
+					Reason: "ValidationFailed",
+				},
+			},
+		},
+		{
+			name:              "ConditionDoesNotExist_ValidationSucceeded",
+			initialConditions: []apimachinery.Condition{},
+			status:            "True",
+			expectedConditions: []apimachinery.Condition{
+				{
+					Type:   "Validated",
+					Status: "True",
+					Reason: "ValidationSucceeded",
+				},
+			},
+		},
+		{
+			name:              "ConditionDoesNotExist_ValidationFailed",
+			initialConditions: []apimachinery.Condition{},
+			status:            "False",
+			expectedConditions: []apimachinery.Condition{
+				{
+					Type:   "Validated",
+					Status: "False",
+					Reason: "ValidationFailed",
+				},
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		suite.Run(tt.name, func() {
+			result := setValidatedConditionStatus(tt.initialConditions, tt.status)
+			suite.Equal(tt.expectedConditions, result)
+		})
+	}
 }

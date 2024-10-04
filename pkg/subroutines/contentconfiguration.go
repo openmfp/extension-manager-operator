@@ -78,21 +78,15 @@ func (r *ContentConfigurationSubroutine) Process(
 	if err != nil {
 		log.Err(err).Msg("failed to validate configuration")
 		condition := apimachinery.Condition{
-			Type:    "InvalidConfiguration",
-			Status:  "True",
+			Type:    "Validated",
+			Status:  "False",
 			Reason:  "ValidationFailed",
 			Message: err.Error(),
 		}
 		instance.Status.Conditions = append(instance.Status.Conditions, condition)
 		return ctrl.Result{}, nil
 	} else {
-		var conditions []apimachinery.Condition
-		for _, condition := range instance.Status.Conditions {
-			if condition.Type != "InvalidConfiguration" {
-				conditions = append(conditions, condition)
-			}
-		}
-		instance.Status.Conditions = conditions
+		instance.Status.Conditions = setValidatedConditionStatus(instance.Status.Conditions, "True")
 	}
 
 	instance.Status.ConfigurationResult = validatedConfig
@@ -132,4 +126,35 @@ func (r *ContentConfigurationSubroutine) getRemoteConfig(url string) (res []byte
 	// https://github.com/openmfp/extension-content-operator/pull/23#discussion_r1622598363
 
 	return body, nil, false
+}
+
+func setValidatedConditionStatus(conditions []apimachinery.Condition, status string) []apimachinery.Condition {
+	var newConditions []apimachinery.Condition
+	found := false
+	for _, condition := range conditions {
+		if condition.Type == "Validated" {
+			condition.Status = apimachinery.ConditionStatus(status)
+			if status == "True" {
+				condition.Reason = "ValidationSucceeded"
+			} else {
+				condition.Reason = "ValidationFailed"
+			}
+			found = true
+		}
+		newConditions = append(newConditions, condition)
+	}
+	// create condition if it doesn't exist
+	if !found {
+		condition := apimachinery.Condition{
+			Type:   "Validated",
+			Status: apimachinery.ConditionStatus(status),
+		}
+		if status == "True" {
+			condition.Reason = "ValidationSucceeded"
+		} else {
+			condition.Reason = "ValidationFailed"
+		}
+		newConditions = append(newConditions, condition)
+	}
+	return newConditions
 }
