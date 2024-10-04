@@ -420,6 +420,32 @@ func (suite *ContentConfigurationSubroutineTestSuite) Test_IncompatibleSchemaUpd
 	suite.Require().Equal(
 		getCondition(contentConfiguration.Status.Conditions, "InvalidConfiguration").Reason, "ValidationFailed",
 	)
+
+	// make it valid and check if condition is removed
+	contentConfiguration.Spec.InlineConfiguration.Content = validation_test.GetYAMLFixture(validation_test.GetValidYAML())
+
+	// When
+	result, err = suite.testObj.Process(context.Background(), contentConfiguration)
+	suite.Require().Nil(err)
+	suite.Require().Empty(result)
+
+	cmp, cmpErr = compareYAML(
+		validation_test.GetYAMLFixture(validation_test.GetValidYAML()),
+		contentConfiguration.Status.ConfigurationResult,
+	)
+	suite.Require().NoError(cmpErr)
+	suite.Require().True(cmp)
+
+	suite.Require().Equal(
+		getCondition(contentConfiguration.Status.Conditions, "InvalidConfiguration").Reason, "",
+	)
+	suite.Require().Equal(
+		getCondition(contentConfiguration.Status.Conditions, "InvalidConfiguration").Message, "",
+	)
+	suite.Require().Equal(
+		getCondition(contentConfiguration.Status.Conditions, "InvalidConfiguration").Type, "",
+	)
+
 }
 
 func getCondition(conditions []apimachinery.Condition, conditionType string) apimachinery.Condition {
