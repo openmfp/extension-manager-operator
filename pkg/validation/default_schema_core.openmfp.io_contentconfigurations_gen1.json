@@ -145,7 +145,7 @@
           "type": "object"
         },
         "webcomponent": {
-          "ref": "#/$defs/Webcomponent"
+          "$ref": "#/$defs/Webcomponent"
         }
       },
       "additionalProperties": false,
