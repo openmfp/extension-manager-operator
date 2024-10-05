@@ -322,6 +322,12 @@ func TestService_Do(t *testing.T) {
 			mockError:   errors.New("network error"),
 			expectError: true,
 		},
+		{
+			name:        "invalidurl",
+			url:         "://invalid-url",
+			mockError:   errors.New("network error"),
+			expectError: true,
+		},
 	}
 
 	for _, tt := range tests {
