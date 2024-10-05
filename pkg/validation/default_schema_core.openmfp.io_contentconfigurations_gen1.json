@@ -45,6 +45,26 @@
       "type": "object",
       "required": []
     },
+    "Webcomponent": {
+      "properties": {
+        "selfRegistered": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": []
+    },
+    "Entity": {
+      "properties": {
+        "id": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": []
+    },
     "LuigiConfigFragment": {
       "properties": {
         "data": {
@@ -87,9 +107,12 @@
         },
         "children": {
           "items": {
-            "$ref": "#/$defs/NodeChild"
+            "$ref": "#/$defs/Node"
           },
           "type": "array"
+        },
+        "defineEntity": {
+          "$ref": "#/$defs/Entity"
         },
         "loadingIndicator": {
           "type": "object"
@@ -102,37 +125,46 @@
             "type": "string"
           },
           "type": "array"
+        },
+        "virtualTree": {
+          "type": "boolean"
+        },
+        "requiredIFramePermissions": {
+          "type": "object"
+        },
+        "compound": {
+            "type": "object"
+        },
+        "initialRoute": {
+          "type": "string"
+        },
+        "layoutConfig": {
+          "type": "object"
+        },
+        "context": {
+          "type": "object"
+        },
+        "webcomponent": {
+          "ref": "#/$defs/Webcomponent"
         }
       },
       "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "required": []
     },
     "Text": {
-      "locale": {
-        "type": "string",
-        "minLength": 0
+      "properties": {
+        "locale": {
+          "type": "string",
+          "minLength": 0
+        },
+        "textDictionary": {
+          "type": "object"
+        }
       },
-      "textDictionary": {
-        "type": "object"
-      },
+      "additionalProperties": false,
+      "type": "object",
       "required": ["locale", "textDictionary"]
-    },
-    "NodeChild": {
-      "pathSegment": {
-        "type": "string"
-      },
-      "hideFromNav": {
-        "type": "boolean"
-      },
-      "keepSelectedForChildren": {
-        "type": "boolean"
-      },
-      "defineEntity": {
-        "type": "object"
-      },
-      "context": {
-        "type": "object"
-      }
     }
   },
   "properties": {
