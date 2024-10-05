@@ -50,6 +50,9 @@
         "label": {
           "type": "string"
         },
+        "category": {
+          "type": "string"
+        },
         "icon": {
           "type": "string"
         },
