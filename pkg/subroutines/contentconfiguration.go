@@ -6,6 +6,7 @@ import (
 	"io"
 	"net/http"
 
+	"github.com/rs/zerolog/log"
 	ctrl "sigs.k8s.io/controller-runtime"
 
 	"github.com/openmfp/golang-commons/controller/lifecycle"
@@ -44,9 +45,7 @@ func (r *ContentConfigurationSubroutine) GetName() string {
 	return ContentConfigurationSubroutineName
 }
 
-func (r *ContentConfigurationSubroutine) Finalize(
-	ctx context.Context,
-	runtimeObj lifecycle.RuntimeObject) (ctrl.Result, errors.OperatorError) {
+func (r *ContentConfigurationSubroutine) Finalize(_ context.Context, _ lifecycle.RuntimeObject) (ctrl.Result, errors.OperatorError) {
 	return ctrl.Result{}, nil
 }
 
@@ -117,7 +116,11 @@ func (r *ContentConfigurationSubroutine) getRemoteConfig(url string) (res []byte
 	if err != nil {
 		return nil, fmt.Errorf("request failed: %v", err), false
 	}
-	defer resp.Body.Close() // nolint: errcheck
+	defer func() {
+		if cerr := resp.Body.Close(); cerr != nil {
+			log.Err(cerr).Msg("failed to close response body")
+		}
+	}()
 
 	if resp.StatusCode != http.StatusOK {
 		// Give the caller signal to retry if we have 5xx status codes
