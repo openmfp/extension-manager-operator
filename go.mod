@@ -4,7 +4,7 @@ go 1.22.5
 
 require (
 	github.com/jarcoal/httpmock v1.3.1
-	github.com/openmfp/golang-commons v0.71.0
+	github.com/openmfp/golang-commons v0.72.0
 	github.com/pkg/errors v0.9.1
 	github.com/rs/zerolog v1.33.0
 	github.com/spf13/cobra v1.8.1
