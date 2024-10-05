@@ -29,6 +29,22 @@
       "type": "object",
       "required": ["nodes"]
     },
+    "Category": {
+      "properties": {
+        "label": {
+          "type": "string"
+        },
+        "icon": {
+          "type": "string"
+        },
+        "collapsible": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": []
+    },
     "LuigiConfigFragment": {
       "properties": {
         "data": {
@@ -51,7 +67,7 @@
           "type": "string"
         },
         "category": {
-          "type": "string"
+          "type": ["string", "#/$defs/Category"]
         },
         "icon": {
           "type": "string"
