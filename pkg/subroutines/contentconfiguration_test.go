@@ -9,7 +9,9 @@ import (
 	"time"
 
 	"github.com/jarcoal/httpmock"
+	"github.com/openmfp/golang-commons/logger"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
 	"gopkg.in/yaml.v2"
 
@@ -281,6 +283,8 @@ func (suite *ContentConfigurationSubroutineTestSuite) TestFinalizers_OK() {
 }
 
 func TestService_Do(t *testing.T) {
+	log, err := logger.New(logger.DefaultConfig())
+	require.NoError(t, err)
 	tests := []struct {
 		name           string
 		url            string
@@ -335,7 +339,7 @@ func TestService_Do(t *testing.T) {
 
 			r := NewContentConfigurationSubroutine(validation.NewContentConfiguration(), http.DefaultClient)
 
-			body, err, _ := r.getRemoteConfig(tt.url)
+			body, err, _ := r.getRemoteConfig(tt.url, log)
 			if tt.expectError {
 				assert.Error(t, err)
 			} else {

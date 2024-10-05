@@ -6,7 +6,6 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/rs/zerolog/log"
 	ctrl "sigs.k8s.io/controller-runtime"
 
 	"github.com/openmfp/golang-commons/controller/lifecycle"
@@ -68,7 +67,7 @@ func (r *ContentConfigurationSubroutine) Process(
 		contentType = instance.Spec.InlineConfiguration.ContentType
 		rawConfig = []byte(instance.Spec.InlineConfiguration.Content)
 	case instance.Spec.RemoteConfiguration.URL != "":
-		bytes, err, retry := r.getRemoteConfig(instance.Spec.RemoteConfiguration.URL)
+		bytes, err, retry := r.getRemoteConfig(instance.Spec.RemoteConfiguration.URL, log)
 		if err != nil {
 			log.Err(err).Msg("failed to fetch remote configuration")
 
@@ -106,7 +105,7 @@ func (r *ContentConfigurationSubroutine) Process(
 }
 
 // Do makes an HTTP request to the specified URL.
-func (r *ContentConfigurationSubroutine) getRemoteConfig(url string) (res []byte, err error, retry bool) {
+func (r *ContentConfigurationSubroutine) getRemoteConfig(url string, log *logger.Logger) (res []byte, err error, retry bool) {
 	req, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create request: %v", err), false
