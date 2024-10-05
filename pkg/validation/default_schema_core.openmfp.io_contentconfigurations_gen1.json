@@ -67,7 +67,14 @@
           "type": "string"
         },
         "category": {
-          "type": ["string", "#/$defs/Category"]
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/$defs/Category"
+            }
+          ]
         },
         "icon": {
           "type": "string"
