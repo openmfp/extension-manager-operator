@@ -13,12 +13,13 @@ import (
 	"github.com/stretchr/testify/suite"
 	"gopkg.in/yaml.v2"
 
+	golangCommonErrors "github.com/openmfp/golang-commons/errors"
+	apimachinery "k8s.io/apimachinery/pkg/apis/meta/v1"
+
 	cachev1alpha1 "github.com/openmfp/extension-content-operator/api/v1alpha1"
 	"github.com/openmfp/extension-content-operator/pkg/subroutines/mocks"
 	"github.com/openmfp/extension-content-operator/pkg/validation"
 	"github.com/openmfp/extension-content-operator/pkg/validation/validation_test"
-	golangCommonErrors "github.com/openmfp/golang-commons/errors"
-	apimachinery "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 type ContentConfigurationSubroutineTestSuite struct {
@@ -406,10 +407,10 @@ func (suite *ContentConfigurationSubroutineTestSuite) Test_IncompatibleSchemaUpd
 	suite.Require().Nil(cmpErr)
 	suite.Require().True(cmp)
 	suite.Require().True(
-		getCondition(contentConfiguration.Status.Conditions, "Validated").Status == apimachinery.ConditionFalse,
+		getCondition(contentConfiguration.Status.Conditions, ValidationConditionType).Status == apimachinery.ConditionFalse,
 	)
 	suite.Require().Equal(
-		getCondition(contentConfiguration.Status.Conditions, "Validated").Reason, "ValidationFailed",
+		"ValidationFailed", getCondition(contentConfiguration.Status.Conditions, ValidationConditionType).Reason,
 	)
 
 	// make it valid and check if condition is removed
@@ -428,12 +429,8 @@ func (suite *ContentConfigurationSubroutineTestSuite) Test_IncompatibleSchemaUpd
 	suite.Require().True(cmp)
 
 	suite.Require().Equal(
-		getCondition(contentConfiguration.Status.Conditions, "Validated").Reason, "ValidationSucceeded",
+		"ValidationSucceeded", getCondition(contentConfiguration.Status.Conditions, ValidationConditionType).Reason,
 	)
-	suite.Require().Equal(
-		getCondition(contentConfiguration.Status.Conditions, "Validated").Type, "Validated",
-	)
-
 }
 
 func getCondition(conditions []apimachinery.Condition, conditionType string) apimachinery.Condition { // nolint: unparam

@@ -8,17 +8,23 @@ import (
 
 	ctrl "sigs.k8s.io/controller-runtime"
 
-	"github.com/openmfp/extension-content-operator/api/v1alpha1"
-	"github.com/openmfp/extension-content-operator/pkg/validation"
 	"github.com/openmfp/golang-commons/controller/lifecycle"
 	"github.com/openmfp/golang-commons/errors"
 	"github.com/openmfp/golang-commons/logger"
 	"k8s.io/apimachinery/pkg/api/meta"
 	apimachinery "k8s.io/apimachinery/pkg/apis/meta/v1"
+
+	"github.com/openmfp/extension-content-operator/api/v1alpha1"
+	"github.com/openmfp/extension-content-operator/pkg/validation"
 )
 
 const (
 	ContentConfigurationSubroutineName = "ContentConfigurationSubroutine"
+	ValidationConditionType            = "Valid"
+	ValidationConditionReasonSuccess   = "ValidationSucceeded"
+	ValidationConditionReasonFailed    = "ValidationFailed"
+	ConditionStatusTrue                = "True"
+	ConditionStatusFalse               = "False"
 )
 
 type ContentConfigurationSubroutine struct {
@@ -79,19 +85,19 @@ func (r *ContentConfigurationSubroutine) Process(
 	if err != nil {
 		log.Err(err).Msg("failed to validate configuration")
 		condition := apimachinery.Condition{
-			Type:    "Validated",
-			Status:  "False",
-			Reason:  "ValidationFailed",
+			Type:    ValidationConditionType,
+			Status:  ConditionStatusFalse,
+			Reason:  ValidationConditionReasonFailed,
 			Message: err.Error(),
 		}
 		meta.SetStatusCondition(&instance.Status.Conditions, condition)
 		return ctrl.Result{}, nil
 	} else {
 		condition := apimachinery.Condition{
-			Type:    "Validated",
-			Status:  "True",
-			Reason:  "ValidationSucceeded",
-			Message: "",
+			Type:    ValidationConditionType,
+			Status:  ConditionStatusTrue,
+			Reason:  ValidationConditionReasonSuccess,
+			Message: "OK",
 		}
 		meta.SetStatusCondition(&instance.Status.Conditions, condition)
 	}
