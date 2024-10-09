@@ -1,10 +1,9 @@
 module github.com/openmfp/extension-content-operator
 
-go 1.23
-
-toolchain go1.23.2
+go 1.22.5
 
 require (
+	github.com/invopop/jsonschema v0.12.0
 	github.com/jarcoal/httpmock v1.3.1
 	github.com/openmfp/golang-commons v0.72.0
 	github.com/pkg/errors v0.9.1
@@ -49,7 +48,6 @@ require (
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/imdario/mergo v0.3.16 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
-	github.com/invopop/jsonschema v0.12.0 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/mailru/easyjson v0.7.7 // indirect
@@ -67,7 +65,6 @@ require (
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/stretchr/objx v0.5.2 // indirect
 	github.com/vektah/gqlparser/v2 v2.5.16 // indirect
-	github.com/vektra/mockery/v2 v2.46.2 // indirect
 	github.com/wk8/go-ordered-map/v2 v2.1.8 // indirect
 	github.com/x448/float16 v0.8.4 // indirect
 	github.com/xeipuuv/gojsonpointer v0.0.0-20180127040702-4e3ac2762d5f // indirect
