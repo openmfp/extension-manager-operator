@@ -34,7 +34,6 @@ func GetYAMLFixture(input string) string {
 
 func GetValidJSON() string {
 	return `{
-		"iAmOptionalCustomFieldThatShouldBeStored": "iAmOptionalCustomValue",
 		"luigiConfigFragment": {
 			"data": {
 				"nodeDefaults": {
@@ -65,7 +64,6 @@ func GetValidJSON() string {
 
 func GetValidJSONWithEmptyLocale() string {
 	return `{
-		"iAmOptionalCustomFieldThatShouldBeStored": "iAmOptionalCustomValue",
 		"luigiConfigFragment": {
 			"data": {
 				"nodeDefaults": {
@@ -102,7 +100,6 @@ func GetValidJSONWithEmptyLocale() string {
 
 func GetValidYAML() string {
 	return `
-iAmOptionalCustomFieldThatShouldBeStored: iAmOptionalCustomValue
 name: overview
 luigiConfigFragment:
  data:
@@ -152,7 +149,6 @@ luigiConfigFragment:
 
 func GetValidJSONButDifferentName() string {
 	return `{
-		"iAmOptionalCustomFieldThatShouldBeStored": "iAmOptionalCustomValue",
 		"luigiConfigFragment": {
 			"data": {
 				"nodeDefaults": {
@@ -183,7 +179,6 @@ func GetValidJSONButDifferentName() string {
 
 func GetValidYAMLFixtureButDifferentName() string {
 	return `
-iAmOptionalCustomFieldThatShouldBeStored: iAmOptionalCustomValue
 name: overview2
 luigiConfigFragment:
  data:
@@ -205,7 +200,6 @@ luigiConfigFragment:
 func GetluigiConfigFragment() string {
 	return ` {
         "name": "accounts",
-        "creationTimestamp": "2022-05-17T11:37:17Z",
         "luigiConfigFragment": {
             "data": {
               "nodes": [

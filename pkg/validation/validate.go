@@ -25,7 +25,7 @@ type contentConfiguration struct {
 	schema []byte
 }
 
-//go:embed default_schema_core.openmfp.io_contentconfigurations_gen1.json
+//go:embed schema/schema_autogen.json
 var schemaJSON []byte
 
 func NewContentConfiguration() ExtensionConfiguration {

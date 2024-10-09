@@ -155,6 +155,10 @@ docker image rm local-extension-content-operator:test
 kind delete cluster
 ```
 
+### Updating the JSONSchema
+
+The JSON Schema used to validate `ContentConfiguration` resources is automatically generated from the structs in `pkg/validation/model.go`. To update it, modify model.go and run `task codegen`.
+
 ## Support, Feedback, Contributing
 
 This project is open to feature requests/suggestions, bug reports etc. via [GitHub issues](https://github.com/openmfp/extension-content-operator/issues). Contribution and feedback are encouraged and always welcome. For more information about how to contribute, the project structure, as well as additional contribution information, see our [Contribution Guidelines](CONTRIBUTING.md).
