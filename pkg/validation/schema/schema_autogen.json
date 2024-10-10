@@ -122,10 +122,10 @@
         "category": {
           "anyOf": [
             {
-              "$ref": "string"
+              "$ref": "#/$defs/Category"
             },
             {
-              "$ref": "#/$defs/Category"
+              "type": "string"
             }
           ]
         },

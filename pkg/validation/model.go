@@ -53,7 +53,7 @@ type Node struct {
 	PathSegment               string       `json:"pathSegment,omitempty" yaml:"pathSegment,omitempty"`
 	Label                     string       `json:"label,omitempty" yaml:"label,omitempty"`
 	Icon                      string       `json:"icon,omitempty" yaml:"icon,omitempty"`
-	Category                  interface{}  `json:"category,omitempty" yaml:"category,omitempty" jsonschema:"anyof_ref=string;#/$defs/Category"`
+	Category                  interface{}  `json:"category,omitempty" yaml:"category,omitempty" jsonschema:"anyof_ref=#/$defs/Category,anyof_type=string"`
 	Url                       string       `json:"url,omitempty" yaml:"url,omitempty"`
 	HideFromNav               bool         `json:"hideFromNav,omitempty" yaml:"hideFromNav,omitempty"`
 	VisibleForFeatureToggles  []string     `json:"visibleForFeatureToggles,omitempty" yaml:"visibleForFeatureToggles,omitempty"`
