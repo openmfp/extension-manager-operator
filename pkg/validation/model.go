@@ -16,15 +16,19 @@ type ViewGroup struct {
 }
 
 type LuigiConfigData struct {
-	NodeDefaults    NodeDefaults                      `json:"nodeDefaults,omitempty" yaml:"nodeDefaults,omitempty"`
-	Nodes           []Node                            `json:"nodes,omitempty" yaml:"nodes,omitempty" jsonschema:"oneof_required=array"`
-	Texts           []Text                            `json:"texts,omitempty" yaml:"texts,omitempty"`
-	TargetAppConfig TargetAppConfig                   `json:"targetAppConfig,omitempty" yaml:"targetAppConfig,omitempty"`
-	ViewGroup       ViewGroup                         `json:"viewGroup,omitempty" yaml:"viewGroup,omitempty"`
-	UserSettings    map[string]map[string]UserSetting `json:"userSettings,omitempty" yaml:"userSettings,omitempty"`
+	NodeDefaults    NodeDefaults    `json:"nodeDefaults,omitempty" yaml:"nodeDefaults,omitempty"`
+	Nodes           []Node          `json:"nodes,omitempty" yaml:"nodes,omitempty" jsonschema:"oneof_required=array"`
+	Texts           []Text          `json:"texts,omitempty" yaml:"texts,omitempty"`
+	TargetAppConfig TargetAppConfig `json:"targetAppConfig,omitempty" yaml:"targetAppConfig,omitempty"`
+	ViewGroup       ViewGroup       `json:"viewGroup,omitempty" yaml:"viewGroup,omitempty"`
+	UserSettings    UserSettings    `json:"userSettings,omitempty" yaml:"userSettings,omitempty"`
 }
 
-type UserSetting struct {
+type UserSettings struct {
+	Groups map[string]UserGroupsSetting `json:"groups,omitempty" yaml:"groups,omitempty"`
+}
+
+type UserGroupsSetting struct {
 	Label    string             `json:"label,omitempty" yaml:"label,omitempty"`
 	Sublabel string             `json:"sublabel,omitempty" yaml:"sublabel,omitempty"`
 	Title    string             `json:"title,omitempty" yaml:"title,omitempty"`

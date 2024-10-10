@@ -85,13 +85,7 @@
           "$ref": "#/$defs/ViewGroup"
         },
         "userSettings": {
-          "additionalProperties": {
-            "additionalProperties": {
-              "$ref": "#/$defs/UserSetting"
-            },
-            "type": "object"
-          },
-          "type": "object"
+          "$ref": "#/$defs/UserSettings"
         }
       },
       "additionalProperties": false,
@@ -316,7 +310,7 @@
       "additionalProperties": false,
       "type": "object"
     },
-    "UserSetting": {
+    "UserGroupsSetting": {
       "properties": {
         "label": {
           "type": "string"
@@ -339,6 +333,18 @@
         "settings": {
           "additionalProperties": {
             "$ref": "#/$defs/Setting"
+          },
+          "type": "object"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "UserSettings": {
+      "properties": {
+        "groups": {
+          "additionalProperties": {
+            "$ref": "#/$defs/UserGroupsSetting"
           },
           "type": "object"
         }
