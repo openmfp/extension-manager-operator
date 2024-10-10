@@ -30,6 +30,7 @@ type UserSetting struct {
 	Title    string             `json:"title,omitempty" yaml:"title,omitempty"`
 	Icon     string             `json:"icon,omitempty" yaml:"icon,omitempty"`
 	ViewUrl  string             `json:"viewUrl,omitempty" yaml:"viewUrl,omitempty"`
+	Initials string             `json:"initials,omitempty" yaml:"initials,omitempty"`
 	Settings map[string]Setting `json:"settings,omitempty" yaml:"settings,omitempty"`
 }
 

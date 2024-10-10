@@ -333,6 +333,9 @@
         "viewUrl": {
           "type": "string"
         },
+        "initials": {
+          "type": "string"
+        },
         "settings": {
           "additionalProperties": {
             "$ref": "#/$defs/Setting"
