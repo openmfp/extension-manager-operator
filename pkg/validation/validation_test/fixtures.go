@@ -343,3 +343,48 @@ func GetValidYaml_targetAppConfig_viewGroup() string {
   }
 }`
 }
+
+func GetValidYAML_node_category_string() string {
+	return `
+name: overview2
+luigiConfigFragment:
+ data:
+  nodeDefaults:
+    entityType: global
+    isolateView: true
+  nodes:
+  - entityType: global
+    pathSegment: home
+    label: Overview
+    icon: home
+    category: cat1
+  texts:
+  - locale: de
+    textDictionary:
+      hello: Hallo
+`
+}
+
+func GetValidYAML_node_category_object() string {
+	return `
+name: overview2
+luigiConfigFragment:
+ data:
+  nodeDefaults:
+    entityType: global
+    isolateView: true
+  nodes:
+  - entityType: global
+    pathSegment: home
+    label: Overview
+    icon: home
+    category:
+      label: cat1
+      icon: icon1
+      collapsible: false
+  texts:
+  - locale: de
+    textDictionary:
+      hello: Hallo
+`
+}

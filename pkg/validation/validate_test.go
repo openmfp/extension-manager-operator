@@ -5,9 +5,8 @@ import (
 	"log"
 	"testing"
 
-	"github.com/stretchr/testify/assert"
-
 	"github.com/openmfp/extension-content-operator/pkg/validation/validation_test"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestValidate(t *testing.T) {
@@ -109,9 +108,25 @@ func TestValidate(t *testing.T) {
 		},
 		{
 			name:        "test_luigiConfigFragment",
-			input:       validation_test.GetJSONFixture(validation_test.GetValidYaml_targetAppConfig_viewGroup()),
-			contentType: "json",
-			expected:    validation_test.GetJSONFixture(validation_test.GetValidYaml_targetAppConfig_viewGroup()),
+			input:       validation_test.GetYAMLFixture(validation_test.GetValidYaml_targetAppConfig_viewGroup()),
+			contentType: "yaml",
+			expected:    validation_test.GetYAMLFixture(validation_test.GetValidYaml_targetAppConfig_viewGroup()),
+			expectError: false,
+			schema:      nil,
+		},
+		{
+			name:        "test_node_category_string",
+			input:       validation_test.GetYAMLFixture(validation_test.GetValidYAML_node_category_string()),
+			contentType: "yaml",
+			expected:    validation_test.GetYAMLFixture(validation_test.GetValidYAML_node_category_string()),
+			expectError: false,
+			schema:      nil,
+		},
+		{
+			name:        "test_node_category_object",
+			input:       validation_test.GetYAMLFixture(validation_test.GetValidYAML_node_category_object()),
+			contentType: "yaml",
+			expected:    validation_test.GetYAMLFixture(validation_test.GetValidYAML_node_category_object()),
 			expectError: false,
 			schema:      nil,
 		},
