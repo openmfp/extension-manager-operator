@@ -16,44 +16,29 @@ type ViewGroup struct {
 }
 
 type LuigiConfigData struct {
-	NodeDefaults    NodeDefaults    `json:"nodeDefaults,omitempty" yaml:"nodeDefaults,omitempty"`
-	Nodes           []Node          `json:"nodes,omitempty" yaml:"nodes,omitempty" jsonschema:"oneof_required=array"`
-	Texts           []Text          `json:"texts,omitempty" yaml:"texts,omitempty"`
-	TargetAppConfig TargetAppConfig `json:"targetAppConfig,omitempty" yaml:"targetAppConfig,omitempty"`
-	ViewGroup       ViewGroup       `json:"viewGroup,omitempty" yaml:"viewGroup,omitempty"`
-	UserSettings    UserSettings    `json:"userSettings,omitempty" yaml:"userSettings,omitempty"`
+	NodeDefaults    NodeDefaults                      `json:"nodeDefaults,omitempty" yaml:"nodeDefaults,omitempty"`
+	Nodes           []Node                            `json:"nodes,omitempty" yaml:"nodes,omitempty" jsonschema:"oneof_required=array"`
+	Texts           []Text                            `json:"texts,omitempty" yaml:"texts,omitempty"`
+	TargetAppConfig TargetAppConfig                   `json:"targetAppConfig,omitempty" yaml:"targetAppConfig,omitempty"`
+	ViewGroup       ViewGroup                         `json:"viewGroup,omitempty" yaml:"viewGroup,omitempty"`
+	UserSettings    map[string]map[string]UserSetting `json:"userSettings,omitempty" yaml:"userSettings,omitempty"`
 }
 
-type UserSettings struct {
-	Groups Groups `json:"groups,omitempty" yaml:"groups,omitempty"`
+type UserSetting struct {
+	Label    string             `json:"label,omitempty" yaml:"label,omitempty"`
+	Sublabel string             `json:"sublabel,omitempty" yaml:"sublabel,omitempty"`
+	Title    string             `json:"title,omitempty" yaml:"title,omitempty"`
+	Icon     string             `json:"icon,omitempty" yaml:"icon,omitempty"`
+	ViewUrl  string             `json:"viewUrl,omitempty" yaml:"viewUrl,omitempty"`
+	Settings map[string]Setting `json:"settings,omitempty" yaml:"settings,omitempty"`
 }
 
-type Groups struct {
-	User1 User1 `json:"user1,omitempty" yaml:"user1,omitempty"`
-}
-
-type User1 struct {
-	Label    string   `json:"label,omitempty" yaml:"label,omitempty"`
-	Sublabel string   `json:"sublabel,omitempty" yaml:"sublabel,omitempty"`
-	Title    string   `json:"title,omitempty" yaml:"title,omitempty"`
-	Icon     string   `json:"icon,omitempty" yaml:"icon,omitempty"`
-	ViewUrl  string   `json:"viewUrl,omitempty" yaml:"viewUrl,omitempty"`
-	Settings Settings `json:"settings,omitempty" yaml:"settings,omitempty"`
-}
-
-type Settings struct {
-	Option1 Option1 `json:"option1,omitempty" yaml:"option1,omitempty"`
-}
-
-type Option1 struct {
+type Setting struct {
 	Type       string   `json:"type,omitempty" yaml:"type,omitempty"`
 	Label      string   `json:"label,omitempty" yaml:"label,omitempty"`
 	Style      string   `json:"style,omitempty" yaml:"style,omitempty"`
-	Options    []Option `json:"options,omitempty" yaml:"options,omitempty"`
 	IsEditable bool     `json:"isEditable,omitempty" yaml:"isEditable,omitempty"`
-}
-
-type Option struct {
+	Options    []string `json:"options,omitempty" yaml:"options,omitempty"`
 }
 
 type TargetAppConfig struct {

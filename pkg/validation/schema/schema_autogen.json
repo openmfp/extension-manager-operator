@@ -53,15 +53,6 @@
       "additionalProperties": false,
       "type": "object"
     },
-    "Groups": {
-      "properties": {
-        "user1": {
-          "$ref": "#/$defs/User1"
-        }
-      },
-      "additionalProperties": false,
-      "type": "object"
-    },
     "LuigiConfigData": {
       "oneOf": [
         {
@@ -94,7 +85,13 @@
           "$ref": "#/$defs/ViewGroup"
         },
         "userSettings": {
-          "$ref": "#/$defs/UserSettings"
+          "additionalProperties": {
+            "additionalProperties": {
+              "$ref": "#/$defs/UserSetting"
+            },
+            "type": "object"
+          },
+          "type": "object"
         }
       },
       "additionalProperties": false,
@@ -243,35 +240,6 @@
       "additionalProperties": false,
       "type": "object"
     },
-    "Option": {
-      "properties": {},
-      "additionalProperties": false,
-      "type": "object"
-    },
-    "Option1": {
-      "properties": {
-        "type": {
-          "type": "string"
-        },
-        "label": {
-          "type": "string"
-        },
-        "style": {
-          "type": "string"
-        },
-        "options": {
-          "items": {
-            "$ref": "#/$defs/Option"
-          },
-          "type": "array"
-        },
-        "isEditable": {
-          "type": "boolean"
-        }
-      },
-      "additionalProperties": false,
-      "type": "object"
-    },
     "SapIntegration": {
       "properties": {
         "navMode": {
@@ -287,10 +255,25 @@
       "additionalProperties": false,
       "type": "object"
     },
-    "Settings": {
+    "Setting": {
       "properties": {
-        "option1": {
-          "$ref": "#/$defs/Option1"
+        "type": {
+          "type": "string"
+        },
+        "label": {
+          "type": "string"
+        },
+        "style": {
+          "type": "string"
+        },
+        "isEditable": {
+          "type": "boolean"
+        },
+        "options": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
         }
       },
       "additionalProperties": false,
@@ -333,7 +316,7 @@
       "additionalProperties": false,
       "type": "object"
     },
-    "User1": {
+    "UserSetting": {
       "properties": {
         "label": {
           "type": "string"
@@ -351,16 +334,10 @@
           "type": "string"
         },
         "settings": {
-          "$ref": "#/$defs/Settings"
-        }
-      },
-      "additionalProperties": false,
-      "type": "object"
-    },
-    "UserSettings": {
-      "properties": {
-        "groups": {
-          "$ref": "#/$defs/Groups"
+          "additionalProperties": {
+            "$ref": "#/$defs/Setting"
+          },
+          "type": "object"
         }
       },
       "additionalProperties": false,
