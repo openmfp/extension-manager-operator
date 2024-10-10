@@ -255,57 +255,281 @@ func GetluigiConfigFragment() string {
 
 func GetValidYaml_targetAppConfig_viewGroup() string {
 	return `{
-        "name": "accounts",
-		"contentType": "json",
-        "luigiConfigFragment": {
-            "data": {
-              "nodes": [
-                {
-                  "pathSegment": "create",
-                  "hideFromNav": true,
-                  "entityType": "main",
-                  "loadingIndicator": {
-                    "enabled": false
-                  },
-                  "keepSelectedForChildren": true,
-                  "url": "https://some.url/modal/create",
-                  "children": []
-                },
-                {
-                  "pathSegment": "accounts",
-                  "label": "Accounts",
-                  "entityType": "main",
-                  "loadingIndicator": {
-                    "enabled": false
-                  },
-                  "keepSelectedForChildren": true,
-                  "url": "https://some.url/accounts",
-                  "children": [
-                    {
-                      "pathSegment": ":accountId",
-                      "hideFromNav": true,
-                      "keepSelectedForChildren": false,
-                      "defineEntity": {
-                        "id": "account"
-                      },
-                      "context": {
-                        "accountId": ":accountId"
-                      }
-                    }
-                  ]
-                },
-                {
-                  "pathSegment": "overview",
-                  "label": "Overview",
-                  "entityType": "main.account",
-                  "loadingIndicator": {
-                    "enabled": false
-                  },
-                  "visibleForFeatureToggles": ["oldAccount"],
-                  "url": "https://some.url/accounts/:accountId"
-                }
-              ]
-            }
+  "name": "extension-manager",
+  "contentType": "json",
+  "luigiConfigFragment": {
+      "data": {
+        "targetAppConfig": {
+        "_version": "1.13.0",
+        "sap.integration": {
+          "navMode": "inplace",
+          "urlTemplateId": "urltemplate.url",
+          "urlTemplateParams": {
+            "query": {}
           }
-      }`
+        }
+      },
+      "viewGroup": {
+        "preloadSuffix": "/#/preload"
+      },
+      "nodes": [
+        {
+          "entityType": "global",
+          "pathSegment": "catalog",
+          "label": "{{catalog}}",
+          "icon": "business-one",
+          "dxpOrder": 6,
+          "order": 6,
+          "hideSideNav": true,
+          "tabNav": true,
+          "showBreadcrumbs": false,
+          "urlSuffix": "/#/global-catalog",
+          "visibleForFeatureToggles": ["!global-catalog"]
+        },
+        {
+          "entityType": "global",
+          "pathSegment": "catalog",
+          "label": "{{catalog}}",
+          "icon": "business-one",
+          "dxpOrder": 6,
+          "order": 6,
+          "hideSideNav": true,
+          "tabNav": true,
+          "showBreadcrumbs": false,
+          "urlSuffix": "/#/new-global-catalog",
+          "visibleForFeatureToggles": ["global-catalog"]
+        },
+        {
+          "entityType": "global",
+          "pathSegment": "extensions",
+          "label": "{{extensions}}",
+          "hideFromNav": true,
+          "children": [
+            {
+              "pathSegment": ":extClassName",
+              "hideFromNav": true,
+              "urlSuffix": "/#/extensions/:extClassName",
+              "context": {
+                "extClassName": ":extClassName"
+              }
+            }
+          ]
+        }
+      ],
+      "texts": [
+        {
+          "locale": "",
+          "textDictionary": {
+            "catalog": "Catalog",
+            "extensions": "Extensions"
+          }
+        },
+        {
+          "locale": "en",
+          "textDictionary": {
+            "catalog": "Catalog",
+            "extensions": "Extensions"
+          }
+        },
+        {
+          "locale": "de",
+          "textDictionary": {
+            "catalog": "Katalog",
+            "extensions": "Erweiterungen"
+          }
+        }
+      ]
+    }
+  }
+}`
+}
+
+func GetValidYAML_node_category_string() string {
+	return `
+name: overview2
+luigiConfigFragment:
+ data:
+  nodeDefaults:
+    entityType: global
+    isolateView: true
+  nodes:
+  - entityType: global
+    pathSegment: home
+    label: Overview
+    icon: home
+    category: cat1
+  texts:
+  - locale: de
+    textDictionary:
+      hello: Hallo
+`
+}
+
+func GetValidYAML_node_category_object() string {
+	return `
+name: overview2
+luigiConfigFragment:
+ data:
+  nodeDefaults:
+    entityType: global
+    isolateView: true
+  nodes:
+  - entityType: global
+    pathSegment: home
+    label: Overview
+    icon: home
+    category:
+      label: cat1
+      icon: icon1
+      collapsible: false
+  texts:
+  - locale: de
+    textDictionary:
+      hello: Hallo
+`
+}
+
+func GetInalidYAML_node_category_object() string {
+	return `
+name: overview2
+luigiConfigFragment:
+ data:
+  nodeDefaults:
+    entityType: global
+    isolateView: true
+  nodes:
+  - entityType: global
+    pathSegment: home
+    label: Overview
+    icon: home
+    category:
+      label: cat1
+      icon: icon1
+      collapsible: false
+      invalidfield: invalid
+  texts:
+  - locale: de
+    textDictionary:
+      hello: Hallo
+`
+}
+
+func GetValidYaml_targetAppConfig_viewGroup2() string {
+	return `{
+    "name": "extension-manager",
+    "contentType": "json",
+    "luigiConfigFragment": {
+        "data": {
+            "userSettings": {
+                "groups": {
+                    "user1": {
+                        "label": "label",
+                        "sublabel": "sublabel",
+                        "title": "title",
+                        "icon": "icon",
+                        "viewUrl": "viewUrl",
+                        "settings": {
+                            "option1": {
+                                "type": "type",
+                                "label": "label",
+                                "style": "style",
+                                "options": [],
+                                "isEditable": false
+                            }
+                        }
+                    }
+                }
+            },
+            "nodeDefaults": {
+                "entityType": "type",
+                "isolateView": false
+            },
+            "targetAppConfig": {
+                "_version": "1.13.0",
+                "sap.integration": {
+                    "navMode": "inplace",
+                    "urlTemplateId": "urltemplate.url",
+                    "urlTemplateParams": {
+                        "query": {}
+                    }
+                }
+            },
+            "viewGroup": {
+                "preloadSuffix": "/#/preload"
+            },
+            "nodes": [
+                {
+                    "entityType": "global",
+                    "pathSegment": "catalog",
+                    "label": "{{catalog}}",
+                    "icon": "business-one",
+                    "dxpOrder": 6,
+                    "order": 6,
+                    "hideSideNav": true,
+                    "tabNav": true,
+                    "showBreadcrumbs": false,
+                    "urlSuffix": "/#/global-catalog",
+                    "visibleForFeatureToggles": [
+                        "!global-catalog"
+                    ]
+                },
+                {
+                    "entityType": "global",
+                    "pathSegment": "catalog",
+                    "label": "{{catalog}}",
+                    "icon": "business-one",
+                    "dxpOrder": 6,
+                    "order": 6,
+                    "hideSideNav": true,
+                    "tabNav": true,
+                    "showBreadcrumbs": false,
+                    "urlSuffix": "/#/new-global-catalog",
+                    "visibleForFeatureToggles": [
+                        "global-catalog"
+                    ]
+                },
+                {
+                    "entityType": "global",
+                    "pathSegment": "extensions",
+                    "label": "{{extensions}}",
+                    "hideFromNav": true,
+                    "children": [
+                        {
+                            "pathSegment": ":extClassName",
+                            "hideFromNav": true,
+                            "urlSuffix": "/#/extensions/:extClassName",
+                            "context": {
+                                "extClassName": ":extClassName"
+                            }
+                        }
+                    ]
+                }
+            ],
+            "texts": [
+                {
+                    "locale": "",
+                    "textDictionary": {
+                        "catalog": "Catalog",
+                        "extensions": "Extensions"
+                    }
+                },
+                {
+                    "locale": "en",
+                    "textDictionary": {
+                        "catalog": "Catalog",
+                        "extensions": "Extensions"
+                    }
+                },
+                {
+                    "locale": "de",
+                    "textDictionary": {
+                        "catalog": "Katalog",
+                        "extensions": "Erweiterungen"
+                    }
+                }
+            ]
+        }
+    }
+}
+`
 }

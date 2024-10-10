@@ -3,6 +3,21 @@
   "$id": "https://github.com/openmfp/extension-content-operator/pkg/validation/content-configuration",
   "$ref": "#/$defs/ContentConfiguration",
   "$defs": {
+    "Category": {
+      "properties": {
+        "label": {
+          "type": "string"
+        },
+        "icon": {
+          "type": "string"
+        },
+        "collapsible": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
     "ContentConfiguration": {
       "oneOf": [
         {
@@ -65,6 +80,12 @@
         },
         "targetAppConfig": {
           "$ref": "#/$defs/TargetAppConfig"
+        },
+        "viewGroup": {
+          "$ref": "#/$defs/ViewGroup"
+        },
+        "userSettings": {
+          "$ref": "#/$defs/UserSettings"
         }
       },
       "additionalProperties": false,
@@ -82,9 +103,6 @@
       "properties": {
         "data": {
           "$ref": "#/$defs/LuigiConfigData"
-        },
-        "viewGroup": {
-          "$ref": "#/$defs/ViewGroup"
         }
       },
       "additionalProperties": false,
@@ -107,10 +125,10 @@
         "category": {
           "anyOf": [
             {
-              "type": "string"
+              "$ref": "#/$defs/Category"
             },
             {
-              "type": "object"
+              "type": "string"
             }
           ]
         },
@@ -190,6 +208,15 @@
         },
         "tabNav": {
           "type": "boolean"
+        },
+        "showBreadcrumbs": {
+          "type": "boolean"
+        },
+        "dxpOrder": {
+          "type": "integer"
+        },
+        "order": {
+          "type": "integer"
         }
       },
       "additionalProperties": false,
@@ -222,12 +249,36 @@
       "additionalProperties": false,
       "type": "object"
     },
+    "Setting": {
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "label": {
+          "type": "string"
+        },
+        "style": {
+          "type": "string"
+        },
+        "isEditable": {
+          "type": "boolean"
+        },
+        "options": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
     "TargetAppConfig": {
       "properties": {
         "_version": {
           "type": "string"
         },
-        "sapIntegration": {
+        "sap.integration": {
           "$ref": "#/$defs/SapIntegration"
         }
       },
@@ -255,6 +306,48 @@
     "UrlTemplateParams": {
       "properties": {
         "query": true
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "UserGroupsSetting": {
+      "properties": {
+        "label": {
+          "type": "string"
+        },
+        "sublabel": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "icon": {
+          "type": "string"
+        },
+        "viewUrl": {
+          "type": "string"
+        },
+        "initials": {
+          "type": "string"
+        },
+        "settings": {
+          "additionalProperties": {
+            "$ref": "#/$defs/Setting"
+          },
+          "type": "object"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "UserSettings": {
+      "properties": {
+        "groups": {
+          "additionalProperties": {
+            "$ref": "#/$defs/UserGroupsSetting"
+          },
+          "type": "object"
+        }
       },
       "additionalProperties": false,
       "type": "object"

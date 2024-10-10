@@ -8,8 +8,7 @@ type ContentConfiguration struct {
 }
 
 type LuigiConfigFragment struct {
-	Data      LuigiConfigData `json:"data,omitempty" yaml:"data,omitempty" jsonschema:"oneof_required=object"`
-	ViewGroup ViewGroup       `json:"viewGroup,omitempty" yaml:"viewGroup,omitempty"`
+	Data LuigiConfigData `json:"data,omitempty" yaml:"data,omitempty" jsonschema:"oneof_required=object"`
 }
 
 type ViewGroup struct {
@@ -21,11 +20,35 @@ type LuigiConfigData struct {
 	Nodes           []Node          `json:"nodes,omitempty" yaml:"nodes,omitempty" jsonschema:"oneof_required=array"`
 	Texts           []Text          `json:"texts,omitempty" yaml:"texts,omitempty"`
 	TargetAppConfig TargetAppConfig `json:"targetAppConfig,omitempty" yaml:"targetAppConfig,omitempty"`
+	ViewGroup       ViewGroup       `json:"viewGroup,omitempty" yaml:"viewGroup,omitempty"`
+	UserSettings    UserSettings    `json:"userSettings,omitempty" yaml:"userSettings,omitempty"`
+}
+
+type UserSettings struct {
+	Groups map[string]UserGroupsSetting `json:"groups,omitempty" yaml:"groups,omitempty"`
+}
+
+type UserGroupsSetting struct {
+	Label    string             `json:"label,omitempty" yaml:"label,omitempty"`
+	Sublabel string             `json:"sublabel,omitempty" yaml:"sublabel,omitempty"`
+	Title    string             `json:"title,omitempty" yaml:"title,omitempty"`
+	Icon     string             `json:"icon,omitempty" yaml:"icon,omitempty"`
+	ViewUrl  string             `json:"viewUrl,omitempty" yaml:"viewUrl,omitempty"`
+	Initials string             `json:"initials,omitempty" yaml:"initials,omitempty"`
+	Settings map[string]Setting `json:"settings,omitempty" yaml:"settings,omitempty"`
+}
+
+type Setting struct {
+	Type       string   `json:"type,omitempty" yaml:"type,omitempty"`
+	Label      string   `json:"label,omitempty" yaml:"label,omitempty"`
+	Style      string   `json:"style,omitempty" yaml:"style,omitempty"`
+	IsEditable bool     `json:"isEditable,omitempty" yaml:"isEditable,omitempty"`
+	Options    []string `json:"options,omitempty" yaml:"options,omitempty"`
 }
 
 type TargetAppConfig struct {
 	Version        string         `json:"_version,omitempty" yaml:"_version,omitempty"`
-	SapIntegration SapIntegration `json:"sapIntegration,omitempty" yaml:"sapIntegration,omitempty"`
+	SapIntegration SapIntegration `json:"sap.integration,omitempty" yaml:"sap.integration,omitempty"`
 }
 
 type SapIntegration struct {
@@ -53,7 +76,7 @@ type Node struct {
 	PathSegment               string       `json:"pathSegment,omitempty" yaml:"pathSegment,omitempty"`
 	Label                     string       `json:"label,omitempty" yaml:"label,omitempty"`
 	Icon                      string       `json:"icon,omitempty" yaml:"icon,omitempty"`
-	Category                  interface{}  `json:"category,omitempty" yaml:"category,omitempty" jsonschema:"anyof_type=string;object"`
+	Category                  interface{}  `json:"category,omitempty" yaml:"category,omitempty" jsonschema:"anyof_ref=#/$defs/Category,anyof_type=string"`
 	Url                       string       `json:"url,omitempty" yaml:"url,omitempty"`
 	HideFromNav               bool         `json:"hideFromNav,omitempty" yaml:"hideFromNav,omitempty"`
 	VisibleForFeatureToggles  []string     `json:"visibleForFeatureToggles,omitempty" yaml:"visibleForFeatureToggles,omitempty"`
@@ -71,6 +94,9 @@ type Node struct {
 	UrlSuffix                 string       `json:"urlSuffix,omitempty" yaml:"urlSuffix,omitempty"`
 	HideSideNav               bool         `json:"hideSideNav,omitempty" yaml:"hideSideNav,omitempty"`
 	TabNav                    bool         `json:"tabNav,omitempty" yaml:"tabNav,omitempty"`
+	ShowBreadcrumbs           bool         `json:"showBreadcrumbs,omitempty" yaml:"showBreadcrumbs,omitempty"`
+	DxpOrder                  int          `json:"dxpOrder,omitempty" yaml:"dxpOrder,omitempty"`
+	Order                     int          `json:"order,omitempty" yaml:"order,omitempty"`
 }
 
 type DefineEntity struct {
