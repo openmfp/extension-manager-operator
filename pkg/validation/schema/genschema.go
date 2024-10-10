@@ -38,7 +38,10 @@ func reflectContentConfiguration() {
 	if err != nil {
 		panic(err.Error())
 	}
-	file.Sync()
+	err = file.Sync()
+	if err != nil {
+		panic(err.Error())
+	}
 	file.Close()
 
 	// // print data
