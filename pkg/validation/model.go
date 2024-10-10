@@ -3,17 +3,39 @@ package validation
 //go:generate go run schema/genschema.go
 type ContentConfiguration struct {
 	Name                string              `json:"name,omitempty" yaml:"name,omitempty" jsonschema:"oneof_required=string"`
+	ContentType         string              `json:"contentType,omitempty" yaml:"contentType,omitempty"`
 	LuigiConfigFragment LuigiConfigFragment `json:"luigiConfigFragment" yaml:"luigiConfigFragment"`
 }
 
 type LuigiConfigFragment struct {
-	Data LuigiConfigData `json:"data,omitempty" yaml:"data,omitempty" jsonschema:"oneof_required=object"`
+	Data      LuigiConfigData `json:"data,omitempty" yaml:"data,omitempty" jsonschema:"oneof_required=object"`
+	ViewGroup ViewGroup       `json:"viewGroup,omitempty" yaml:"viewGroup,omitempty"`
+}
+
+type ViewGroup struct {
+	PreloadSuffix string `json:"preloadSuffix,omitempty" yaml:"preloadSuffix,omitempty"`
 }
 
 type LuigiConfigData struct {
-	NodeDefaults NodeDefaults `json:"nodeDefaults,omitempty" yaml:"nodeDefaults,omitempty"`
-	Nodes        []Node       `json:"nodes,omitempty" yaml:"nodes,omitempty" jsonschema:"oneof_required=array"`
-	Texts        []Text       `json:"texts,omitempty" yaml:"texts,omitempty"`
+	NodeDefaults    NodeDefaults    `json:"nodeDefaults,omitempty" yaml:"nodeDefaults,omitempty"`
+	Nodes           []Node          `json:"nodes,omitempty" yaml:"nodes,omitempty" jsonschema:"oneof_required=array"`
+	Texts           []Text          `json:"texts,omitempty" yaml:"texts,omitempty"`
+	TargetAppConfig TargetAppConfig `json:"targetAppConfig,omitempty" yaml:"targetAppConfig,omitempty"`
+}
+
+type TargetAppConfig struct {
+	Version        string         `json:"_version,omitempty" yaml:"_version,omitempty"`
+	SapIntegration SapIntegration `json:"sapIntegration,omitempty" yaml:"sapIntegration,omitempty"`
+}
+
+type SapIntegration struct {
+	NavMode           string            `json:"navMode,omitempty" yaml:"navMode,omitempty"`
+	UrlTemplateId     string            `json:"urlTemplateId,omitempty" yaml:"urlTemplateId,omitempty"`
+	UrlTemplateParams UrlTemplateParams `json:"urlTemplateParams,omitempty" yaml:"urlTemplateParams,omitempty"`
+}
+
+type UrlTemplateParams struct {
+	Query interface{} `json:"query,omitempty" yaml:"query,omitempty"`
 }
 
 type NodeDefaults struct {
@@ -46,6 +68,9 @@ type Node struct {
 	DefineEntity              DefineEntity `json:"defineEntity,omitempty" yaml:"defineEntity,omitempty"`
 	KeepSelectedForChildren   bool         `json:"keepSelectedForChildren,omitempty" yaml:"keepSelectedForChildren,omitempty"`
 	Children                  []Node       `json:"children,omitempty" yaml:"children,omitempty"`
+	UrlSuffix                 string       `json:"urlSuffix,omitempty" yaml:"urlSuffix,omitempty"`
+	HideSideNav               bool         `json:"hideSideNav,omitempty" yaml:"hideSideNav,omitempty"`
+	TabNav                    bool         `json:"tabNav,omitempty" yaml:"tabNav,omitempty"`
 }
 
 type DefineEntity struct {

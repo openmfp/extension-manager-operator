@@ -252,3 +252,60 @@ func GetluigiConfigFragment() string {
           }
       }`
 }
+
+func GetValidYaml_targetAppConfig_viewGroup() string {
+	return `{
+        "name": "accounts",
+		"contentType": "json",
+        "luigiConfigFragment": {
+            "data": {
+              "nodes": [
+                {
+                  "pathSegment": "create",
+                  "hideFromNav": true,
+                  "entityType": "main",
+                  "loadingIndicator": {
+                    "enabled": false
+                  },
+                  "keepSelectedForChildren": true,
+                  "url": "https://some.url/modal/create",
+                  "children": []
+                },
+                {
+                  "pathSegment": "accounts",
+                  "label": "Accounts",
+                  "entityType": "main",
+                  "loadingIndicator": {
+                    "enabled": false
+                  },
+                  "keepSelectedForChildren": true,
+                  "url": "https://some.url/accounts",
+                  "children": [
+                    {
+                      "pathSegment": ":accountId",
+                      "hideFromNav": true,
+                      "keepSelectedForChildren": false,
+                      "defineEntity": {
+                        "id": "account"
+                      },
+                      "context": {
+                        "accountId": ":accountId"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "pathSegment": "overview",
+                  "label": "Overview",
+                  "entityType": "main.account",
+                  "loadingIndicator": {
+                    "enabled": false
+                  },
+                  "visibleForFeatureToggles": ["oldAccount"],
+                  "url": "https://some.url/accounts/:accountId"
+                }
+              ]
+            }
+          }
+      }`
+}
