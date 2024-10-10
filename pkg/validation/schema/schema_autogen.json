@@ -53,6 +53,15 @@
       "additionalProperties": false,
       "type": "object"
     },
+    "Groups": {
+      "properties": {
+        "user1": {
+          "$ref": "#/$defs/User1"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
     "LuigiConfigData": {
       "oneOf": [
         {
@@ -83,6 +92,9 @@
         },
         "viewGroup": {
           "$ref": "#/$defs/ViewGroup"
+        },
+        "userSettings": {
+          "$ref": "#/$defs/UserSettings"
         }
       },
       "additionalProperties": false,
@@ -231,6 +243,35 @@
       "additionalProperties": false,
       "type": "object"
     },
+    "Option": {
+      "properties": {},
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "Option1": {
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "label": {
+          "type": "string"
+        },
+        "style": {
+          "type": "string"
+        },
+        "options": {
+          "items": {
+            "$ref": "#/$defs/Option"
+          },
+          "type": "array"
+        },
+        "isEditable": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
     "SapIntegration": {
       "properties": {
         "navMode": {
@@ -241,6 +282,15 @@
         },
         "urlTemplateParams": {
           "$ref": "#/$defs/UrlTemplateParams"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "Settings": {
+      "properties": {
+        "option1": {
+          "$ref": "#/$defs/Option1"
         }
       },
       "additionalProperties": false,
@@ -279,6 +329,39 @@
     "UrlTemplateParams": {
       "properties": {
         "query": true
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "User1": {
+      "properties": {
+        "label": {
+          "type": "string"
+        },
+        "sublabel": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "icon": {
+          "type": "string"
+        },
+        "viewUrl": {
+          "type": "string"
+        },
+        "settings": {
+          "$ref": "#/$defs/Settings"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "UserSettings": {
+      "properties": {
+        "groups": {
+          "$ref": "#/$defs/Groups"
+        }
       },
       "additionalProperties": false,
       "type": "object"

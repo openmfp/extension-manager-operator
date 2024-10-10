@@ -413,3 +413,123 @@ luigiConfigFragment:
       hello: Hallo
 `
 }
+
+func GetValidYaml_targetAppConfig_viewGroup2() string {
+	return `{
+    "name": "extension-manager",
+    "contentType": "json",
+    "luigiConfigFragment": {
+        "data": {
+            "userSettings": {
+                "groups": {
+                    "user1": {
+                        "label": "label",
+                        "sublabel": "sublabel",
+                        "title": "title",
+                        "icon": "icon",
+                        "viewUrl": "viewUrl",
+                        "settings": {
+                            "option1": {
+                                "type": "type",
+                                "label": "label",
+                                "style": "style",
+                                "options": [],
+                                "isEditable": false
+                            }
+                        }
+                    }
+                }
+            },
+            "nodeDefaults": {
+                "entityType": "type",
+                "isolateView": false
+            },
+            "targetAppConfig": {
+                "_version": "1.13.0",
+                "sap.integration": {
+                    "navMode": "inplace",
+                    "urlTemplateId": "urltemplate.url",
+                    "urlTemplateParams": {
+                        "query": {}
+                    }
+                }
+            },
+            "viewGroup": {
+                "preloadSuffix": "/#/preload"
+            },
+            "nodes": [
+                {
+                    "entityType": "global",
+                    "pathSegment": "catalog",
+                    "label": "{{catalog}}",
+                    "icon": "business-one",
+                    "dxpOrder": 6,
+                    "order": 6,
+                    "hideSideNav": true,
+                    "tabNav": true,
+                    "showBreadcrumbs": false,
+                    "urlSuffix": "/#/global-catalog",
+                    "visibleForFeatureToggles": [
+                        "!global-catalog"
+                    ]
+                },
+                {
+                    "entityType": "global",
+                    "pathSegment": "catalog",
+                    "label": "{{catalog}}",
+                    "icon": "business-one",
+                    "dxpOrder": 6,
+                    "order": 6,
+                    "hideSideNav": true,
+                    "tabNav": true,
+                    "showBreadcrumbs": false,
+                    "urlSuffix": "/#/new-global-catalog",
+                    "visibleForFeatureToggles": [
+                        "global-catalog"
+                    ]
+                },
+                {
+                    "entityType": "global",
+                    "pathSegment": "extensions",
+                    "label": "{{extensions}}",
+                    "hideFromNav": true,
+                    "children": [
+                        {
+                            "pathSegment": ":extClassName",
+                            "hideFromNav": true,
+                            "urlSuffix": "/#/extensions/:extClassName",
+                            "context": {
+                                "extClassName": ":extClassName"
+                            }
+                        }
+                    ]
+                }
+            ],
+            "texts": [
+                {
+                    "locale": "",
+                    "textDictionary": {
+                        "catalog": "Catalog",
+                        "extensions": "Extensions"
+                    }
+                },
+                {
+                    "locale": "en",
+                    "textDictionary": {
+                        "catalog": "Catalog",
+                        "extensions": "Extensions"
+                    }
+                },
+                {
+                    "locale": "de",
+                    "textDictionary": {
+                        "catalog": "Katalog",
+                        "extensions": "Erweiterungen"
+                    }
+                }
+            ]
+        }
+    }
+}
+`
+}

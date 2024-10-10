@@ -138,6 +138,14 @@ func TestValidate(t *testing.T) {
 			expectError: true,
 			schema:      nil,
 		},
+		{
+			name:        "test_luigiConfigFragment",
+			input:       validation_test.GetYAMLFixture(validation_test.GetValidYaml_targetAppConfig_viewGroup2()),
+			contentType: "yaml",
+			expected:    validation_test.GetYAMLFixture(validation_test.GetValidYaml_targetAppConfig_viewGroup2()),
+			expectError: false,
+			schema:      nil,
+		},
 	}
 
 	cC := NewContentConfiguration()
