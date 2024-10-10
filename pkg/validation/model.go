@@ -8,8 +8,7 @@ type ContentConfiguration struct {
 }
 
 type LuigiConfigFragment struct {
-	Data      LuigiConfigData `json:"data,omitempty" yaml:"data,omitempty" jsonschema:"oneof_required=object"`
-	ViewGroup ViewGroup       `json:"viewGroup,omitempty" yaml:"viewGroup,omitempty"`
+	Data LuigiConfigData `json:"data,omitempty" yaml:"data,omitempty" jsonschema:"oneof_required=object"`
 }
 
 type ViewGroup struct {
@@ -21,11 +20,12 @@ type LuigiConfigData struct {
 	Nodes           []Node          `json:"nodes,omitempty" yaml:"nodes,omitempty" jsonschema:"oneof_required=array"`
 	Texts           []Text          `json:"texts,omitempty" yaml:"texts,omitempty"`
 	TargetAppConfig TargetAppConfig `json:"targetAppConfig,omitempty" yaml:"targetAppConfig,omitempty"`
+	ViewGroup       ViewGroup       `json:"viewGroup,omitempty" yaml:"viewGroup,omitempty"`
 }
 
 type TargetAppConfig struct {
 	Version        string         `json:"_version,omitempty" yaml:"_version,omitempty"`
-	SapIntegration SapIntegration `json:"sapIntegration,omitempty" yaml:"sapIntegration,omitempty"`
+	SapIntegration SapIntegration `json:"sap.integration,omitempty" yaml:"sap.integration,omitempty"`
 }
 
 type SapIntegration struct {
@@ -71,6 +71,9 @@ type Node struct {
 	UrlSuffix                 string       `json:"urlSuffix,omitempty" yaml:"urlSuffix,omitempty"`
 	HideSideNav               bool         `json:"hideSideNav,omitempty" yaml:"hideSideNav,omitempty"`
 	TabNav                    bool         `json:"tabNav,omitempty" yaml:"tabNav,omitempty"`
+	ShowBreadcrumbs           bool         `json:"showBreadcrumbs,omitempty" yaml:"showBreadcrumbs,omitempty"`
+	DxpOrder                  int          `json:"dxpOrder,omitempty" yaml:"dxpOrder,omitempty"`
+	Order                     int          `json:"order,omitempty" yaml:"order,omitempty"`
 }
 
 type DefineEntity struct {

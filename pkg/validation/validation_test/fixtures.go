@@ -255,57 +255,91 @@ func GetluigiConfigFragment() string {
 
 func GetValidYaml_targetAppConfig_viewGroup() string {
 	return `{
-        "name": "accounts",
-		"contentType": "json",
-        "luigiConfigFragment": {
-            "data": {
-              "nodes": [
-                {
-                  "pathSegment": "create",
-                  "hideFromNav": true,
-                  "entityType": "main",
-                  "loadingIndicator": {
-                    "enabled": false
-                  },
-                  "keepSelectedForChildren": true,
-                  "url": "https://some.url/modal/create",
-                  "children": []
-                },
-                {
-                  "pathSegment": "accounts",
-                  "label": "Accounts",
-                  "entityType": "main",
-                  "loadingIndicator": {
-                    "enabled": false
-                  },
-                  "keepSelectedForChildren": true,
-                  "url": "https://some.url/accounts",
-                  "children": [
-                    {
-                      "pathSegment": ":accountId",
-                      "hideFromNav": true,
-                      "keepSelectedForChildren": false,
-                      "defineEntity": {
-                        "id": "account"
-                      },
-                      "context": {
-                        "accountId": ":accountId"
-                      }
-                    }
-                  ]
-                },
-                {
-                  "pathSegment": "overview",
-                  "label": "Overview",
-                  "entityType": "main.account",
-                  "loadingIndicator": {
-                    "enabled": false
-                  },
-                  "visibleForFeatureToggles": ["oldAccount"],
-                  "url": "https://some.url/accounts/:accountId"
-                }
-              ]
-            }
+  "name": "extension-manager",
+  "contentType": "json",
+  "luigiConfigFragment": {
+      "data": {
+        "targetAppConfig": {
+        "_version": "1.13.0",
+        "sap.integration": {
+          "navMode": "inplace",
+          "urlTemplateId": "urltemplate.url",
+          "urlTemplateParams": {
+            "query": {}
           }
-      }`
+        }
+      },
+      "viewGroup": {
+        "preloadSuffix": "/#/preload"
+      },
+      "nodes": [
+        {
+          "entityType": "global",
+          "pathSegment": "catalog",
+          "label": "{{catalog}}",
+          "icon": "business-one",
+          "dxpOrder": 6,
+          "order": 6,
+          "hideSideNav": true,
+          "tabNav": true,
+          "showBreadcrumbs": false,
+          "urlSuffix": "/#/global-catalog",
+          "visibleForFeatureToggles": ["!global-catalog"]
+        },
+        {
+          "entityType": "global",
+          "pathSegment": "catalog",
+          "label": "{{catalog}}",
+          "icon": "business-one",
+          "dxpOrder": 6,
+          "order": 6,
+          "hideSideNav": true,
+          "tabNav": true,
+          "showBreadcrumbs": false,
+          "urlSuffix": "/#/new-global-catalog",
+          "visibleForFeatureToggles": ["global-catalog"]
+        },
+        {
+          "entityType": "global",
+          "pathSegment": "extensions",
+          "label": "{{extensions}}",
+          "hideFromNav": true,
+          "children": [
+            {
+              "pathSegment": ":extClassName",
+              "hideFromNav": true,
+              "urlSuffix": "/#/extensions/:extClassName",
+              "context": {
+                "extClassName": ":extClassName"
+              }
+            }
+          ]
+        }
+      ],
+      "texts": [
+        {
+          "locale": "",
+          "textDictionary": {
+            "catalog": "Catalog",
+            "extensions": "Extensions"
+          }
+        },
+        {
+          "locale": "en",
+          "textDictionary": {
+            "catalog": "Catalog",
+            "extensions": "Extensions"
+          }
+        },
+        {
+          "locale": "de",
+          "textDictionary": {
+            "catalog": "Katalog",
+            "extensions": "Erweiterungen"
+          }
+        }
+      ]
+    }
+  }
+}`
 }
