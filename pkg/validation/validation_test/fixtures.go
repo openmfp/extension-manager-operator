@@ -388,3 +388,28 @@ luigiConfigFragment:
       hello: Hallo
 `
 }
+
+func GetInalidYAML_node_category_object() string {
+	return `
+name: overview2
+luigiConfigFragment:
+ data:
+  nodeDefaults:
+    entityType: global
+    isolateView: true
+  nodes:
+  - entityType: global
+    pathSegment: home
+    label: Overview
+    icon: home
+    category:
+      label: cat1
+      icon: icon1
+      collapsible: false
+      invalidfield: invalid
+  texts:
+  - locale: de
+    textDictionary:
+      hello: Hallo
+`
+}

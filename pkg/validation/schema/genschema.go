@@ -12,8 +12,12 @@ import (
 )
 
 func reflectContentConfiguration() {
-	s := jsonschema.Reflect(&validation.ContentConfiguration{})
-	data, err := json.MarshalIndent(s, "", "  ")
+	r := new(jsonschema.Reflector)
+	// r.ExpandedStruct = false
+	schemaCategory := r.Reflect(&validation.Category{})
+	schemaRoot := r.Reflect(&validation.ContentConfiguration{})
+	schemaRoot.Definitions["Category"] = schemaCategory.Definitions["Category"]
+	data, err := json.MarshalIndent(schemaRoot, "", "  ")
 	if err != nil {
 		panic(err.Error())
 	}

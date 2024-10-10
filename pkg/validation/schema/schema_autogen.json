@@ -3,6 +3,21 @@
   "$id": "https://github.com/openmfp/extension-content-operator/pkg/validation/content-configuration",
   "$ref": "#/$defs/ContentConfiguration",
   "$defs": {
+    "Category": {
+      "properties": {
+        "label": {
+          "type": "string"
+        },
+        "icon": {
+          "type": "string"
+        },
+        "collapsible": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
     "ContentConfiguration": {
       "oneOf": [
         {
@@ -107,10 +122,10 @@
         "category": {
           "anyOf": [
             {
-              "type": "string"
+              "$ref": "string"
             },
             {
-              "type": "object"
+              "$ref": "#/$defs/Category"
             }
           ]
         },
