@@ -34,6 +34,7 @@ tasks:
     cmds:
       - task: manifests
       - "{{.LOCAL_BIN}}/controller-gen object:headerFile=hack/boilerplate.go.txt paths=./..."
+      - task: schemagen
   build:
     cmds:
       - go build ./...
@@ -74,6 +75,6 @@ tasks:
     cmds:
       - task: lint
       - task: test
-  codegen:
+  schemagen:
     cmds:
       - go generate ./...
