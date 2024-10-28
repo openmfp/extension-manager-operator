@@ -27,6 +27,7 @@ func init() { // coverage-ignore
 	//+kubebuilder:scaffold:scheme
 
 	rootCmd.AddCommand(operatorCmd)
+	rootCmd.AddCommand(serverCmd)
 
 }
 

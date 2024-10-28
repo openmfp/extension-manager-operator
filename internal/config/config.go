@@ -14,6 +14,8 @@ type Config struct {
 		Level  string `envconfig:"default=info"`
 		NoJSON bool   `envconfig:"default=false"`
 	}
+	IsLocal         bool          `envconfig:"default=false"`
+	ServerPort      string        `envconfig:"default=8088,optional"`
 	ShutdownTimeout time.Duration `envconfig:"default=1s"`
 	EnableHTTP2     bool          `envconfig:"default=false"`
 	Metrics         struct {

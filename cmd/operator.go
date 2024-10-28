@@ -21,6 +21,7 @@ import (
 	"crypto/tls"
 	"os"
 
+	openmfpcontext "github.com/openmfp/golang-commons/context"
 	"github.com/spf13/cobra"
 	_ "k8s.io/client-go/plugin/pkg/client/auth"
 	ctrl "sigs.k8s.io/controller-runtime"
@@ -30,8 +31,6 @@ import (
 
 	"github.com/openmfp/extension-content-operator/internal/config"
 	"github.com/openmfp/extension-content-operator/internal/controller"
-	openmfpcontext "github.com/openmfp/golang-commons/context"
-	"github.com/openmfp/golang-commons/logger"
 )
 
 var operatorCmd = &cobra.Command{
@@ -130,16 +129,4 @@ func RunController(cmd *cobra.Command, args []string) { // coverage-ignore
 	if err := mgr.Start(ctrl.SetupSignalHandler()); err != nil {
 		log.Fatal().Err(err).Msg("problem running manager")
 	}
-}
-
-func initLog() *logger.Logger { // coverage-ignore
-	logcfg := logger.DefaultConfig()
-	logcfg.Level = loglevel
-	logcfg.NoJSON = logNoJSON
-	log, err := logger.New(logcfg)
-	if err != nil {
-		setupLog.Error(err, "unable to create logger")
-		os.Exit(1)
-	}
-	return log
 }
