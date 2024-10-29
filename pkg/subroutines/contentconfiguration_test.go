@@ -13,7 +13,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
-	"gopkg.in/yaml.v2"
+	"gopkg.in/yaml.v3"
 
 	golangCommonErrors "github.com/openmfp/golang-commons/errors"
 	apimachinery "k8s.io/apimachinery/pkg/apis/meta/v1"
