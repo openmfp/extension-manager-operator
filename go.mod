@@ -5,7 +5,7 @@ go 1.22.5
 require (
 	github.com/invopop/jsonschema v0.12.0
 	github.com/jarcoal/httpmock v1.3.1
-	github.com/openmfp/golang-commons v0.86.0
+	github.com/openmfp/golang-commons v0.87.0
 	github.com/pkg/errors v0.9.1
 	github.com/rs/zerolog v1.33.0
 	github.com/spf13/cobra v1.8.1
