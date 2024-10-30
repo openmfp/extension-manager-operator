@@ -19,7 +19,6 @@ func CreateRouter(
 ) *chi.Mux {
 	router := chi.NewRouter()
 
-	// On local the iam responds to CORS requests, on the cluster this is handled by istio
 	if appConfig.IsLocal {
 		rl := requestLogger{
 			log: log,
@@ -39,7 +38,7 @@ func CreateRouter(
 		log:       log,
 	}
 
-	router.MethodFunc(http.MethodPost, "/validate", vh.Handler())
+	router.MethodFunc(http.MethodPost, "/validate", vh.Handler)
 
 	return router
 }

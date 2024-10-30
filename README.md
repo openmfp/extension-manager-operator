@@ -114,6 +114,14 @@ func main() {
 }
 ```
 
+## Using a `/validate` HTTP endpoint
+
+```shell
+curl http://localhost:8088/validate -X POST -d @cc3.json   -H "Content-Type: application/json
+```
+
+
+
 ### Debug Helm chart locally
 
 ```sh

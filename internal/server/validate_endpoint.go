@@ -10,73 +10,75 @@ import (
 )
 
 type requestValidate struct {
-	ConfigurationContentType string `json:"configurationContentType"` // Enum: "json" or "yaml"
-	ContentConfiguration     string `json:"contentConfiguration"`
+	ContentConfiguration string `json:"contentConfiguration"`
 }
 
-type responseValidate struct {
-	ParsedConfiguration string            `json:"parsedConfiguration"`
-	ValidationErrors    []validationError `json:"validationErrors"`
+type responseValid struct {
+	ParsedConfiguration string `json:"parsedConfiguration"`
+}
+
+type responseError struct {
+	ValidationErrors []validationError `json:"validationErrors"`
 }
 
 type validationError struct {
 	Message string `json:"message"`
 }
 
-type validationHandler struct {
+func NewHttpValidateHandler(log *logger.Logger, validator validation.ExtensionConfiguration) *HttpValidateHandler {
+	return &HttpValidateHandler{
+		validator: validator,
+		log:       log,
+	}
+}
+
+type HttpValidateHandler struct {
 	validator validation.ExtensionConfiguration
 	log       *logger.Logger
 }
 
-func (h *validationHandler) Handler() http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		var request requestValidate
-		var response responseValidate
+func (h *HttpValidateHandler) HandlerValidate(w http.ResponseWriter, r *http.Request) {
+	var request requestValidate
+	var rValid responseValid
 
-		decoder := json.NewDecoder(r.Body)
-		decoder.DisallowUnknownFields()
-		err := decoder.Decode(&request)
-		if err != nil {
-			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte(err.Error()))
-			return
-		}
+	decoder := json.NewDecoder(r.Body)
+	decoder.DisallowUnknownFields()
+	err := decoder.Decode(&request)
 
-		if request.ConfigurationContentType == "" {
-			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte("Missing or empty configurationContentType value in request body"))
-			return
-		}
-
-		if request.ConfigurationContentType != "json" && request.ConfigurationContentType != "yaml" {
-			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte("Unexpected configuration content type"))
-			return
-		}
-
-		if request.ContentConfiguration == "" {
-			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte("Missing or empty contentConfiguration value in request body"))
-			return
-		}
-
-		parsedConfig, err := h.validator.Validate([]byte(request.ContentConfiguration), request.ConfigurationContentType)
-		if err != nil {
-			response.ValidationErrors = []validationError{{
-				Message: err.Error(),
-			}}
-		} else {
-			response.ParsedConfiguration = parsedConfig
-		}
-
-		rspBytes, err := json.Marshal(&response)
-		if err != nil {
-			h.log.Error().Err(err).Msg("Marshaling json failed")
-			w.WriteHeader(http.StatusInternalServerError)
-			return
-		}
-
-		w.WriteHeader(http.StatusOK)
-		w.Write(rspBytes)
+	if err != nil {
+		h.log.Error().Err(err).Msg("Reading request body failed")
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
+		return
 	}
+
+	parsedConfig, err := h.validator.Validate([]byte(request.ContentConfiguration), "json")
+	if err != nil {
+		var responseErr responseError
+		responseErr.ValidationErrors = []validationError{{
+			Message: err.Error(),
+		}}
+		w.WriteHeader(http.StatusOK)
+		responseBytes, err := json.Marshal(responseErr)
+		if err != nil {
+			h.log.Error().Err(err).Msg("Marshalling response failed")
+			w.WriteHeader(http.StatusInternalServerError)
+			w.Write([]byte("Marshalling response failed"))
+			return
+		}
+		w.Write(responseBytes)
+		return
+	}
+
+	rValid.ParsedConfiguration = parsedConfig
+	responseBytes, err := json.Marshal(rValid)
+	if err != nil {
+		h.log.Error().Err(err).Msg("Marshalling response failed")
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("Marshalling response failed"))
+		return
+	}
+	w.Write(responseBytes)
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
 }
