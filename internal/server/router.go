@@ -33,12 +33,9 @@ func CreateRouter(
 		router.Use(rl.Handler)
 	}
 
-	vh := validationHandler{
-		validator: validator,
-		log:       log,
-	}
+	vh := NewHttpValidateHandler(log, validator)
 
-	router.MethodFunc(http.MethodPost, "/validate", vh.Handler)
+	router.MethodFunc(http.MethodPost, "/validate", vh.HandlerValidate)
 
 	return router
 }

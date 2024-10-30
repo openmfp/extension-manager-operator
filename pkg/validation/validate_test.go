@@ -154,7 +154,7 @@ func TestValidate(t *testing.T) {
 			if tc.schema != nil {
 				cC.WithSchema(tc.schema) // nolint: errcheck
 			}
-			result, err := cC.Validate([]byte(tc.input), tc.contentType)
+			result, err, _ := cC.Validate([]byte(tc.input), tc.contentType)
 
 			if tc.expectError {
 				assert.Error(t, err)
@@ -254,7 +254,7 @@ func Test_validateSchema(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			byteArray, _ := json.Marshal(tt.input)
 
-			err := validateSchemaBytes(schema, byteArray)
+			err, _ := validateSchemaBytes(schema, byteArray)
 			assert.Error(t, err)
 			actualStr := err.Error()
 			expectedStr := tt.expectedErrMsg

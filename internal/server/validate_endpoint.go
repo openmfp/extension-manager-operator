@@ -7,6 +7,8 @@ import (
 	"github.com/openmfp/golang-commons/logger"
 
 	"github.com/openmfp/extension-content-operator/pkg/validation"
+
+	"github.com/openmfp/golang-commons/sentry"
 )
 
 type requestValidate struct {
@@ -52,20 +54,25 @@ func (h *HttpValidateHandler) HandlerValidate(w http.ResponseWriter, r *http.Req
 		return
 	}
 
-	parsedConfig, err := h.validator.Validate([]byte(request.ContentConfiguration), "json")
+	parsedConfig, err, merr := h.validator.Validate([]byte(request.ContentConfiguration), "json")
 	if err != nil {
 		var responseErr responseError
-		responseErr.ValidationErrors = []validationError{{
-			Message: err.Error(),
-		}}
-		w.WriteHeader(http.StatusOK)
+
+		for _, e := range merr.Errors {
+			responseErr.ValidationErrors = append(responseErr.ValidationErrors, validationError{
+				Message: e.Error(),
+			})
+		}
+
 		responseBytes, err := json.Marshal(responseErr)
 		if err != nil {
 			h.log.Error().Err(err).Msg("Marshalling response failed")
 			w.WriteHeader(http.StatusInternalServerError)
 			w.Write([]byte("Marshalling response failed"))
+			sentry.CaptureError(err, sentry.Tags{"error": "Marshalling response failed"}, sentry.Extras{"data": responseErr})
 			return
 		}
+		w.WriteHeader(http.StatusOK)
 		w.Write(responseBytes)
 		return
 	}
@@ -76,6 +83,7 @@ func (h *HttpValidateHandler) HandlerValidate(w http.ResponseWriter, r *http.Req
 		h.log.Error().Err(err).Msg("Marshalling response failed")
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte("Marshalling response failed"))
+		sentry.CaptureError(err, sentry.Tags{"error": "Marshalling response failed"}, sentry.Extras{"data": rValid})
 		return
 	}
 	w.Write(responseBytes)
