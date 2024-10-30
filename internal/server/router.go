@@ -29,6 +29,7 @@ func CreateRouter(
 			AllowCredentials: true,
 			AllowedHeaders:   []string{headers.Accept, headers.Authorization, headers.ContentType, headers.XCSRFToken},
 			Debug:            false,
+			AllowedMethods:   []string{http.MethodPost},
 		}).Handler)
 		router.Use(rl.Handler)
 	}

@@ -37,24 +37,24 @@ type HttpValidateHandler struct {
 }
 
 func (h *HttpValidateHandler) HandlerValidate(w http.ResponseWriter, r *http.Request) {
+	// decode request
 	var request requestValidate
-	var rValid Response
-
 	decoder := json.NewDecoder(r.Body)
 	decoder.DisallowUnknownFields()
 	err := decoder.Decode(&request)
-
 	if err != nil {
 		h.log.Error().Err(err).Msg("Reading request body failed")
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(err.Error()))
+		w.Write([]byte(err.Error())) // nolint: errcheck
+		sentry.CaptureError(err, sentry.Tags{"error": "Writing response failed"}, sentry.Extras{"data": r.Body})
+		r.Body.Close()
 		return
 	}
 
+	// validation
 	parsedConfig, err, merr := h.validator.Validate([]byte(request.ContentConfiguration), "json")
 	if err != nil {
 		var responseErr Response
-
 		for _, e := range merr.Errors {
 			responseErr.ValidationErrors = append(responseErr.ValidationErrors, validationError{
 				Message: e.Error(),
@@ -65,25 +65,28 @@ func (h *HttpValidateHandler) HandlerValidate(w http.ResponseWriter, r *http.Req
 		if err != nil {
 			h.log.Error().Err(err).Msg("Marshalling response failed")
 			w.WriteHeader(http.StatusInternalServerError)
-			w.Write([]byte("Marshalling response failed"))
+			w.Write([]byte("Marshalling response failed")) // nolint: errcheck
 			sentry.CaptureError(err, sentry.Tags{"error": "Marshalling response failed"}, sentry.Extras{"data": responseErr})
 			return
 		}
+		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		w.Write(responseBytes)
+		w.Write(responseBytes) // nolint: errcheck
 		return
 	}
 
+	// send response
+	var rValid Response
 	rValid.ParsedConfiguration = parsedConfig
 	responseBytes, err := json.Marshal(rValid)
 	if err != nil {
 		h.log.Error().Err(err).Msg("Marshalling response failed")
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("Marshalling response failed"))
+		w.Write([]byte("Marshalling response failed")) // nolint: errcheck
 		sentry.CaptureError(err, sentry.Tags{"error": "Marshalling response failed"}, sentry.Extras{"data": rValid})
 		return
 	}
-	w.Write(responseBytes)
-	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	w.Write(responseBytes) // nolint: errcheck
 }

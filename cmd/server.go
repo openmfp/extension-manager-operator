@@ -67,7 +67,7 @@ func RunServer(cmd *cobra.Command, args []string) { // coverage-ignore
 	}
 
 	go func() {
-		server.ListenAndServe()
+		server.ListenAndServe() // nolint: errcheck
 	}()
 	log.Info().Msg("Server started")
 
