@@ -75,7 +75,7 @@ func init() { // coverage-ignore
 }
 
 func RunController(cmd *cobra.Command, args []string) { // coverage-ignore
-	log := initLog()
+	_, log := initApp()
 	ctrl.SetLogger(log.ComponentLogger("controller-runtime").Logr())
 
 	ctx, _, shutdown := openmfpcontext.StartContext(log, cfg, cfg.ShutdownTimeout)

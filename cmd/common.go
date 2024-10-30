@@ -17,20 +17,32 @@ limitations under the License.
 package cmd
 
 import (
+	"fmt"
 	"os"
 
+	"github.com/openmfp/extension-content-operator/internal/config"
 	"github.com/openmfp/golang-commons/logger"
 	_ "k8s.io/client-go/plugin/pkg/client/auth"
 )
 
-func initLog() *logger.Logger { // coverage-ignore
-	logcfg := logger.DefaultConfig()
-	logcfg.Level = loglevel
-	logcfg.NoJSON = logNoJSON
-	log, err := logger.New(logcfg)
+func initApp() (config.Config, *logger.Logger) {
+	appConfig, err := config.NewFromEnv()
 	if err != nil {
-		setupLog.Error(err, "unable to create logger")
+		fmt.Printf("Error loading env file: %v\n", err) // nolint: forbidigo
 		os.Exit(1)
 	}
-	return log
+
+	logConfig := logger.DefaultConfig()
+	logConfig.Name = "iam"
+	logConfig.Level = appConfig.Log.Level
+	logConfig.NoJSON = appConfig.IsLocal
+	log, err := logger.New(logConfig)
+	if err != nil {
+		fmt.Printf("Error init logger: %v\n", err) // nolint: forbidigo
+		os.Exit(1)
+	}
+
+	log.Info().Msgf("Logging on log level: %s", log.GetLevel().String())
+
+	return appConfig, log
 }

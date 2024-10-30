@@ -26,13 +26,8 @@ import (
 	_ "k8s.io/client-go/plugin/pkg/client/auth"
 	ctrl "sigs.k8s.io/controller-runtime"
 
-	"github.com/openmfp/extension-content-operator/internal/config"
 	"github.com/openmfp/extension-content-operator/internal/server"
 	"github.com/openmfp/extension-content-operator/pkg/validation"
-)
-
-var (
-	appCfg config.Config
 )
 
 var serverCmd = &cobra.Command{
@@ -41,17 +36,8 @@ var serverCmd = &cobra.Command{
 	Run:   RunServer,
 }
 
-func init() { // coverage-ignore
-	var err error
-	appCfg, err = config.NewFromEnv()
-	if err != nil {
-		setupLog.Error(err, "unable to load config")
-		panic(err)
-	}
-}
-
 func RunServer(cmd *cobra.Command, args []string) { // coverage-ignore
-	log := initLog()
+	appCfg, log := initApp()
 	ctrl.SetLogger(log.ComponentLogger("server").Logr())
 
 	ctx, _, shutdown := openmfpcontext.StartContext(log, nil, appCfg.ShutdownTimeout)
