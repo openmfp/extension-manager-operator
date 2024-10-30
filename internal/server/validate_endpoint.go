@@ -15,12 +15,9 @@ type requestValidate struct {
 	ContentConfiguration string `json:"contentConfiguration"`
 }
 
-type responseValid struct {
-	ParsedConfiguration string `json:"parsedConfiguration"`
-}
-
-type responseError struct {
-	ValidationErrors []validationError `json:"validationErrors"`
+type Response struct {
+	ParsedConfiguration string            `json:"parsedConfiguration,omitempty"`
+	ValidationErrors    []validationError `json:"validationErrors,omitempty"`
 }
 
 type validationError struct {
@@ -41,7 +38,7 @@ type HttpValidateHandler struct {
 
 func (h *HttpValidateHandler) HandlerValidate(w http.ResponseWriter, r *http.Request) {
 	var request requestValidate
-	var rValid responseValid
+	var rValid Response
 
 	decoder := json.NewDecoder(r.Body)
 	decoder.DisallowUnknownFields()
@@ -56,7 +53,7 @@ func (h *HttpValidateHandler) HandlerValidate(w http.ResponseWriter, r *http.Req
 
 	parsedConfig, err, merr := h.validator.Validate([]byte(request.ContentConfiguration), "json")
 	if err != nil {
-		var responseErr responseError
+		var responseErr Response
 
 		for _, e := range merr.Errors {
 			responseErr.ValidationErrors = append(responseErr.ValidationErrors, validationError{
