@@ -7,9 +7,13 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"github.com/hashicorp/go-multierror"
 	"github.com/openmfp/extension-content-operator/pkg/validation"
+	"github.com/openmfp/extension-content-operator/pkg/validation/mocks"
+	"github.com/openmfp/golang-commons/errors"
 	"github.com/openmfp/golang-commons/logger"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
 )
 
 type responseError struct {
@@ -143,4 +147,74 @@ func TestYAML_FailureWrongType(t *testing.T) {
 
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
 	assert.GreaterOrEqual(t, len(re.ValidationErrors), 1)
+}
+
+func TestValidation_Error(t *testing.T) {
+
+	logcfg := logger.DefaultConfig()
+	log, _ := logger.New(logcfg)
+
+	mockValidator := mocks.NewExtensionConfiguration(t)
+	merr := &multierror.Error{}
+	merr = multierror.Append(merr, errors.New("error"))
+	mockValidator.On("Validate", mock.Anything, mock.Anything).Return("", errors.New("error"), merr)
+	handler := NewHttpValidateHandler(log, mockValidator)
+
+	// handler := NewHttpValidateHandler(log, validation.NewContentConfiguration())
+
+	reqBody := `{
+	"contentType": "json",
+	"contentConfiguration":"{\"luigiConfigFragment2\": {\"data\": {\"nodeDefaults\": {\"entityType\": \"global\",\"isolateView\": true},\"nodes\": [{\"entityType\": \"global\",\"icon\": \"home\",\"label\": \"Overview\",\"pathSegment\": \"home\"}],\"texts\": [{\"locale\": \"de\",\"textDictionary\": {\"hello\": \"Hallo\"}}]}},\"name\": \"overview\"}"}"
+	}`
+	req := httptest.NewRequest(http.MethodPost, "/validate", bytes.NewBufferString(reqBody))
+	w := httptest.NewRecorder()
+
+	handler.HandlerValidate(w, req)
+
+	resp := w.Result()
+
+	r := &responseError{}
+	decoder := json.NewDecoder(resp.Body)
+	decoder.DisallowUnknownFields()
+	err := decoder.Decode(r)
+	defer resp.Body.Close()
+
+	assert.Nil(t, err)
+	assert.Equal(t, http.StatusOK, resp.StatusCode)
+	assert.GreaterOrEqual(t, len(r.ValidationErrors), 1)
+}
+
+func TestValidation_ErrorMarshallingValidatedResponse(t *testing.T) {
+
+	logcfg := logger.DefaultConfig()
+	log, _ := logger.New(logcfg)
+
+	mockValidator := mocks.NewExtensionConfiguration(t)
+	merr := &multierror.Error{}
+	merr = multierror.Append(merr, errors.New("error"))
+	mockValidator.On("Validate", mock.Anything, mock.Anything).Return("{ field: }", errors.New("error"), merr)
+	handler := NewHttpValidateHandler(log, mockValidator)
+
+	// handler := NewHttpValidateHandler(log, validation.NewContentConfiguration())
+
+	reqBody := `{
+	"contentType": "json",
+	"contentConfiguration":"{\"luigiConfigFragment2\": {\"data\": {\"nodeDefaults\": {\"entityType\": \"global\",\"isolateView\": true},\"nodes\": [{\"entityType\": \"global\",\"icon\": \"home\",\"label\": \"Overview\",\"pathSegment\": \"home\"}],\"texts\": [{\"locale\": \"de\",\"textDictionary\": {\"hello\": \"Hallo\"}}]}},\"name\": \"overview\"}"}"
+	}`
+	req := httptest.NewRequest(http.MethodPost, "/validate", bytes.NewBufferString(reqBody))
+	w := httptest.NewRecorder()
+
+	handler.HandlerValidate(w, req)
+
+	resp := w.Result()
+
+	r := &responseError{}
+	decoder := json.NewDecoder(resp.Body)
+	decoder.DisallowUnknownFields()
+	err := decoder.Decode(r)
+	defer resp.Body.Close()
+
+	assert.Nil(t, err)
+	assert.Equal(t, http.StatusOK, resp.StatusCode)
+	assert.GreaterOrEqual(t, len(r.ValidationErrors), 1)
 }
