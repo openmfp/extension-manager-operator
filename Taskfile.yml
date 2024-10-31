@@ -9,6 +9,10 @@ vars:
   CRD_DIRECTORY: config/crd/bases
 tasks:
   ## Setup
+  setup:mockery:
+    internal: true
+    cmds:
+      - test -s {{.LOCAL_BIN}}/mockery || GOBIN=$(pwd)/{{.LOCAL_BIN}} go install github.com/vektra/mockery/v2@v2.43.2
   setup:controller-gen:
     internal: true
     cmds:
@@ -26,6 +30,10 @@ tasks:
     cmds:
       - test -s {{.LOCAL_BIN}}/go-test-coverage || GOBIN=$(pwd)/{{.LOCAL_BIN}} go install github.com/vladopajic/go-test-coverage/v2@latest
   ## Development
+  mockery:
+    deps: [setup:mockery]
+    cmds:
+      - "{{.LOCAL_BIN}}/mockery"
   manifests:
     deps: [setup:controller-gen]
     cmds:
