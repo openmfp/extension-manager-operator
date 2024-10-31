@@ -12,6 +12,7 @@ import (
 )
 
 type requestValidate struct {
+	ContentType          string `json:"contentType,omitempty"`
 	ContentConfiguration string `json:"contentConfiguration"`
 }
 
@@ -52,7 +53,7 @@ func (h *HttpValidateHandler) HandlerValidate(w http.ResponseWriter, r *http.Req
 	}
 
 	// validation
-	parsedConfig, err, merr := h.validator.Validate([]byte(request.ContentConfiguration), "json")
+	parsedConfig, err, merr := h.validator.Validate([]byte(request.ContentConfiguration), request.ContentType)
 	if err != nil {
 		var responseErr Response
 		for _, e := range merr.Errors {
