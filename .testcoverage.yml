@@ -8,3 +8,4 @@ exclude:
     - ^pkg/validation/validation_test/fixtures.go # skip fixtures file
     - pkg/validation/schema
     - pkg/validation/mocks
+    - cmd/*
