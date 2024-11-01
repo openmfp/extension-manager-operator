@@ -29,7 +29,7 @@ func CreateRouter(
 			AllowCredentials: true,
 			AllowedHeaders:   []string{headers.Accept, headers.Authorization, headers.ContentType, headers.XCSRFToken},
 			Debug:            false,
-			AllowedMethods:   []string{http.MethodPost},
+			AllowedMethods:   []string{http.MethodPost, http.MethodGet},
 		}).Handler)
 		router.Use(rl.Handler)
 	}
@@ -37,6 +37,8 @@ func CreateRouter(
 	vh := NewHttpValidateHandler(log, validator)
 
 	router.MethodFunc(http.MethodPost, "/validate", vh.HandlerValidate)
+	router.MethodFunc(http.MethodGet, "/healthz", vh.HandlerHealthz)
+	router.MethodFunc(http.MethodGet, "/readyz", vh.HandlerHealthz)
 
 	return router
 }

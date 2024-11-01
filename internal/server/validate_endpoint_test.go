@@ -155,9 +155,8 @@ func TestValidation_Error(t *testing.T) {
 	log, _ := logger.New(logcfg)
 
 	mockValidator := mocks.NewExtensionConfiguration(t)
-	merr := &multierror.Error{}
-	merr = multierror.Append(merr, errors.New("error"))
-	mockValidator.On("Validate", mock.Anything, mock.Anything).Return("", errors.New("error"), merr)
+	merr := &multierror.Error{Errors: []error{errors.New("error")}}
+	mockValidator.On("Validate", mock.Anything, mock.Anything).Return("", merr)
 	handler := NewHttpValidateHandler(log, mockValidator)
 
 	// handler := NewHttpValidateHandler(log, validation.NewContentConfiguration())
@@ -190,9 +189,8 @@ func TestValidation_ErrorMarshallingValidatedResponse(t *testing.T) {
 	log, _ := logger.New(logcfg)
 
 	mockValidator := mocks.NewExtensionConfiguration(t)
-	merr := &multierror.Error{}
-	merr = multierror.Append(merr, errors.New("error"))
-	mockValidator.On("Validate", mock.Anything, mock.Anything).Return("{ field: }", errors.New("error"), merr)
+	merr := &multierror.Error{Errors: []error{errors.New("error")}}
+	mockValidator.On("Validate", mock.Anything, mock.Anything).Return("{ field: }", merr)
 	handler := NewHttpValidateHandler(log, mockValidator)
 
 	// handler := NewHttpValidateHandler(log, validation.NewContentConfiguration())

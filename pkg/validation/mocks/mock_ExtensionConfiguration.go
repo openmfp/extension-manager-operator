@@ -21,7 +21,7 @@ func (_m *ExtensionConfiguration) EXPECT() *ExtensionConfiguration_Expecter {
 }
 
 // Validate provides a mock function with given fields: _a0, _a1
-func (_m *ExtensionConfiguration) Validate(_a0 []byte, _a1 string) (string, error, *multierror.Error) {
+func (_m *ExtensionConfiguration) Validate(_a0 []byte, _a1 string) (string, *multierror.Error) {
 	ret := _m.Called(_a0, _a1)
 
 	if len(ret) == 0 {
@@ -29,9 +29,8 @@ func (_m *ExtensionConfiguration) Validate(_a0 []byte, _a1 string) (string, erro
 	}
 
 	var r0 string
-	var r1 error
-	var r2 *multierror.Error
-	if rf, ok := ret.Get(0).(func([]byte, string) (string, error, *multierror.Error)); ok {
+	var r1 *multierror.Error
+	if rf, ok := ret.Get(0).(func([]byte, string) (string, *multierror.Error)); ok {
 		return rf(_a0, _a1)
 	}
 	if rf, ok := ret.Get(0).(func([]byte, string) string); ok {
@@ -40,21 +39,15 @@ func (_m *ExtensionConfiguration) Validate(_a0 []byte, _a1 string) (string, erro
 		r0 = ret.Get(0).(string)
 	}
 
-	if rf, ok := ret.Get(1).(func([]byte, string) error); ok {
+	if rf, ok := ret.Get(1).(func([]byte, string) *multierror.Error); ok {
 		r1 = rf(_a0, _a1)
 	} else {
-		r1 = ret.Error(1)
-	}
-
-	if rf, ok := ret.Get(2).(func([]byte, string) *multierror.Error); ok {
-		r2 = rf(_a0, _a1)
-	} else {
-		if ret.Get(2) != nil {
-			r2 = ret.Get(2).(*multierror.Error)
+		if ret.Get(1) != nil {
+			r1 = ret.Get(1).(*multierror.Error)
 		}
 	}
 
-	return r0, r1, r2
+	return r0, r1
 }
 
 // ExtensionConfiguration_Validate_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'Validate'
@@ -76,12 +69,12 @@ func (_c *ExtensionConfiguration_Validate_Call) Run(run func(_a0 []byte, _a1 str
 	return _c
 }
 
-func (_c *ExtensionConfiguration_Validate_Call) Return(_a0 string, _a1 error, _a2 *multierror.Error) *ExtensionConfiguration_Validate_Call {
-	_c.Call.Return(_a0, _a1, _a2)
+func (_c *ExtensionConfiguration_Validate_Call) Return(_a0 string, _a1 *multierror.Error) *ExtensionConfiguration_Validate_Call {
+	_c.Call.Return(_a0, _a1)
 	return _c
 }
 
-func (_c *ExtensionConfiguration_Validate_Call) RunAndReturn(run func([]byte, string) (string, error, *multierror.Error)) *ExtensionConfiguration_Validate_Call {
+func (_c *ExtensionConfiguration_Validate_Call) RunAndReturn(run func([]byte, string) (string, *multierror.Error)) *ExtensionConfiguration_Validate_Call {
 	_c.Call.Return(run)
 	return _c
 }

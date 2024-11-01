@@ -37,6 +37,11 @@ type HttpValidateHandler struct {
 	log       *logger.Logger
 }
 
+func (h *HttpValidateHandler) HandlerHealthz(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte("OK")) // nolint: errcheck
+}
+
 func (h *HttpValidateHandler) HandlerValidate(w http.ResponseWriter, r *http.Request) {
 	// decode request
 	var request requestValidate
@@ -53,8 +58,8 @@ func (h *HttpValidateHandler) HandlerValidate(w http.ResponseWriter, r *http.Req
 	}
 
 	// validation
-	parsedConfig, err, merr := h.validator.Validate([]byte(request.ContentConfiguration), request.ContentType)
-	if err != nil {
+	parsedConfig, merr := h.validator.Validate([]byte(request.ContentConfiguration), request.ContentType)
+	if merr.Len() > 0 {
 		var responseErr Response
 		for _, e := range merr.Errors {
 			responseErr.ValidationErrors = append(responseErr.ValidationErrors, validationError{

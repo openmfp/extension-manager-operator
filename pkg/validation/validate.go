@@ -50,9 +50,9 @@ func (cC *contentConfiguration) WithSchema(schema []byte) error {
 // 2. In case of YAML it converts data to raw JSON
 // 3. Passes the raw JSON to the schema validator
 // 4. In case of success returns the original raw JSON
-func (cC *contentConfiguration) Validate(input []byte, contentType string) (string, error, *multierror.Error) {
+func (cC *contentConfiguration) Validate(input []byte, contentType string) (string, *multierror.Error) {
 	if len(input) == 0 {
-		return "", ErrorEmptyInput, nil
+		return "", multierror.Append(nil, ErrorEmptyInput)
 	}
 
 	var rawJSON []byte
@@ -63,21 +63,20 @@ func (cC *contentConfiguration) Validate(input []byte, contentType string) (stri
 	case "yaml":
 		rawJSON, err = convertYAMLToJSON(input)
 		if err != nil {
-			return "", err, &multierror.Error{Errors: []error{err}}
+			return "", &multierror.Error{Errors: []error{err}}
 		}
 	default:
-		return "", ErrorNoValidator, nil
+		return "", &multierror.Error{Errors: []error{ErrorNoValidator}}
 	}
-
-	err, merr := validateSchemaBytes(cC.schema, rawJSON)
-	if err == nil {
-		return string(input), err, merr
+	merr := validateSchemaBytes(cC.schema, rawJSON)
+	if merr.Len() == 0 {
+		return string(input), merr
 	} else {
-		return "", err, merr
+		return "", merr
 	}
 }
 
-func validateSchemaBytes(schema []byte, input []byte) (error, *multierror.Error) {
+func validateSchemaBytes(schema []byte, input []byte) *multierror.Error {
 	schemaLoader := gojsonschema.NewBytesLoader(schema)
 	documentLoader := gojsonschema.NewBytesLoader(input)
 	merrs := &multierror.Error{}
@@ -85,15 +84,13 @@ func validateSchemaBytes(schema []byte, input []byte) (error, *multierror.Error)
 	result, err := gojsonschema.Validate(schemaLoader, documentLoader)
 	if err != nil {
 		merrs = multierror.Append(merrs, err)
-		return ErrorValidatingJSON, merrs
+		return multierror.Append(merrs, ErrorValidatingJSON)
 	}
 
 	if !result.Valid() {
-		var errorsAccumulator []string
 		for _, desc := range result.Errors() {
 			switch desc.Type() {
 			case "required":
-				errorsAccumulator = append(errorsAccumulator, desc.Description())
 				merrs = multierror.Append(merrs, errors.New(desc.Description()))
 
 			case "invalid_type":
@@ -102,17 +99,15 @@ func validateSchemaBytes(schema []byte, input []byte) (error, *multierror.Error)
 					desc.Field(),
 					desc.Details()["type"],
 					desc.Details()["expected"])
-				errorsAccumulator = append(errorsAccumulator, errStr)
 				merrs = multierror.Append(merrs, errors.New(errStr))
 			default:
-				errorsAccumulator = append(errorsAccumulator, desc.String())
 				merrs = multierror.Append(merrs, errors.New(desc.String()))
 			}
 		}
-		return errors.Errorf(ErrorDocumentInvalid.Error(), fmt.Sprint(errorsAccumulator)), merrs
+		return multierror.Append(merrs, errors.New(ErrorDocumentInvalid.Error()))
 	}
 
-	return nil, merrs
+	return merrs
 }
 
 // ConvertYAMLToJSON converts a YAML byte array to a JSON byte array

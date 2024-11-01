@@ -5,6 +5,7 @@ import (
 	"log"
 	"testing"
 
+	"github.com/hashicorp/go-multierror"
 	"github.com/openmfp/extension-content-operator/pkg/validation/validation_test"
 	"github.com/stretchr/testify/assert"
 )
@@ -154,14 +155,14 @@ func TestValidate(t *testing.T) {
 			if tc.schema != nil {
 				cC.WithSchema(tc.schema) // nolint: errcheck
 			}
-			result, err, _ := cC.Validate([]byte(tc.input), tc.contentType)
+			result, merr := cC.Validate([]byte(tc.input), tc.contentType)
 
 			if tc.expectError {
-				assert.Error(t, err)
+				assert.GreaterOrEqual(t, merr.Len(), 1)
 				assert.Equal(t, tc.expected, result)
-				assert.Contains(t, err.Error(), tc.errorMsg)
+				assert.Contains(t, merr.Error(), tc.errorMsg)
 			} else {
-				assert.NoError(t, err)
+				assert.Equal(t, merr.Len(), 0)
 				assert.Equal(t, tc.expected, result)
 			}
 		})
@@ -177,17 +178,21 @@ func Test_validateSchema(t *testing.T) {
 	schema := getJSONSchemaFixture()
 
 	tests := []struct {
-		name           string
-		input          interface{}
-		expectedErrMsg string
+		name                  string
+		input                 interface{}
+		expectedErrorMessages []string
 	}{
 		{
 			name: "Invalid_Type",
 			input: ContentConfigurationTypeMock{
 				Name: 1, // wrong type
 			},
-			expectedErrMsg: "The document is not valid:\n[luigiConfigFragment is required (root):" +
-				" Additional property surname is not allowed field 'name' is invalid, got '%!s(<nil>)', expected 'string']",
+			expectedErrorMessages: []string{
+				"The document is not valid:\n%s",
+				"luigiConfigFragment is required",
+				"(root): Additional property surname is not allowed",
+				"field 'name' is invalid, got '%!s(<nil>)', expected 'string'",
+			},
 		},
 		{
 			name: "Invalid_JSON",
@@ -195,14 +200,20 @@ func Test_validateSchema(t *testing.T) {
 				Name:    "John",
 				Surname: make(chan int), // invalid type for JSON marshaling
 			},
-			expectedErrMsg: "error validating JSON data",
+			expectedErrorMessages: []string{
+				"error validating JSON data",
+				"EOF",
+			},
 		},
 		{
 			name: "luigiConfigFragment_is_required",
 			input: []byte(`{
 				"name": "overview"
 			}`),
-			expectedErrMsg: "The document is not valid:\n[field '(root)' is invalid",
+			expectedErrorMessages: []string{
+				"The document is not valid:\n%s",
+				"field '(root)' is invalid, got '%!s(<nil>)', expected 'object'",
+			},
 		},
 		{
 			name: "name_is_required",
@@ -217,7 +228,11 @@ func Test_validateSchema(t *testing.T) {
 					},
 				},
 			},
-			expectedErrMsg: "The document is not valid:\n[(root): Must validate one and only one schema (oneOf) name is required]",
+			expectedErrorMessages: []string{
+				"The document is not valid:\n%s",
+				"(root): Must validate one and only one schema (oneOf)",
+				"name is required",
+			},
 		},
 		{
 			name: "nodes_is_required",
@@ -225,8 +240,11 @@ func Test_validateSchema(t *testing.T) {
 				Name:                "overview",
 				LuigiConfigFragment: LuigiConfigFragment{},
 			},
-			expectedErrMsg: "The document is not valid:\n[luigiConfigFragment.data: " +
-				"Must validate one and only one schema (oneOf) nodes is required]",
+			expectedErrorMessages: []string{
+				"The document is not valid:\n%s",
+				"luigiConfigFragment.data: Must validate one and only one schema (oneOf)",
+				"nodes is required",
+			},
 		},
 		{
 			name: "textDictionary_is_required",
@@ -245,8 +263,10 @@ func Test_validateSchema(t *testing.T) {
 					},
 				},
 			},
-			expectedErrMsg: "The document is not valid:\n[field 'luigiConfigFragment.data.texts.0.textDictionary'" +
-				" is invalid, got '%!s(<nil>)', expected 'object']",
+			expectedErrorMessages: []string{
+				"The document is not valid:\n%s",
+				"field 'luigiConfigFragment.data.texts.0.textDictionary' is invalid, got '%!s(<nil>)', expected 'object'",
+			},
 		},
 	}
 
@@ -254,12 +274,10 @@ func Test_validateSchema(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			byteArray, _ := json.Marshal(tt.input)
 
-			err, _ := validateSchemaBytes(schema, byteArray)
-			assert.Error(t, err)
-			actualStr := err.Error()
-			expectedStr := tt.expectedErrMsg
-			assert.Contains(t, actualStr, expectedStr)
-			assert.Contains(t, err.Error(), tt.expectedErrMsg)
+			merr := validateSchemaBytes(schema, byteArray)
+			assert.Error(t, merr)
+			assert.True(t, allErrorsContained(*merr, tt.expectedErrorMessages))
+			assert.Equal(t, len(tt.expectedErrorMessages), merr.Len())
 		})
 	}
 }
@@ -279,4 +297,23 @@ func TestWithSchema(t *testing.T) {
 	empty := ""
 	err := cC.WithSchema([]byte(empty))
 	assert.Error(t, err)
+}
+
+func allErrorsContained(merr multierror.Error, expectedErrors []string) bool {
+	for _, err := range merr.Errors {
+		found := false
+		errStr := ""
+		expectedError := ""
+		for _, expectedError = range expectedErrors {
+			errStr = err.Error()
+			if errStr == expectedError {
+				found = true
+				break
+			}
+		}
+		if !found {
+			return false
+		}
+	}
+	return true
 }

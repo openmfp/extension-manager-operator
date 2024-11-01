@@ -1,6 +1,7 @@
 package server
 
 import (
+	"bytes"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -29,13 +30,18 @@ func TestCreateRouter(t *testing.T) {
 		path       string
 		expectCode int
 		expectCORS bool
+		reqBody    string
 	}{
 		{
 			name:       "validate endpoint exists",
 			isLocal:    false,
 			method:     http.MethodPost,
 			path:       "/validate",
-			expectCode: http.StatusInternalServerError,
+			expectCode: http.StatusOK,
+			reqBody: `{
+				"contentType": "json",
+				"contentConfiguration":"{\"luigiConfigFragment\": {\"data\": {\"nodeDefaults\": {\"entityType\": \"global\",\"isolateView\": true},\"nodes\": [{\"entityType\": \"global\",\"icon\": \"home\",\"label\": \"Overview\",\"pathSegment\": \"home\"}],\"texts\": [{\"locale\": \"de\",\"textDictionary\": {\"hello\": \"Hallo\"}}]}},\"name\": \"overview\"}"}"
+			}`,
 		},
 		{
 			name:       "wrong method not allowed",
@@ -43,13 +49,32 @@ func TestCreateRouter(t *testing.T) {
 			method:     http.MethodGet,
 			path:       "/validate",
 			expectCode: http.StatusMethodNotAllowed,
+			reqBody: `{
+				"contentType": "json",
+				"contentConfiguration":"{\"luigiConfigFragment\": {\"data\": {\"nodeDefaults\": {\"entityType\": \"global\",\"isolateView\": true},\"nodes\": [{\"entityType\": \"global\",\"icon\": \"home\",\"label\": \"Overview\",\"pathSegment\": \"home\"}],\"texts\": [{\"locale\": \"de\",\"textDictionary\": {\"hello\": \"Hallo\"}}]}},\"name\": \"overview\"}"}"
+			}`,
 		},
 		{
 			name:       "local setup OK",
 			isLocal:    true,
 			method:     http.MethodPost,
 			path:       "/validate",
+			expectCode: http.StatusOK,
+			reqBody: `{
+				"contentType": "json",
+				"contentConfiguration":"{\"luigiConfigFragment\": {\"data\": {\"nodeDefaults\": {\"entityType\": \"global\",\"isolateView\": true},\"nodes\": [{\"entityType\": \"global\",\"icon\": \"home\",\"label\": \"Overview\",\"pathSegment\": \"home\"}],\"texts\": [{\"locale\": \"de\",\"textDictionary\": {\"hello\": \"Hallo\"}}]}},\"name\": \"overview\"}"}"
+			}`,
+		},
+		{
+			name:       "invalid request body",
+			isLocal:    true,
+			method:     http.MethodPost,
+			path:       "/validate",
 			expectCode: http.StatusInternalServerError,
+			reqBody: `{
+				"contentType": "json",
+				"contentConfiguration":"{\"luigiConfigFragment\": {\"dat
+			}`,
 		},
 	}
 
@@ -63,7 +88,7 @@ func TestCreateRouter(t *testing.T) {
 			router := CreateRouter(cfg, log, validator)
 			assert.NotNil(t, router)
 
-			req := httptest.NewRequest(tt.method, tt.path, nil)
+			req := httptest.NewRequest(tt.method, tt.path, bytes.NewBufferString(tt.reqBody))
 			rr := httptest.NewRecorder()
 
 			router.ServeHTTP(rr, req)

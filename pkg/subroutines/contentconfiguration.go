@@ -79,14 +79,14 @@ func (r *ContentConfigurationSubroutine) Process(
 		return ctrl.Result{}, errors.NewOperatorError(errors.New("no configuration provided"), false, true)
 	}
 
-	validatedConfig, err, _ := r.validator.Validate(rawConfig, contentType)
-	if err != nil {
-		log.Err(err).Msg("failed to validate configuration")
+	validatedConfig, merr := r.validator.Validate(rawConfig, contentType)
+	if merr.Len() > 0 {
+		log.Err(merr).Msg("failed to validate configuration")
 		condition := apimachinery.Condition{
 			Type:    ValidationConditionType,
 			Status:  ConditionStatusFalse,
 			Reason:  ValidationConditionReasonFailed,
-			Message: err.Error(),
+			Message: merr.Error(),
 		}
 		meta.SetStatusCondition(&instance.Status.Conditions, condition)
 		return ctrl.Result{}, nil
