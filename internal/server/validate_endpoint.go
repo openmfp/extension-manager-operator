@@ -77,8 +77,7 @@ func (h *HttpValidateHandler) HandlerValidate(w http.ResponseWriter, r *http.Req
 	// send response
 	var rValid Response
 	rValid.ParsedConfiguration = parsedConfig
-	responseBytes, _ := json.Marshal(rValid)
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	w.Write(responseBytes) // nolint: errcheck
+	json.NewEncoder(w).Encode(&rValid)
 }
