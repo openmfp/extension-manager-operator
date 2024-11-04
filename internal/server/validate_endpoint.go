@@ -48,12 +48,12 @@ func (h *HttpValidateHandler) HandlerValidate(w http.ResponseWriter, r *http.Req
 	decoder := json.NewDecoder(r.Body)
 	decoder.DisallowUnknownFields()
 	err := decoder.Decode(&request)
+	defer r.Body.Close()
 	if err != nil {
 		h.log.Error().Err(err).Msg("Reading request body failed")
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error())) // nolint: errcheck
 		sentry.CaptureError(err, sentry.Tags{"error": "Writing response failed"}, sentry.Extras{"data": r.Body})
-		r.Body.Close()
 		return
 	}
 
