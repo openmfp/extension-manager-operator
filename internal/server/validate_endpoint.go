@@ -79,5 +79,9 @@ func (h *HttpValidateHandler) HandlerValidate(w http.ResponseWriter, r *http.Req
 	rValid.ParsedConfiguration = parsedConfig
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(&rValid)
+	err = json.NewEncoder(w).Encode(&rValid)
+	if err != nil {
+		h.log.Error().Err(err).Msg("Writing response failed")
+		sentry.CaptureError(err, sentry.Tags{"error": "Writing response failed"}, sentry.Extras{"data": rValid})
+	}
 }
