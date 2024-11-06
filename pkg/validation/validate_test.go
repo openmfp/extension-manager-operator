@@ -146,6 +146,38 @@ func TestValidate(t *testing.T) {
 			expectError: false,
 			schema:      nil,
 		},
+		{
+			name:        "extension-manager-ui1",
+			input:       validation_test.GetJSONFixture(validation_test.GetValidJSON_extension_manager_ui1()),
+			contentType: "json",
+			expected:    validation_test.GetJSONFixture(validation_test.GetValidJSON_extension_manager_ui1()),
+			expectError: false,
+			schema:      nil,
+		},
+		{
+			name:        "github-ui1",
+			input:       validation_test.GetJSONFixture(validation_test.GetValidJSON_github_ui1()),
+			contentType: "json",
+			expected:    validation_test.GetJSONFixture(validation_test.GetValidJSON_github_ui1()),
+			expectError: false,
+			schema:      nil,
+		},
+		{
+			name:        "github-wc1",
+			input:       validation_test.GetJSONFixture(validation_test.GetValidJSON_github_wc()),
+			contentType: "json",
+			expected:    validation_test.GetJSONFixture(validation_test.GetValidJSON_github_wc()),
+			expectError: false,
+			schema:      nil,
+		},
+		{
+			name:        "iam-ui1",
+			input:       validation_test.GetJSONFixture(validation_test.GetValidJSON_iam_ui()),
+			contentType: "json",
+			expected:    validation_test.GetJSONFixture(validation_test.GetValidJSON_iam_ui()),
+			expectError: false,
+			schema:      nil,
+		},
 	}
 
 	cC := NewContentConfiguration()
