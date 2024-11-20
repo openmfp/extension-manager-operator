@@ -33,6 +33,15 @@
       "additionalProperties": false,
       "type": "object"
     },
+    "ClientPermissions": {
+      "properties": {
+        "urlParameters": {
+          "$ref": "#/$defs/UrlParameters"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
     "ContentConfiguration": {
       "oneOf": [
         {
@@ -69,6 +78,21 @@
         },
         "useBack": {
           "type": "boolean"
+        },
+        "contextKey": {
+          "type": "string"
+        },
+        "dynamicFetchId": {
+          "type": "string"
+        },
+        "label": {
+          "type": "string"
+        },
+        "pluralLabel": {
+          "type": "string"
+        },
+        "notFoundConfig": {
+          "$ref": "#/$defs/NotFoundConfig"
         }
       },
       "additionalProperties": false,
@@ -124,6 +148,18 @@
       "properties": {
         "data": {
           "$ref": "#/$defs/LuigiConfigData"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "NavHeader": {
+      "properties": {
+        "useTitleResolver": {
+          "type": "boolean"
+        },
+        "label": {
+          "type": "string"
         }
       },
       "additionalProperties": false,
@@ -234,7 +270,7 @@
           "type": "boolean"
         },
         "dxpOrder": {
-          "type": "integer"
+          "type": "number"
         },
         "order": {
           "type": "integer"
@@ -256,6 +292,24 @@
         },
         "visibleForEntityContext": {
           "$ref": "#/$defs/VisibleForEntityContext"
+        },
+        "networkVisibility": {
+          "type": "string"
+        },
+        "clientPermissions": {
+          "$ref": "#/$defs/ClientPermissions"
+        },
+        "navigationContext": {
+          "type": "string"
+        },
+        "navHeader": {
+          "$ref": "#/$defs/NavHeader"
+        },
+        "titleResolver": {
+          "$ref": "#/$defs/TitleResolver"
+        },
+        "defineSlot": {
+          "type": "string"
         }
       },
       "additionalProperties": false,
@@ -273,6 +327,18 @@
       "additionalProperties": false,
       "type": "object"
     },
+    "NotFoundConfig": {
+      "properties": {
+        "entityListNavigationContext": {
+          "type": "string"
+        },
+        "sapIllusSVG": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
     "Project": {
       "properties": {
         "policies": {
@@ -285,9 +351,33 @@
       "additionalProperties": false,
       "type": "object"
     },
+    "Request": {
+      "properties": {
+        "method": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string"
+        },
+        "headers": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "type": "object"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
     "RequiredIFramePermissions": {
       "properties": {
         "allow": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "sandbox": {
           "items": {
             "type": "string"
           },
@@ -365,6 +455,51 @@
       "required": [
         "textDictionary"
       ]
+    },
+    "TitleResolver": {
+      "properties": {
+        "request": {
+          "$ref": "#/$defs/Request"
+        },
+        "titlePropertyChain": {
+          "type": "string"
+        },
+        "prerenderFallback": {
+          "type": "boolean"
+        },
+        "fallbackTitle": {
+          "type": "string"
+        },
+        "fallbackIcon": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "Url": {
+      "properties": {
+        "read": {
+          "type": "boolean"
+        },
+        "write": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "UrlParameters": {
+      "properties": {
+        "url": {
+          "$ref": "#/$defs/Url"
+        },
+        "q": {
+          "$ref": "#/$defs/Url"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
     },
     "UrlTemplateParams": {
       "properties": {

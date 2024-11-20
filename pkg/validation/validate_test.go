@@ -178,6 +178,30 @@ func TestValidate(t *testing.T) {
 			expectError: false,
 			schema:      nil,
 		},
+		{
+			name:        "learnings",
+			input:       validation_test.GetJSONFixture(validation_test.GetValidJSON_learnings()),
+			contentType: "json",
+			expected:    validation_test.GetJSONFixture(validation_test.GetValidJSON_learnings()),
+			expectError: false,
+			schema:      nil,
+		},
+		{
+			name:        "organization-ui",
+			input:       validation_test.GetJSONFixture(validation_test.GetValidJSON_organization_ui()),
+			contentType: "json",
+			expected:    validation_test.GetJSONFixture(validation_test.GetValidJSON_organization_ui()),
+			expectError: false,
+			schema:      nil,
+		},
+		{
+			name:        "search-ui",
+			input:       validation_test.GetJSONFixture(validation_test.GetValidJSON_search_ui()),
+			contentType: "json",
+			expected:    validation_test.GetJSONFixture(validation_test.GetValidJSON_search_ui()),
+			expectError: false,
+			schema:      nil,
+		},
 	}
 
 	cC := NewContentConfiguration()
