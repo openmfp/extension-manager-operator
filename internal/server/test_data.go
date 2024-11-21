@@ -29,3 +29,5 @@ var ERROR_INVALID_JSON_CONTENT_MARSHALLINGVALIDATEDRESPONSE = `{
 	"contentType": "json",
 	"contentConfiguration":"{\"luigiConfigFragment2\": {\"data\": {\"nodeDefaults\": {\"entityType\": \"global\",\"isolateView\": true},\"nodes\": [{\"entityType\": \"global\",\"icon\": \"home\",\"label\": \"Overview\",\"pathSegment\": \"home\"}],\"texts\": [{\"locale\": \"de\",\"textDictionary\": {\"hello\": \"Hallo\"}}]}},\"name\": \"overview\"}"}"
 	}`
+
+var ERROR_INVALID_JSON_CONTENT3 = `not_a_json`

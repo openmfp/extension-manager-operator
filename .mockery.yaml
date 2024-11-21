@@ -10,3 +10,12 @@ packages:
         config:
           mockname: ExtensionConfiguration
 
+  # external
+  net/http:
+    config:
+      dir: pkg/validation/mocks
+      outpkg: mocks
+    interfaces:
+      ResponseWriter:
+        config:
+          mockname: ResponseWriter
