@@ -39,7 +39,20 @@ type HttpValidateHandler struct {
 
 func (h *HttpValidateHandler) HandlerHealthz(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
-	w.Write([]byte("OK")) // nolint: errcheck
+	_, err := w.Write([]byte("OK"))
+	if err != nil {
+		h.log.Error().Err(err).Msg("Writing response failed")
+		sentry.CaptureError(err, sentry.Tags{"error": "Writing response failed"})
+	}
+}
+
+func (h *HttpValidateHandler) writeErrorHelper(w http.ResponseWriter, errcode int, err error) (int, error) {
+	w.WriteHeader(errcode)
+	bytes, errWrite := w.Write([]byte(err.Error()))
+	if errWrite != nil {
+		return 0, errWrite
+	}
+	return bytes, nil
 }
 
 func (h *HttpValidateHandler) HandlerValidate(w http.ResponseWriter, r *http.Request) {
@@ -49,11 +62,13 @@ func (h *HttpValidateHandler) HandlerValidate(w http.ResponseWriter, r *http.Req
 	decoder.DisallowUnknownFields()
 	err := decoder.Decode(&request)
 	defer r.Body.Close()
+
 	if err != nil {
-		h.log.Error().Err(err).Msg("Reading request body failed")
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(err.Error())) // nolint: errcheck
-		sentry.CaptureError(err, sentry.Tags{"error": "Writing response failed"}, sentry.Extras{"data": r.Body})
+		_, errResponse := h.writeErrorHelper(w, http.StatusInternalServerError, err)
+		if errResponse != nil {
+			h.log.Error().Err(errResponse).Msg("Writing response failed")
+			sentry.CaptureError(errResponse, sentry.Tags{"error": "Writing 'StatusInternalServerError' response failed"})
+		}
 		return
 	}
 
