@@ -40,7 +40,7 @@ func RunServer(cmd *cobra.Command, args []string) { // coverage-ignore
 	appCfg, log := initApp()
 	ctrl.SetLogger(log.ComponentLogger("server").Logr())
 
-	ctx, _, shutdown := openmfpcontext.StartContext(log, nil, appCfg.ShutdownTimeout)
+	ctx, cancelMain, shutdown := openmfpcontext.StartContext(log, nil, appCfg.ShutdownTimeout)
 	defer shutdown()
 
 	rt := server.CreateRouter(appCfg, log, validation.NewContentConfiguration())
@@ -53,7 +53,10 @@ func RunServer(cmd *cobra.Command, args []string) { // coverage-ignore
 	}
 
 	go func() {
-		server.ListenAndServe() // nolint: errcheck
+		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			log.Error().Err(err).Msg("Server failed")
+			cancelMain(err)
+		}
 	}()
 	log.Info().Msg("Server started")
 

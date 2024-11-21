@@ -33,7 +33,7 @@ func initApp() (config.Config, *logger.Logger) {
 	}
 
 	logConfig := logger.DefaultConfig()
-	logConfig.Name = "iam"
+	logConfig.Name = "extension-content-operator"
 	logConfig.Level = appConfig.Log.Level
 	logConfig.NoJSON = appConfig.IsLocal
 	log, err := logger.New(logConfig)
