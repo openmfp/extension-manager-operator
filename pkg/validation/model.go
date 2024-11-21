@@ -13,7 +13,12 @@ type LuigiConfigFragment struct {
 }
 
 type ViewGroup struct {
-	PreloadSuffix string `json:"preloadSuffix,omitempty" yaml:"preloadSuffix,omitempty"`
+	PreloadSuffix             string                    `json:"preloadSuffix,omitempty" yaml:"preloadSuffix,omitempty"`
+	RequiredIFramePermissions RequiredIFramePermissions `json:"requiredIFramePermissions,omitempty" yaml:"requiredIFramePermissions,omitempty"`
+}
+
+type RequiredIFramePermissions struct {
+	Allow []string `json:"allow,omitempty" yaml:"allow,omitempty"`
 }
 
 type LuigiConfigData struct {
@@ -73,35 +78,50 @@ type Text struct {
 }
 
 type Node struct {
-	EntityType                string       `json:"entityType,omitempty" yaml:"entityType,omitempty"`
-	PathSegment               string       `json:"pathSegment,omitempty" yaml:"pathSegment,omitempty"`
-	Label                     string       `json:"label,omitempty" yaml:"label,omitempty"`
-	Icon                      string       `json:"icon,omitempty" yaml:"icon,omitempty"`
-	Category                  interface{}  `json:"category,omitempty" yaml:"category,omitempty" jsonschema:"anyof_ref=#/$defs/Category,anyof_type=string"`
-	Url                       string       `json:"url,omitempty" yaml:"url,omitempty"`
-	HideFromNav               bool         `json:"hideFromNav,omitempty" yaml:"hideFromNav,omitempty"`
-	VisibleForFeatureToggles  []string     `json:"visibleForFeatureToggles,omitempty" yaml:"visibleForFeatureToggles,omitempty"`
-	VirtualTree               bool         `json:"virtualTree,omitempty" yaml:"virtualTree,omitempty"`
-	RequiredIFramePermissions interface{}  `json:"requiredIFramePermissions,omitempty" yaml:"requiredIFramePermissions,omitempty" jsonschema:"anyof_type=object"`
-	Compound                  interface{}  `json:"compound,omitempty" yaml:"compound,omitempty" jsonschema:"anyof_type=object"`
-	InitialRoute              string       `json:"initialRoute,omitempty" yaml:"initialRoute,omitempty"`
-	LayoutConfig              interface{}  `json:"layoutConfig,omitempty" yaml:"layoutConfig,omitempty" jsonschema:"anyof_type=object"`
-	Context                   interface{}  `json:"context,omitempty" yaml:"context,omitempty" jsonschema:"anyof_type=object"`
-	Webcomponent              Webcomponent `json:"webcomponent,omitempty" yaml:"webcomponent,omitempty"`
-	LoadingIndicator          interface{}  `json:"loadingIndicator,omitempty" yaml:"loadingIndicator,omitempty" jsonschema:"anyof_type=object"`
-	DefineEntity              DefineEntity `json:"defineEntity,omitempty" yaml:"defineEntity,omitempty"`
-	KeepSelectedForChildren   bool         `json:"keepSelectedForChildren,omitempty" yaml:"keepSelectedForChildren,omitempty"`
-	Children                  []Node       `json:"children,omitempty" yaml:"children,omitempty"`
-	UrlSuffix                 string       `json:"urlSuffix,omitempty" yaml:"urlSuffix,omitempty"`
-	HideSideNav               bool         `json:"hideSideNav,omitempty" yaml:"hideSideNav,omitempty"`
-	TabNav                    bool         `json:"tabNav,omitempty" yaml:"tabNav,omitempty"`
-	ShowBreadcrumbs           bool         `json:"showBreadcrumbs,omitempty" yaml:"showBreadcrumbs,omitempty"`
-	DxpOrder                  int          `json:"dxpOrder,omitempty" yaml:"dxpOrder,omitempty"`
-	Order                     int          `json:"order,omitempty" yaml:"order,omitempty"`
+	EntityType                string                  `json:"entityType,omitempty" yaml:"entityType,omitempty"`
+	PathSegment               string                  `json:"pathSegment,omitempty" yaml:"pathSegment,omitempty"`
+	Label                     string                  `json:"label,omitempty" yaml:"label,omitempty"`
+	Icon                      string                  `json:"icon,omitempty" yaml:"icon,omitempty"`
+	Category                  interface{}             `json:"category,omitempty" yaml:"category,omitempty" jsonschema:"anyof_ref=#/$defs/Category,anyof_type=string"`
+	Url                       string                  `json:"url,omitempty" yaml:"url,omitempty"`
+	HideFromNav               bool                    `json:"hideFromNav,omitempty" yaml:"hideFromNav,omitempty"`
+	VisibleForFeatureToggles  []string                `json:"visibleForFeatureToggles,omitempty" yaml:"visibleForFeatureToggles,omitempty"`
+	VirtualTree               bool                    `json:"virtualTree,omitempty" yaml:"virtualTree,omitempty"`
+	RequiredIFramePermissions interface{}             `json:"requiredIFramePermissions,omitempty" yaml:"requiredIFramePermissions,omitempty" jsonschema:"anyof_type=object"`
+	Compound                  interface{}             `json:"compound,omitempty" yaml:"compound,omitempty" jsonschema:"anyof_type=object"`
+	InitialRoute              string                  `json:"initialRoute,omitempty" yaml:"initialRoute,omitempty"`
+	LayoutConfig              interface{}             `json:"layoutConfig,omitempty" yaml:"layoutConfig,omitempty" jsonschema:"anyof_type=object"`
+	Context                   interface{}             `json:"context,omitempty" yaml:"context,omitempty" jsonschema:"anyof_type=object"`
+	Webcomponent              Webcomponent            `json:"webcomponent,omitempty" yaml:"webcomponent,omitempty"`
+	LoadingIndicator          interface{}             `json:"loadingIndicator,omitempty" yaml:"loadingIndicator,omitempty" jsonschema:"anyof_type=object"`
+	DefineEntity              DefineEntity            `json:"defineEntity,omitempty" yaml:"defineEntity,omitempty"`
+	KeepSelectedForChildren   bool                    `json:"keepSelectedForChildren,omitempty" yaml:"keepSelectedForChildren,omitempty"`
+	Children                  []Node                  `json:"children,omitempty" yaml:"children,omitempty"`
+	UrlSuffix                 string                  `json:"urlSuffix,omitempty" yaml:"urlSuffix,omitempty"`
+	HideSideNav               bool                    `json:"hideSideNav,omitempty" yaml:"hideSideNav,omitempty"`
+	TabNav                    bool                    `json:"tabNav,omitempty" yaml:"tabNav,omitempty"`
+	ShowBreadcrumbs           bool                    `json:"showBreadcrumbs,omitempty" yaml:"showBreadcrumbs,omitempty"`
+	DxpOrder                  int                     `json:"dxpOrder,omitempty" yaml:"dxpOrder,omitempty"`
+	Order                     int                     `json:"order,omitempty" yaml:"order,omitempty"`
+	TestId                    string                  `json:"testId,omitempty" yaml:"testId,omitempty"`
+	NavSlot                   string                  `json:"navSlot,omitempty" yaml:"navSlot,omitempty"`
+	VisibleForPlugin          bool                    `json:"visibleForPlugin,omitempty" yaml:"visibleForPlugin,omitempty"`
+	IsolateView               bool                    `json:"isolateView,omitempty" yaml:"isolateView,omitempty"`
+	VisibleForContext         string                  `json:"visibleForContext,omitempty" yaml:"visibleForContext,omitempty"`
+	VisibleForEntityContext   VisibleForEntityContext `json:"visibleForEntityContext,omitempty" yaml:"visibleForEntityContext,omitempty"`
+}
+
+type VisibleForEntityContext struct {
+	Project Project `json:"project,omitempty" yaml:"project,omitempty"`
+}
+
+type Project struct {
+	Policies []string `json:"policies,omitempty" yaml:"policies,omitempty"`
 }
 
 type DefineEntity struct {
-	Id string `json:"id,omitempty" yaml:"id,omitempty"`
+	Id      string `json:"id,omitempty" yaml:"id,omitempty"`
+	UseBack bool   `json:"useBack,omitempty" yaml:"useBack,omitempty"`
 }
 
 type Webcomponent struct {
@@ -112,4 +132,9 @@ type Category struct {
 	Label       string `json:"label,omitempty" yaml:"label,omitempty"`
 	Icon        string `json:"icon,omitempty" yaml:"icon,omitempty"`
 	Collapsible bool   `json:"collapsible,omitempty" yaml:"collapsible,omitempty"`
+	Id          string `json:"id,omitempty" yaml:"id,omitempty"`
+	IsGroup     bool   `json:"isGroup,omitempty" yaml:"isGroup,omitempty"`
+	Collapsable bool   `json:"collapsable,omitempty" yaml:"collapsable,omitempty"`
+	DxpOrder    int    `json:"dxpOrder,omitempty" yaml:"dxpOrder,omitempty"`
+	Order       int    `json:"order,omitempty" yaml:"order,omitempty"`
 }

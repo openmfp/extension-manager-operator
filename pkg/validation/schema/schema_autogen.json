@@ -13,6 +13,21 @@
         },
         "collapsible": {
           "type": "boolean"
+        },
+        "id": {
+          "type": "string"
+        },
+        "isGroup": {
+          "type": "boolean"
+        },
+        "collapsable": {
+          "type": "boolean"
+        },
+        "dxpOrder": {
+          "type": "integer"
+        },
+        "order": {
+          "type": "integer"
         }
       },
       "additionalProperties": false,
@@ -51,6 +66,9 @@
       "properties": {
         "id": {
           "type": "string"
+        },
+        "useBack": {
+          "type": "boolean"
         }
       },
       "additionalProperties": false,
@@ -220,6 +238,24 @@
         },
         "order": {
           "type": "integer"
+        },
+        "testId": {
+          "type": "string"
+        },
+        "navSlot": {
+          "type": "string"
+        },
+        "visibleForPlugin": {
+          "type": "boolean"
+        },
+        "isolateView": {
+          "type": "boolean"
+        },
+        "visibleForContext": {
+          "type": "string"
+        },
+        "visibleForEntityContext": {
+          "$ref": "#/$defs/VisibleForEntityContext"
         }
       },
       "additionalProperties": false,
@@ -232,6 +268,30 @@
         },
         "isolateView": {
           "type": "boolean"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "Project": {
+      "properties": {
+        "policies": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "RequiredIFramePermissions": {
+      "properties": {
+        "allow": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
         }
       },
       "additionalProperties": false,
@@ -359,6 +419,18 @@
       "properties": {
         "preloadSuffix": {
           "type": "string"
+        },
+        "requiredIFramePermissions": {
+          "$ref": "#/$defs/RequiredIFramePermissions"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "VisibleForEntityContext": {
+      "properties": {
+        "project": {
+          "$ref": "#/$defs/Project"
         }
       },
       "additionalProperties": false,
