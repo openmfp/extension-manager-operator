@@ -5,7 +5,7 @@ go 1.23.2
 require (
 	github.com/invopop/jsonschema v0.12.0
 	github.com/jarcoal/httpmock v1.3.1
-	github.com/openmfp/golang-commons v0.99.0
+	github.com/openmfp/golang-commons v0.100.0
 	github.com/pkg/errors v0.9.1
 	github.com/rs/zerolog v1.33.0
 	github.com/spf13/cobra v1.8.1
@@ -16,7 +16,7 @@ require (
 	k8s.io/api v0.31.3
 	k8s.io/apimachinery v0.31.3
 	k8s.io/client-go v0.31.3
-	sigs.k8s.io/controller-runtime v0.19.1
+	sigs.k8s.io/controller-runtime v0.19.2
 )
 
 require (
