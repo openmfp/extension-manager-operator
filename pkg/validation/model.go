@@ -93,7 +93,7 @@ type Node struct {
 	InitialRoute              string                  `json:"initialRoute,omitempty" yaml:"initialRoute,omitempty"`
 	LayoutConfig              interface{}             `json:"layoutConfig,omitempty" yaml:"layoutConfig,omitempty" jsonschema:"anyof_type=object"`
 	Context                   interface{}             `json:"context,omitempty" yaml:"context,omitempty" jsonschema:"anyof_type=object"`
-	Webcomponent              Webcomponent            `json:"webcomponent,omitempty" yaml:"webcomponent,omitempty"`
+	Webcomponent              Webcomponent            `json:"webcomponent,omitempty" yaml:"webcomponent,omitempty" jsonschema:"anyof_ref=#/$defs/Webcomponent,anyof_type=boolean"`
 	LoadingIndicator          interface{}             `json:"loadingIndicator,omitempty" yaml:"loadingIndicator,omitempty" jsonschema:"anyof_type=object"`
 	DefineEntity              DefineEntity            `json:"defineEntity,omitempty" yaml:"defineEntity,omitempty"`
 	KeepSelectedForChildren   bool                    `json:"keepSelectedForChildren,omitempty" yaml:"keepSelectedForChildren,omitempty"`
@@ -103,7 +103,7 @@ type Node struct {
 	TabNav                    bool                    `json:"tabNav,omitempty" yaml:"tabNav,omitempty"`
 	ShowBreadcrumbs           bool                    `json:"showBreadcrumbs,omitempty" yaml:"showBreadcrumbs,omitempty"`
 	DxpOrder                  float32                 `json:"dxpOrder,omitempty" yaml:"dxpOrder,omitempty"`
-	Order                     int                     `json:"order,omitempty" yaml:"order,omitempty"`
+	Order                     float32                 `json:"order,omitempty" yaml:"order,omitempty"`
 	TestId                    string                  `json:"testId,omitempty" yaml:"testId,omitempty"`
 	NavSlot                   string                  `json:"navSlot,omitempty" yaml:"navSlot,omitempty"`
 	VisibleForPlugin          bool                    `json:"visibleForPlugin,omitempty" yaml:"visibleForPlugin,omitempty"`
@@ -116,6 +116,13 @@ type Node struct {
 	NavHeader                 NavHeader               `json:"navHeader,omitempty" yaml:"navHeader,omitempty"`
 	TitleResolver             TitleResolver           `json:"titleResolver,omitempty" yaml:"titleResolver,omitempty"`
 	DefineSlot                string                  `json:"defineSlot,omitempty" yaml:"defineSlot,omitempty"`
+	IgnoreInDocumentTitle     bool                    `json:"ignoreInDocumentTitle,omitempty" yaml:"ignoreInDocumentTitle,omitempty"`
+	ExternalLink              ExternalLink            `json:"externalLink,omitempty" yaml:"externalLink,omitempty"`
+}
+
+type ExternalLink struct {
+	Url        string `json:"url,omitempty" yaml:"url,omitempty"`
+	SameWindow bool   `json:"sameWindow,omitempty" yaml:"sameWindow,omitempty"`
 }
 
 type TitleResolver struct {
@@ -135,6 +142,8 @@ type Request struct {
 type NavHeader struct {
 	UseTitleResolver bool   `json:"useTitleResolver,omitempty" yaml:"useTitleResolver,omitempty"`
 	Label            string `json:"label,omitempty" yaml:"label,omitempty"`
+	ShowUpLink       bool   `json:"showUpLink,omitempty" yaml:"showUpLink,omitempty"`
+	Icon             string `json:"icon,omitempty" yaml:"icon,omitempty"`
 }
 
 type ClientPermissions struct {
@@ -142,8 +151,9 @@ type ClientPermissions struct {
 }
 
 type UrlParameters struct {
-	Url Url `json:"url,omitempty" yaml:"url,omitempty"`
-	Q   Url `json:"q,omitempty" yaml:"q,omitempty"`
+	Url    Url `json:"url,omitempty" yaml:"url,omitempty"`
+	Q      Url `json:"q,omitempty" yaml:"q,omitempty"`
+	Author Url `json:"author,omitempty" yaml:"author,omitempty"`
 }
 
 type Url struct {
