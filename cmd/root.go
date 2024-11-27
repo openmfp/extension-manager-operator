@@ -7,7 +7,7 @@ import (
 	clientgoscheme "k8s.io/client-go/kubernetes/scheme"
 	ctrl "sigs.k8s.io/controller-runtime"
 
-	corev1alpha1 "github.com/openmfp/extension-content-operator/api/v1alpha1"
+	corev1alpha1 "github.com/openmfp/extension-manager-operator/api/v1alpha1"
 )
 
 var (
@@ -16,7 +16,7 @@ var (
 )
 
 var rootCmd = &cobra.Command{
-	Use:   "extension-content-operator",
+	Use:   "extension-manager-operator",
 	Short: "operator to reconcile ContentConfiguration",
 }
 

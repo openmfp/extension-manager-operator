@@ -9,6 +9,6 @@ jobs:
     uses: openmfp/gha/.github/workflows/pipeline-golang-app.yml@main
     secrets: inherit
     with:
-      imageTagName: ghcr.io/openmfp/extension-content-operator
+      imageTagName: ghcr.io/openmfp/extension-manager-operator
       useTask: true
       useLocalCoverageConfig: true

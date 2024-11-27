@@ -35,8 +35,8 @@ import (
 	openmfpcontext "github.com/openmfp/golang-commons/context"
 	"github.com/openmfp/golang-commons/logger"
 
-	cachev1alpha1 "github.com/openmfp/extension-content-operator/api/v1alpha1"
-	"github.com/openmfp/extension-content-operator/internal/config"
+	cachev1alpha1 "github.com/openmfp/extension-manager-operator/api/v1alpha1"
+	"github.com/openmfp/extension-manager-operator/internal/config"
 )
 
 const (

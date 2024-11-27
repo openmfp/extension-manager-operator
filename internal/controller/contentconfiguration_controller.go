@@ -23,16 +23,16 @@ import (
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/predicate"
 
-	cachev1alpha1 "github.com/openmfp/extension-content-operator/api/v1alpha1"
-	"github.com/openmfp/extension-content-operator/internal/config"
-	"github.com/openmfp/extension-content-operator/pkg/subroutines"
-	"github.com/openmfp/extension-content-operator/pkg/validation"
+	cachev1alpha1 "github.com/openmfp/extension-manager-operator/api/v1alpha1"
+	"github.com/openmfp/extension-manager-operator/internal/config"
+	"github.com/openmfp/extension-manager-operator/pkg/subroutines"
+	"github.com/openmfp/extension-manager-operator/pkg/validation"
 	"github.com/openmfp/golang-commons/controller/lifecycle"
 	"github.com/openmfp/golang-commons/logger"
 )
 
 var (
-	operatorName                       = "extension-content-operator"
+	operatorName                       = "extension-manager-operator"
 	contentConfigurationReconcilerName = "ContentConfigurationReconciler"
 )
 

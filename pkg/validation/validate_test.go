@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	"github.com/hashicorp/go-multierror"
-	"github.com/openmfp/extension-content-operator/pkg/validation/validation_test"
+	"github.com/openmfp/extension-manager-operator/pkg/validation/validation_test"
 	"github.com/stretchr/testify/assert"
 )
 

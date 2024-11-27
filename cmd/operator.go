@@ -29,8 +29,8 @@ import (
 	metricsserver "sigs.k8s.io/controller-runtime/pkg/metrics/server"
 	"sigs.k8s.io/controller-runtime/pkg/webhook"
 
-	"github.com/openmfp/extension-content-operator/internal/config"
-	"github.com/openmfp/extension-content-operator/internal/controller"
+	"github.com/openmfp/extension-manager-operator/internal/config"
+	"github.com/openmfp/extension-manager-operator/internal/controller"
 )
 
 var operatorCmd = &cobra.Command{

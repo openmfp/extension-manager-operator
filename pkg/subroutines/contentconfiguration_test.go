@@ -18,10 +18,10 @@ import (
 	golangCommonErrors "github.com/openmfp/golang-commons/errors"
 	apimachinery "k8s.io/apimachinery/pkg/apis/meta/v1"
 
-	cachev1alpha1 "github.com/openmfp/extension-content-operator/api/v1alpha1"
-	"github.com/openmfp/extension-content-operator/pkg/subroutines/mocks"
-	"github.com/openmfp/extension-content-operator/pkg/validation"
-	"github.com/openmfp/extension-content-operator/pkg/validation/validation_test"
+	cachev1alpha1 "github.com/openmfp/extension-manager-operator/api/v1alpha1"
+	"github.com/openmfp/extension-manager-operator/pkg/subroutines/mocks"
+	"github.com/openmfp/extension-manager-operator/pkg/validation"
+	"github.com/openmfp/extension-manager-operator/pkg/validation/validation_test"
 )
 
 type ContentConfigurationSubroutineTestSuite struct {

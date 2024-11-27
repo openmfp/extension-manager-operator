@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/openmfp/extension-content-operator/cmd"
+	"github.com/openmfp/extension-manager-operator/cmd"
 )
 
 func main() {

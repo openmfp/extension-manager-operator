@@ -1,7 +1,7 @@
 with-expecter: true
 packages:
   # internal
-  github.com/openmfp/extension-content-operator/pkg/validation:
+  github.com/openmfp/extension-manager-operator/pkg/validation:
     config:
       dir: pkg/validation/mocks
       outpkg: mocks

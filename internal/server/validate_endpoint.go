@@ -6,7 +6,7 @@ import (
 
 	"github.com/openmfp/golang-commons/logger"
 
-	"github.com/openmfp/extension-content-operator/pkg/validation"
+	"github.com/openmfp/extension-manager-operator/pkg/validation"
 
 	"github.com/openmfp/golang-commons/sentry"
 )

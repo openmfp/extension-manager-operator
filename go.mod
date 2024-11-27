@@ -1,4 +1,4 @@
-module github.com/openmfp/extension-content-operator
+module github.com/openmfp/extension-manager-operator
 
 go 1.23.2
 

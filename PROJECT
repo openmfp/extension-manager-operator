@@ -8,8 +8,8 @@ layout:
 plugins:
   manifests.sdk.operatorframework.io/v2: {}
   scorecard.sdk.operatorframework.io/v2: {}
-projectName: extension-content-operator
-repo: github.com/openmfp/extension-content-operator
+projectName: extension-manager-operator
+repo: github.com/openmfp/extension-manager-operator
 resources:
 - api:
     crdVersion: v1
@@ -18,6 +18,6 @@ resources:
   domain: openmfp.io
   group: core
   kind: ContentConfiguration
-  path: github.com/openmfp/extension-content-operator/api/v1alpha1
+  path: github.com/openmfp/extension-manager-operator/api/v1alpha1
   version: v1alpha1
 version: "3"

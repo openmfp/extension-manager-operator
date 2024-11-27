@@ -26,8 +26,8 @@ import (
 	_ "k8s.io/client-go/plugin/pkg/client/auth"
 	ctrl "sigs.k8s.io/controller-runtime"
 
-	"github.com/openmfp/extension-content-operator/internal/server"
-	"github.com/openmfp/extension-content-operator/pkg/validation"
+	"github.com/openmfp/extension-manager-operator/internal/server"
+	"github.com/openmfp/extension-manager-operator/pkg/validation"
 )
 
 var serverCmd = &cobra.Command{

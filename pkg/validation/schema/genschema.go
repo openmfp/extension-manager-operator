@@ -8,7 +8,7 @@ import (
 	"runtime"
 
 	"github.com/invopop/jsonschema"
-	"github.com/openmfp/extension-content-operator/pkg/validation"
+	"github.com/openmfp/extension-manager-operator/pkg/validation"
 )
 
 func reflectContentConfiguration() {

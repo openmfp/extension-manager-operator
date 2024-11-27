@@ -9,8 +9,8 @@ import (
 	"testing"
 
 	"github.com/hashicorp/go-multierror"
-	"github.com/openmfp/extension-content-operator/pkg/validation"
-	"github.com/openmfp/extension-content-operator/pkg/validation/mocks"
+	"github.com/openmfp/extension-manager-operator/pkg/validation"
+	"github.com/openmfp/extension-manager-operator/pkg/validation/mocks"
 	"github.com/openmfp/golang-commons/errors"
 	"github.com/openmfp/golang-commons/logger"
 	"github.com/stretchr/testify/assert"

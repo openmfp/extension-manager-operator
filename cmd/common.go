@@ -20,7 +20,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/openmfp/extension-content-operator/internal/config"
+	"github.com/openmfp/extension-manager-operator/internal/config"
 	"github.com/openmfp/golang-commons/logger"
 	_ "k8s.io/client-go/plugin/pkg/client/auth"
 )
@@ -33,7 +33,7 @@ func initApp() (config.Config, *logger.Logger) {
 	}
 
 	logConfig := logger.DefaultConfig()
-	logConfig.Name = "extension-content-operator"
+	logConfig.Name = "extension-manager-operator"
 	logConfig.Level = appConfig.Log.Level
 	logConfig.NoJSON = appConfig.IsLocal
 	log, err := logger.New(logConfig)
