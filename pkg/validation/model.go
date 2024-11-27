@@ -18,7 +18,8 @@ type ViewGroup struct {
 }
 
 type RequiredIFramePermissions struct {
-	Allow []string `json:"allow,omitempty" yaml:"allow,omitempty"`
+	Allow   []string `json:"allow,omitempty" yaml:"allow,omitempty"`
+	Sandbox []string `json:"sandbox,omitempty" yaml:"sandbox,omitempty"`
 }
 
 type LuigiConfigData struct {
@@ -92,7 +93,7 @@ type Node struct {
 	InitialRoute              string                  `json:"initialRoute,omitempty" yaml:"initialRoute,omitempty"`
 	LayoutConfig              interface{}             `json:"layoutConfig,omitempty" yaml:"layoutConfig,omitempty" jsonschema:"anyof_type=object"`
 	Context                   interface{}             `json:"context,omitempty" yaml:"context,omitempty" jsonschema:"anyof_type=object"`
-	Webcomponent              Webcomponent            `json:"webcomponent,omitempty" yaml:"webcomponent,omitempty"`
+	Webcomponent              Webcomponent            `json:"webcomponent,omitempty" yaml:"webcomponent,omitempty" jsonschema:"anyof_ref=#/$defs/Webcomponent,anyof_type=boolean"`
 	LoadingIndicator          interface{}             `json:"loadingIndicator,omitempty" yaml:"loadingIndicator,omitempty" jsonschema:"anyof_type=object"`
 	DefineEntity              DefineEntity            `json:"defineEntity,omitempty" yaml:"defineEntity,omitempty"`
 	KeepSelectedForChildren   bool                    `json:"keepSelectedForChildren,omitempty" yaml:"keepSelectedForChildren,omitempty"`
@@ -101,14 +102,63 @@ type Node struct {
 	HideSideNav               bool                    `json:"hideSideNav,omitempty" yaml:"hideSideNav,omitempty"`
 	TabNav                    bool                    `json:"tabNav,omitempty" yaml:"tabNav,omitempty"`
 	ShowBreadcrumbs           bool                    `json:"showBreadcrumbs,omitempty" yaml:"showBreadcrumbs,omitempty"`
-	DxpOrder                  int                     `json:"dxpOrder,omitempty" yaml:"dxpOrder,omitempty"`
-	Order                     int                     `json:"order,omitempty" yaml:"order,omitempty"`
+	DxpOrder                  float32                 `json:"dxpOrder,omitempty" yaml:"dxpOrder,omitempty"`
+	Order                     float32                 `json:"order,omitempty" yaml:"order,omitempty"`
 	TestId                    string                  `json:"testId,omitempty" yaml:"testId,omitempty"`
 	NavSlot                   string                  `json:"navSlot,omitempty" yaml:"navSlot,omitempty"`
 	VisibleForPlugin          bool                    `json:"visibleForPlugin,omitempty" yaml:"visibleForPlugin,omitempty"`
 	IsolateView               bool                    `json:"isolateView,omitempty" yaml:"isolateView,omitempty"`
 	VisibleForContext         string                  `json:"visibleForContext,omitempty" yaml:"visibleForContext,omitempty"`
 	VisibleForEntityContext   VisibleForEntityContext `json:"visibleForEntityContext,omitempty" yaml:"visibleForEntityContext,omitempty"`
+	NetworkVisibility         string                  `json:"networkVisibility,omitempty" yaml:"networkVisibility,omitempty"`
+	ClientPermissions         ClientPermissions       `json:"clientPermissions,omitempty" yaml:"clientPermissions,omitempty"`
+	NavigationContext         string                  `json:"navigationContext,omitempty" yaml:"navigationContext,omitempty"`
+	NavHeader                 NavHeader               `json:"navHeader,omitempty" yaml:"navHeader,omitempty"`
+	TitleResolver             TitleResolver           `json:"titleResolver,omitempty" yaml:"titleResolver,omitempty"`
+	DefineSlot                string                  `json:"defineSlot,omitempty" yaml:"defineSlot,omitempty"`
+	IgnoreInDocumentTitle     bool                    `json:"ignoreInDocumentTitle,omitempty" yaml:"ignoreInDocumentTitle,omitempty"`
+	ExternalLink              ExternalLink            `json:"externalLink,omitempty" yaml:"externalLink,omitempty"`
+}
+
+type ExternalLink struct {
+	Url        string `json:"url,omitempty" yaml:"url,omitempty"`
+	SameWindow bool   `json:"sameWindow,omitempty" yaml:"sameWindow,omitempty"`
+}
+
+type TitleResolver struct {
+	Request            Request `json:"request,omitempty" yaml:"request,omitempty"`
+	TitlePropertyChain string  `json:"titlePropertyChain,omitempty" yaml:"titlePropertyChain,omitempty"`
+	PrerenderFallback  bool    `json:"prerenderFallback,omitempty" yaml:"prerenderFallback,omitempty"`
+	FallbackTitle      string  `json:"fallbackTitle,omitempty" yaml:"fallbackTitle,omitempty"`
+	FallbackIcon       string  `json:"fallbackIcon,omitempty" yaml:"fallbackIcon,omitempty"`
+}
+
+type Request struct {
+	Method  string            `json:"method,omitempty" yaml:"method,omitempty"`
+	Url     string            `json:"url,omitempty" yaml:"url,omitempty"`
+	Headers map[string]string `json:"headers,omitempty" yaml:"headers,omitempty"`
+}
+
+type NavHeader struct {
+	UseTitleResolver bool   `json:"useTitleResolver,omitempty" yaml:"useTitleResolver,omitempty"`
+	Label            string `json:"label,omitempty" yaml:"label,omitempty"`
+	ShowUpLink       bool   `json:"showUpLink,omitempty" yaml:"showUpLink,omitempty"`
+	Icon             string `json:"icon,omitempty" yaml:"icon,omitempty"`
+}
+
+type ClientPermissions struct {
+	UrlParameters UrlParameters `json:"urlParameters,omitempty" yaml:"urlParameters,omitempty"`
+}
+
+type UrlParameters struct {
+	Url    Url `json:"url,omitempty" yaml:"url,omitempty"`
+	Q      Url `json:"q,omitempty" yaml:"q,omitempty"`
+	Author Url `json:"author,omitempty" yaml:"author,omitempty"`
+}
+
+type Url struct {
+	Read  bool `json:"read,omitempty" yaml:"read,omitempty"`
+	Write bool `json:"write,omitempty" yaml:"write,omitempty"`
 }
 
 type VisibleForEntityContext struct {
@@ -120,8 +170,18 @@ type Project struct {
 }
 
 type DefineEntity struct {
-	Id      string `json:"id,omitempty" yaml:"id,omitempty"`
-	UseBack bool   `json:"useBack,omitempty" yaml:"useBack,omitempty"`
+	Id             string         `json:"id,omitempty" yaml:"id,omitempty"`
+	UseBack        bool           `json:"useBack,omitempty" yaml:"useBack,omitempty"`
+	ContextKey     string         `json:"contextKey,omitempty" yaml:"contextKey,omitempty"`
+	DynamicFetchId string         `json:"dynamicFetchId,omitempty" yaml:"dynamicFetchId,omitempty"`
+	Label          string         `json:"label,omitempty" yaml:"label,omitempty"`
+	PluralLabel    string         `json:"pluralLabel,omitempty" yaml:"pluralLabel,omitempty"`
+	NotFoundConfig NotFoundConfig `json:"notFoundConfig,omitempty" yaml:"notFoundConfig,omitempty"`
+}
+
+type NotFoundConfig struct {
+	EntityListNavigationContext string `json:"entityListNavigationContext,omitempty" yaml:"entityListNavigationContext,omitempty"`
+	SapIllusSVG                 string `json:"sapIllusSVG,omitempty" yaml:"sapIllusSVG,omitempty"`
 }
 
 type Webcomponent struct {

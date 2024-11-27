@@ -33,6 +33,15 @@
       "additionalProperties": false,
       "type": "object"
     },
+    "ClientPermissions": {
+      "properties": {
+        "urlParameters": {
+          "$ref": "#/$defs/UrlParameters"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
     "ContentConfiguration": {
       "oneOf": [
         {
@@ -68,6 +77,33 @@
           "type": "string"
         },
         "useBack": {
+          "type": "boolean"
+        },
+        "contextKey": {
+          "type": "string"
+        },
+        "dynamicFetchId": {
+          "type": "string"
+        },
+        "label": {
+          "type": "string"
+        },
+        "pluralLabel": {
+          "type": "string"
+        },
+        "notFoundConfig": {
+          "$ref": "#/$defs/NotFoundConfig"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "ExternalLink": {
+      "properties": {
+        "url": {
+          "type": "string"
+        },
+        "sameWindow": {
           "type": "boolean"
         }
       },
@@ -124,6 +160,24 @@
       "properties": {
         "data": {
           "$ref": "#/$defs/LuigiConfigData"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "NavHeader": {
+      "properties": {
+        "useTitleResolver": {
+          "type": "boolean"
+        },
+        "label": {
+          "type": "string"
+        },
+        "showUpLink": {
+          "type": "boolean"
+        },
+        "icon": {
+          "type": "string"
         }
       },
       "additionalProperties": false,
@@ -200,7 +254,14 @@
           ]
         },
         "webcomponent": {
-          "$ref": "#/$defs/Webcomponent"
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Webcomponent"
+            },
+            {
+              "type": "boolean"
+            }
+          ]
         },
         "loadingIndicator": {
           "anyOf": [
@@ -234,10 +295,10 @@
           "type": "boolean"
         },
         "dxpOrder": {
-          "type": "integer"
+          "type": "number"
         },
         "order": {
-          "type": "integer"
+          "type": "number"
         },
         "testId": {
           "type": "string"
@@ -256,6 +317,30 @@
         },
         "visibleForEntityContext": {
           "$ref": "#/$defs/VisibleForEntityContext"
+        },
+        "networkVisibility": {
+          "type": "string"
+        },
+        "clientPermissions": {
+          "$ref": "#/$defs/ClientPermissions"
+        },
+        "navigationContext": {
+          "type": "string"
+        },
+        "navHeader": {
+          "$ref": "#/$defs/NavHeader"
+        },
+        "titleResolver": {
+          "$ref": "#/$defs/TitleResolver"
+        },
+        "defineSlot": {
+          "type": "string"
+        },
+        "ignoreInDocumentTitle": {
+          "type": "boolean"
+        },
+        "externalLink": {
+          "$ref": "#/$defs/ExternalLink"
         }
       },
       "additionalProperties": false,
@@ -273,6 +358,18 @@
       "additionalProperties": false,
       "type": "object"
     },
+    "NotFoundConfig": {
+      "properties": {
+        "entityListNavigationContext": {
+          "type": "string"
+        },
+        "sapIllusSVG": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
     "Project": {
       "properties": {
         "policies": {
@@ -285,9 +382,33 @@
       "additionalProperties": false,
       "type": "object"
     },
+    "Request": {
+      "properties": {
+        "method": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string"
+        },
+        "headers": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "type": "object"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
     "RequiredIFramePermissions": {
       "properties": {
         "allow": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "sandbox": {
           "items": {
             "type": "string"
           },
@@ -365,6 +486,54 @@
       "required": [
         "textDictionary"
       ]
+    },
+    "TitleResolver": {
+      "properties": {
+        "request": {
+          "$ref": "#/$defs/Request"
+        },
+        "titlePropertyChain": {
+          "type": "string"
+        },
+        "prerenderFallback": {
+          "type": "boolean"
+        },
+        "fallbackTitle": {
+          "type": "string"
+        },
+        "fallbackIcon": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "Url": {
+      "properties": {
+        "read": {
+          "type": "boolean"
+        },
+        "write": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "UrlParameters": {
+      "properties": {
+        "url": {
+          "$ref": "#/$defs/Url"
+        },
+        "q": {
+          "$ref": "#/$defs/Url"
+        },
+        "author": {
+          "$ref": "#/$defs/Url"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
     },
     "UrlTemplateParams": {
       "properties": {
