@@ -341,6 +341,12 @@
         },
         "externalLink": {
           "$ref": "#/$defs/ExternalLink"
+        },
+        "contextKey": {
+          "type": "string"
+        },
+        "dynamicFetchId": {
+          "type": "string"
         }
       },
       "additionalProperties": false,

@@ -118,6 +118,8 @@ type Node struct {
 	DefineSlot                string                  `json:"defineSlot,omitempty" yaml:"defineSlot,omitempty"`
 	IgnoreInDocumentTitle     bool                    `json:"ignoreInDocumentTitle,omitempty" yaml:"ignoreInDocumentTitle,omitempty"`
 	ExternalLink              ExternalLink            `json:"externalLink,omitempty" yaml:"externalLink,omitempty"`
+	ContextKey                string                  `json:"contextKey,omitempty" yaml:"contextKey,omitempty"`
+	DynamicFetchId            string                  `json:"dynamicFetchId,omitempty" yaml:"dynamicFetchId,omitempty"`
 }
 
 type ExternalLink struct {
