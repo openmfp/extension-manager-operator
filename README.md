@@ -1,25 +1,28 @@
-# extension-manager-operator
+> [!WARNING]
+> This Repository is under development and not ready for productive use. It is in an alpha stage. That means APIs and concepts may change on short notice including breaking changes or complete removal of apis.
 
-## About extension-manager-operator
+# OpenMFP - Extension Manager Operator
 
-The *extension-manager-operator* implements implements the lifecycle management of a Kubernetes CRD `ContentConfiguration` resource, which is the API for configuration of Extensions in openMFP.
+## Description
 
-For reference, see the [RFC for openMFP Extension Management - CDM Processing](https://github.com/openmfp/architecture/pull/2/files?short_path=8a071a3#diff-8a071a31a02919a613572237f1e968fe02b9cf7d350c2cf796ba6b35495ec09b).
+The extension-manager-operator implements the lifecycle management of a Kubernetes CRD `ContentConfiguration` resource, which is a Kubernetes Resource/API for configuration of Micro Frontends in OpenMFP.
+
+For reference, see the [RFC for OpenMFP Extension Management - CDM Processing](https://github.com/openmfp/architecture/blob/main/rfc/002-extension-content-configuration-processing.md).
+
+## Features
+- Support for inline and remote content configurations. 
+- Validation of content configuration and generation of a JSON Schema that can be used by contributors to validate their content configuration.
+- Services to allow validation of content configuration at runtime while developing a micro frontend on the developers system.
+- Ability to provide validation feedback while keeping the last validated content configuration.
 
 ## Getting Started
+For running OpenMFP locally checkout our [getting started guide](https://openmfp.github.io/openmfp.org/docs/getting-started). The extension-manager-operator can be deployed on a kubernetes cluster using the helm-chart [here](https://github.com/openmfp/helm-charts/tree/main/charts/extension-manager-operator) and for CRDs [here](https://github.com/openmfp/helm-charts/tree/main/charts/extension-manager-operator-crds).
 
-### Prerequisites
-- go version v1.22.0+
-- docker version 17.03+.
-- kubectl version v1.11.3+.
-- Access to a Kubernetes v1.11.3+ cluster.
+## Releasing
 
-### To Deploy on the cluster
-**Build and push your image to the location specified by `IMG`:**
+The release is performed automatically through a GitHub Actions Workflow. New Versions will be updated in the helm-chart of the extension-manager-operator located [here](https://github.com/openmfp/helm-charts/tree/main/charts/extension-manager-operator). There is a separate helm chart for the extension-manager-operator CRDS located [here](https://github.com/openmfp/helm-charts/tree/main/charts/extension-manager-operator-crds).
 
-```sh
-task docker-build docker-push IMG=<some-registry>/extension-manager-operator:tag
-```
+## Requirements
 
 **NOTE:** This image ought to be published in the personal registry you specified. 
 And it is required to have access to pull the image from the working environment. 
@@ -176,9 +179,14 @@ This project is open to feature requests/suggestions, bug reports etc. via [GitH
 ## Security / Disclosure
 If you find any bug that may be a security problem, please follow our instructions at [in our security policy](https://github.com/openmfp/extension-manager-operator/security/policy) on how to report it. Please do not create GitHub issues for security-related doubts or problems.
 
+## Contributing
+
+Please refer to the [CONTRIBUTING.md](CONTRIBUTING.md) file in this repository for instructions on how to contribute to OpenMFP.
+
 ## Code of Conduct
-We as members, contributors, and leaders pledge to make participation in our community a harassment-free experience for everyone. By participating in this project, you agree to abide by its [Code of Conduct](https://github.com/openmfp/extension-manager-operator/.github/blob/main/CODE_OF_CONDUCT.md) at all times.
+
+We as members, contributors, and leaders pledge to make participation in our community a harassment-free experience for everyone. By participating in this project, you agree to abide by its [Code of Conduct](CODE_OF_CONDUCT.md) at all times.
 
 ## Licensing
 
-Copyright (20xx-)20xx SAP SE or an SAP affiliate company and *extension-manager-operator* contributors. Please see our [LICENSE](LICENSE) for copyright and license information. Detailed information including third-party components and their licensing/copyright information is available [via the REUSE tool](https://api.reuse.software/info/github.com/SAP/<your-project>).
+Copyright 2024 SAP SE or an SAP affiliate company and OpenMFP contributors. Please see our [LICENSE](LICENSE) for copyright and license information. Detailed information including third-party components and their licensing/copyright information is available [via the REUSE tool](https://api.reuse.software/info/github.com/openmfp/extension-manager-operator).
