@@ -117,9 +117,12 @@ func main() {
 ## Using a `/validate` HTTP endpoint
 
 ```shell
-curl http://localhost:8088/validate -X POST -d @cc3.json   -H "Content-Type: application/json
-```
+# run with 'server' argument
+go run main.go server
 
+# validate cc3.json local file
+curl http://localhost:8088/validate -X POST -d @test.json   -H "Content-Type: application/json"
+```
 
 
 ### Debug Helm chart locally
