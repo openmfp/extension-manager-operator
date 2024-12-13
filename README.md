@@ -120,8 +120,8 @@ func main() {
 # run with 'server' argument
 go run main.go server
 
-# validate cc3.json local file
-curl http://localhost:8088/validate -X POST -d @test.json   -H "Content-Type: application/json"
+# validate docs/assets/test.json local file
+curl http://localhost:8088/validate -X POST -d @docs/assets/test.json   -H "Content-Type: application/json"
 ```
 
 
