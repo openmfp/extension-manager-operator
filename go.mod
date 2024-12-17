@@ -8,7 +8,7 @@ require (
 	github.com/hashicorp/go-multierror v1.1.1
 	github.com/invopop/jsonschema v0.12.0
 	github.com/jarcoal/httpmock v1.3.1
-	github.com/openmfp/golang-commons v0.107.0
+	github.com/openmfp/golang-commons v0.108.0
 	github.com/pkg/errors v0.9.1
 	github.com/rs/cors v1.11.1
 	github.com/rs/zerolog v1.33.0
@@ -76,7 +76,7 @@ require (
 	go.opentelemetry.io/otel/metric v1.33.0 // indirect
 	go.opentelemetry.io/otel/trace v1.33.0 // indirect
 	golang.org/x/crypto v0.29.0 // indirect
-	golang.org/x/exp v0.0.0-20241215155358-4a5509556b9e // indirect
+	golang.org/x/exp v0.0.0-20241217172543-b2144cdd0a67 // indirect
 	golang.org/x/net v0.31.0 // indirect
 	golang.org/x/oauth2 v0.24.0 // indirect
 	golang.org/x/sys v0.27.0 // indirect
