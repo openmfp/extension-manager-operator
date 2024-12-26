@@ -120,8 +120,8 @@ github.com/onsi/ginkgo/v2 v2.21.0 h1:7rg/4f3rB88pb5obDgNZrNHrQ4e6WpjonchcpuBRnZM
 github.com/onsi/ginkgo/v2 v2.21.0/go.mod h1:7Du3c42kxCUegi0IImZ1wUQzMBVecgIHjR1C+NkhLQo=
 github.com/onsi/gomega v1.35.1 h1:Cwbd75ZBPxFSuZ6T+rN/WCb/gOc6YgFBXLlZLhC7Ds4=
 github.com/onsi/gomega v1.35.1/go.mod h1:PvZbdDc8J6XJEpDK4HCuRBm8a6Fzp9/DmhC9C7yFlog=
-github.com/openmfp/golang-commons v0.110.0 h1:GwXSlYxTsXDnYzyb/53eoxShm+qGiJQQzvtYXLDKgcA=
-github.com/openmfp/golang-commons v0.110.0/go.mod h1:T36EaJBDA4MSQqnFx/dHaAA1764XklyBO5+Yb0pP1fQ=
+github.com/openmfp/golang-commons v0.111.0 h1:mJ690Wd1x6uHxk/Pe3QlvKbMJq5Icwr20R0tnOgqk8Q=
+github.com/openmfp/golang-commons v0.111.0/go.mod h1:Eg8f5RKxJinLQ5y9SiGbYt0Q6d8HwkxvOdYOege3dLQ=
 github.com/pingcap/errors v0.11.4 h1:lFuQV/oaUMGcD2tqt+01ROSmJs75VG1ToEOkZIZ4nE4=
 github.com/pingcap/errors v0.11.4/go.mod h1:Oi8TUi2kEtXXLMJk9l1cGmz20kV3TaQ0usTwv5KuLY8=
 github.com/pkg/errors v0.9.1 h1:FEBLx1zS214owpjy7qsBeixbURkuhQAwrK5UwLGTwt4=
@@ -160,8 +160,8 @@ github.com/stretchr/testify v1.3.0/go.mod h1:M5WIy9Dh21IEIfnGCwXGc5bZfKNJtfHm1UV
 github.com/stretchr/testify v1.6.1/go.mod h1:6Fq8oRcR53rry900zMqJjRRixrwX3KX962/h/Wwjteg=
 github.com/stretchr/testify v1.10.0 h1:Xv5erBjTwe/5IxqUQTdXv5kgmIvbHo3QQyRwhJsOfJA=
 github.com/stretchr/testify v1.10.0/go.mod h1:r2ic/lqez/lEtzL7wO/rwa5dbSLXVDPFyf8C91i36aY=
-github.com/vektah/gqlparser/v2 v2.5.20 h1:kPaWbhBntxoZPaNdBaIPT1Kh0i1b/onb5kXgEdP5JCo=
-github.com/vektah/gqlparser/v2 v2.5.20/go.mod h1:xMl+ta8a5M1Yo1A1Iwt/k7gSpscwSnHZdw7tfhEGfTM=
+github.com/vektah/gqlparser/v2 v2.5.21 h1:Zw1rG2dr1pRR4wqwbVq4d6+xk2f4ut/yo+hwr4QjE08=
+github.com/vektah/gqlparser/v2 v2.5.21/go.mod h1:xMl+ta8a5M1Yo1A1Iwt/k7gSpscwSnHZdw7tfhEGfTM=
 github.com/vrischmann/envconfig v1.3.0 h1:4XIvQTXznxmWMnjouj0ST5lFo/WAYf5Exgl3x82crEk=
 github.com/vrischmann/envconfig v1.3.0/go.mod h1:bbvxFYJdRSpXrhS63mBFtKJzkDiNkyArOLXtY6q0kuI=
 github.com/wk8/go-ordered-map/v2 v2.1.8 h1:5h/BUHu93oj4gIdvHHHGsScSTMijfx5PeYkE/fJgbpc=

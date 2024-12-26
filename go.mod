@@ -8,7 +8,7 @@ require (
 	github.com/hashicorp/go-multierror v1.1.1
 	github.com/invopop/jsonschema v0.12.0
 	github.com/jarcoal/httpmock v1.3.1
-	github.com/openmfp/golang-commons v0.110.0
+	github.com/openmfp/golang-commons v0.111.0
 	github.com/pkg/errors v0.9.1
 	github.com/rs/cors v1.11.1
 	github.com/rs/zerolog v1.33.0
@@ -66,7 +66,7 @@ require (
 	github.com/sosodev/duration v1.3.1 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/stretchr/objx v0.5.2 // indirect
-	github.com/vektah/gqlparser/v2 v2.5.20 // indirect
+	github.com/vektah/gqlparser/v2 v2.5.21 // indirect
 	github.com/wk8/go-ordered-map/v2 v2.1.8 // indirect
 	github.com/x448/float16 v0.8.4 // indirect
 	github.com/xeipuuv/gojsonpointer v0.0.0-20180127040702-4e3ac2762d5f // indirect
