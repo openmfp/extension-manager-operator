@@ -4,6 +4,7 @@ import (
 	_ "embed"
 	"encoding/json"
 	"fmt"
+	"strings"
 
 	"github.com/hashicorp/go-multierror"
 	"github.com/xeipuuv/gojsonschema"
@@ -57,7 +58,7 @@ func (cC *contentConfiguration) Validate(input []byte, contentType string) (stri
 
 	var rawJSON []byte
 	var err error
-	switch contentType {
+	switch contentTypeLower := strings.ToLower(contentType); contentTypeLower {
 	case "json":
 		rawJSON = input
 	case "yaml":
