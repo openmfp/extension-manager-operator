@@ -243,6 +243,14 @@ func TestValidate(t *testing.T) {
 			expectError: false,
 			schema:      nil,
 		},
+		{
+			name:        "devUrl",
+			input:       validation_test.GetJSONFixture(validation_test.GetValidJSON_devUrl()),
+			contentType: "json",
+			expected:    validation_test.GetJSONFixture(validation_test.GetValidJSON_devUrl()),
+			expectError: false,
+			schema:      nil,
+		},
 	}
 
 	cC := NewContentConfiguration()
