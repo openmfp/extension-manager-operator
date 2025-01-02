@@ -55,9 +55,6 @@
         "name": {
           "type": "string"
         },
-        "contentType": {
-          "type": "string"
-        },
         "creationTimestamp": {
           "type": "string"
         },

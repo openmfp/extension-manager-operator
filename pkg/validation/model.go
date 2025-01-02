@@ -3,7 +3,6 @@ package validation
 //go:generate go run schema/genschema.go
 type ContentConfiguration struct {
 	Name                string              `json:"name,omitempty" yaml:"name,omitempty" jsonschema:"oneof_required=string"`
-	ContentType         string              `json:"contentType,omitempty" yaml:"contentType,omitempty"`
 	CreationTimestamp   string              `json:"creationTimestamp,omitempty" yaml:"creationTimestamp,omitempty"`
 	LuigiConfigFragment LuigiConfigFragment `json:"luigiConfigFragment" yaml:"luigiConfigFragment"`
 	DevUrl              string              `json:"devUrl,omitempty" yaml:"devUrl,omitempty"`

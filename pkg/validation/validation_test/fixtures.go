@@ -256,7 +256,6 @@ func GetluigiConfigFragment() string {
 func GetValidYaml_targetAppConfig_viewGroup() string {
 	return `{
   "name": "extension-manager",
-  "contentType": "json",
   "luigiConfigFragment": {
       "data": {
         "targetAppConfig": {
@@ -417,7 +416,6 @@ luigiConfigFragment:
 func GetValidYaml_targetAppConfig_viewGroup2() string {
 	return `{
     "name": "extension-manager",
-    "contentType": "json",
     "luigiConfigFragment": {
         "data": {
             "userSettings": {
