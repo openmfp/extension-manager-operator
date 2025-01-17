@@ -5,7 +5,7 @@ type ContentConfiguration struct {
 	Name                string              `json:"name,omitempty" yaml:"name,omitempty" jsonschema:"oneof_required=string"`
 	CreationTimestamp   string              `json:"creationTimestamp,omitempty" yaml:"creationTimestamp,omitempty"`
 	LuigiConfigFragment LuigiConfigFragment `json:"luigiConfigFragment" yaml:"luigiConfigFragment"`
-	DevUrl              string              `json:"devUrl,omitempty" yaml:"devUrl,omitempty"`
+	Url                 string              `json:"url,omitempty" yaml:"url,omitempty"`
 }
 
 type LuigiConfigFragment struct {

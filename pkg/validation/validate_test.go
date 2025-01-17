@@ -244,10 +244,10 @@ func TestValidate(t *testing.T) {
 			schema:      nil,
 		},
 		{
-			name:        "devUrl",
-			input:       validation_test.GetJSONFixture(validation_test.GetValidJSON_devUrl()),
+			name:        "url",
+			input:       validation_test.GetJSONFixture(validation_test.GetValidJSON_url()),
 			contentType: "json",
-			expected:    validation_test.GetJSONFixture(validation_test.GetValidJSON_devUrl()),
+			expected:    validation_test.GetJSONFixture(validation_test.GetValidJSON_url()),
 			expectError: false,
 			schema:      nil,
 		},

@@ -3342,9 +3342,9 @@ func GetValidJSON_tech_docs() string {
       }`
 }
 
-func GetValidJSON_devUrl() string {
+func GetValidJSON_url() string {
 	return `{
-    "devUrl": "https://dev-url.com",
+    "url": "https://url.com",
 		"luigiConfigFragment": {
 			"data": {
 				"nodeDefaults": {

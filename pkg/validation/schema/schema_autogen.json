@@ -61,7 +61,7 @@
         "luigiConfigFragment": {
           "$ref": "#/$defs/LuigiConfigFragment"
         },
-        "devUrl": {
+        "url": {
           "type": "string"
         }
       },
