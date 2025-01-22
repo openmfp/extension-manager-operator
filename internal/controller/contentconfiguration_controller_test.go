@@ -120,3 +120,123 @@ func (suite *ContentConfigurationTestSuite) TestContentConfigurationCreation() {
 		})
 	}
 }
+
+func (suite *ContentConfigurationTestSuite) TestUpdateReconcile() {
+	remoteURL := "https://this-address-should-be-mocked-by-httpmock"
+
+	suite.Run("TearDown", func() {
+
+		// Given
+		testContext := context.Background()
+		contentConfiguration := &cachev1alpha1.ContentConfiguration{
+			ObjectMeta: metaV1.ObjectMeta{
+				Name:      "extension-manager",
+				Namespace: defaultNamespace,
+				Labels: map[string]string{
+					"argocd.argoproj.io/instance":                     "extension-manager-ui-dev",
+					"extension.dxp.sap.com/extension-class-namespace": "root-universe",
+					"extension.openmfp.io/extension-class-namespace":  "root-universe",
+					"extensions.dxp.sap.com":                          "dxp-extension-management",
+				},
+				Generation: 1,
+			},
+			Spec: cachev1alpha1.ContentConfigurationSpec{
+				RemoteConfiguration: cachev1alpha1.RemoteConfiguration{
+					ContentType: "json",
+					URL:         remoteURL,
+				},
+			},
+		}
+
+		// setup mocks
+		httpmock.Activate()
+		defer httpmock.DeactivateAndReset()
+		httpmock.RegisterResponder(
+			"GET", remoteURL, httpmock.NewStringResponder(200, validation_test.GetJSONFixture(validation_test.GetValidJSON())),
+		)
+
+		// When
+		err := suite.kubernetesClient.Create(testContext, contentConfiguration)
+		suite.Nil(err)
+
+		// Then
+		createdInstance := cachev1alpha1.ContentConfiguration{}
+		suite.Assert().Eventually(
+			func() bool {
+				err := suite.kubernetesClient.Get(testContext, types.NamespacedName{
+					Name:      contentConfiguration.Name,
+					Namespace: contentConfiguration.Namespace,
+				}, &createdInstance)
+				return err == nil && createdInstance.Status.ConfigurationResult == validation_test.GetJSONFixture(validation_test.GetValidJSON())
+			},
+			defaultTestTimeout, defaultTickInterval,
+		)
+		// suite.Assert().Equal(createdInstance.GetObservedGeneration(), int64(1))
+
+		// Update ContentConfiguration and check for 2nd reconcile
+		// Given
+		createdInstance.Spec.RemoteConfiguration.URL = "https://new.url"
+		httpmock.RegisterResponder(
+			"GET", "https://new.url", httpmock.NewStringResponder(200, validation_test.GetJSONFixture(validation_test.GetValidJSONButDifferentName())),
+		)
+
+		// When
+		err = suite.kubernetesClient.Update(testContext, &createdInstance)
+		suite.Nil(err)
+
+		// Then
+		updatedInstance := cachev1alpha1.ContentConfiguration{}
+		suite.Assert().Eventually(
+			func() bool {
+				err := suite.kubernetesClient.Get(testContext, types.NamespacedName{
+					Name:      contentConfiguration.Name,
+					Namespace: contentConfiguration.Namespace,
+				}, &updatedInstance)
+
+				return err == nil &&
+					updatedInstance.Status.ConfigurationResult == validation_test.GetJSONFixture(validation_test.GetValidJSONButDifferentName())
+			},
+			defaultTestTimeout, defaultTickInterval,
+		)
+		// suite.Assert().Equal(updatedInstance.GetObservedGeneration(), int64(2))
+
+		// 3rd reconcile: the same URL but it returns a different content; changed labels
+		// Given
+		updatedInstance.Spec.RemoteConfiguration.URL = "https://new.url"
+		httpmock.Reset()
+		httpmock.RegisterResponder(
+			"GET", "https://new.url", httpmock.NewStringResponder(200, validation_test.GetJSONFixture(validation_test.GetValidJSON())),
+		)
+
+		updatedInstance.ObjectMeta.Labels = map[string]string{
+			"argocd.argoproj.io/instance":                     "extension-manager-ui-dev",
+			"extension.dxp.sap.com/extension-class-namespace": "root-universe",
+			"extension.openmfp.io/extension-class-namespace":  "root-universe",
+			"extensions.dxp.sap.com":                          "dxp-extension-management",
+			"somelabel":                                       "somevalue",
+		}
+
+		// When
+		err = suite.kubernetesClient.Update(testContext, &updatedInstance)
+		suite.Nil(err)
+		println("--------------------- resource updated a 2nd time ---------------------")
+
+		// Then
+		updatedInstanceSameUrl := cachev1alpha1.ContentConfiguration{}
+		suite.Assert().Eventually(
+			func() bool {
+				err := suite.kubernetesClient.Get(testContext, types.NamespacedName{
+					Name:      contentConfiguration.Name,
+					Namespace: contentConfiguration.Namespace,
+				}, &updatedInstanceSameUrl)
+
+				return err == nil &&
+					updatedInstanceSameUrl.Status.ConfigurationResult == validation_test.GetJSONFixture(validation_test.GetValidJSON())
+			},
+			defaultTestTimeout, defaultTickInterval,
+		)
+		// suite.Assert().True(updatedInstanceSameUrl.ObjectMeta.Labels["somelabel"] == "somevalue")
+		// suite.Assert().Equal(updatedInstanceSameUrl.GetObservedGeneration(), int64(2))
+
+	})
+}

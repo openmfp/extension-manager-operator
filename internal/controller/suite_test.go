@@ -64,19 +64,20 @@ func (suite *ContentConfigurationTestSuite) SetupSuite() {
 	// Disable color logging as vs-code does not support color logging in the test output
 	log = logger.NewFromZerolog(log.Output(&zerolog.ConsoleWriter{Out: os.Stdout, NoColor: true}))
 
-	cfg, err := config.NewFromEnv()
+	appConfig, err := config.NewFromEnv()
 	suite.Nil(err)
 
-	testContext, _, _ := openmfpcontext.StartContext(log, cfg, cfg.ShutdownTimeout)
+	testContext, _, _ := openmfpcontext.StartContext(log, appConfig, appConfig.ShutdownTimeout)
 
 	testContext = logger.SetLoggerInContext(testContext, log.ComponentLogger("TestSuite"))
 
 	suite.testEnv = &envtest.Environment{
 		CRDDirectoryPaths:     []string{filepath.Join("..", "..", "config", "crd", "bases")},
 		ErrorIfCRDPathMissing: true,
+		BinaryAssetsDirectory: filepath.Join("..", "..", "bin", "k8s", "1.29.0-linux-amd64"),
 	}
 
-	k8scfg, err := suite.testEnv.Start()
+	cfg, err := suite.testEnv.Start()
 	suite.Nil(err)
 
 	utilruntime.Must(cachev1alpha1.AddToScheme(scheme.Scheme))
@@ -84,19 +85,19 @@ func (suite *ContentConfigurationTestSuite) SetupSuite() {
 
 	// +kubebuilder:scaffold:scheme
 
-	suite.kubernetesClient, err = client.New(k8scfg, client.Options{
+	suite.kubernetesClient, err = client.New(cfg, client.Options{
 		Scheme: scheme.Scheme,
 	})
 	suite.Nil(err)
 	ctrl.SetLogger(log.Logr())
-	suite.kubernetesManager, err = ctrl.NewManager(k8scfg, ctrl.Options{
+	suite.kubernetesManager, err = ctrl.NewManager(cfg, ctrl.Options{
 		Scheme:      scheme.Scheme,
 		BaseContext: func() context.Context { return testContext },
 	})
 	suite.Nil(err)
 
-	contentConfigurationReconciler := NewContentConfigurationReconciler(log, suite.kubernetesManager, cfg)
-	err = contentConfigurationReconciler.SetupWithManager(suite.kubernetesManager, cfg, log)
+	contentConfigurationReconciler := NewContentConfigurationReconciler(log, suite.kubernetesManager, appConfig)
+	err = contentConfigurationReconciler.SetupWithManager(suite.kubernetesManager, appConfig, log)
 	suite.Nil(err)
 
 	go suite.startController()

@@ -59,6 +59,8 @@ func (r *ContentConfigurationSubroutine) Process(
 
 	instance := runtimeObj.(*v1alpha1.ContentConfiguration)
 
+	log.Debug().Str("name", instance.Name).Msg("processing content configuration")
+
 	var contentType string
 	var rawConfig []byte
 	// InlineConfiguration has higher priority than RemoteConfiguration
@@ -73,6 +75,7 @@ func (r *ContentConfigurationSubroutine) Process(
 
 			return ctrl.Result{}, errors.NewOperatorError(err, retry, true)
 		}
+		log.Info().Msg("fetched remote configuration")
 		contentType = instance.Spec.RemoteConfiguration.ContentType
 		rawConfig = bytes
 	default:

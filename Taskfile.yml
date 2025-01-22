@@ -87,3 +87,6 @@ tasks:
   schemagen:
     cmds:
       - go generate ./...
+  run:
+    cmds:
+      - go run ./main.go operator
