@@ -171,7 +171,6 @@ func (suite *ContentConfigurationTestSuite) TestUpdateReconcile() {
 			},
 			defaultTestTimeout, defaultTickInterval,
 		)
-		// suite.Assert().Equal(createdInstance.GetObservedGeneration(), int64(1))
 
 		// Update ContentConfiguration and check for 2nd reconcile
 		// Given
@@ -198,7 +197,6 @@ func (suite *ContentConfigurationTestSuite) TestUpdateReconcile() {
 			},
 			defaultTestTimeout, defaultTickInterval,
 		)
-		// suite.Assert().Equal(updatedInstance.GetObservedGeneration(), int64(2))
 
 		// 3rd reconcile: the same URL but it returns a different content; changed labels
 		// Given
@@ -235,8 +233,7 @@ func (suite *ContentConfigurationTestSuite) TestUpdateReconcile() {
 			},
 			defaultTestTimeout, defaultTickInterval,
 		)
-		// suite.Assert().True(updatedInstanceSameUrl.ObjectMeta.Labels["somelabel"] == "somevalue")
-		// suite.Assert().Equal(updatedInstanceSameUrl.GetObservedGeneration(), int64(2))
+		suite.Assert().True(updatedInstanceSameUrl.ObjectMeta.Labels["somelabel"] == "somevalue")
 
 	})
 }

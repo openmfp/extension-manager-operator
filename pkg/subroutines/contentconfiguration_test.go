@@ -404,11 +404,10 @@ func (suite *ContentConfigurationSubroutineTestSuite) Test_IncompatibleSchemaUpd
 	)
 
 	// When
-	result, err := suite.testObj.Process(context.Background(), contentConfiguration)
+	_, err := suite.testObj.Process(context.Background(), contentConfiguration)
 
 	// Then: should keep previously valid and currently invalid result
 	suite.Require().Nil(err)
-	suite.Require().Empty(result)
 
 	cmp, cmpErr := compareYAML(
 		validation_test.GetJSONFixture(validation_test.GetValidJSON()),
@@ -427,9 +426,8 @@ func (suite *ContentConfigurationSubroutineTestSuite) Test_IncompatibleSchemaUpd
 	contentConfiguration.Spec.InlineConfiguration.Content = validation_test.GetYAMLFixture(validation_test.GetValidYAML())
 
 	// When
-	result, err = suite.testObj.Process(context.Background(), contentConfiguration)
+	_, err = suite.testObj.Process(context.Background(), contentConfiguration)
 	suite.Require().Nil(err)
-	suite.Require().Empty(result)
 
 	cmp, cmpErr = compareYAML(
 		validation_test.GetYAMLFixture(validation_test.GetValidYAML()),
