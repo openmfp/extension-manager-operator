@@ -404,7 +404,8 @@ func (suite *ContentConfigurationSubroutineTestSuite) Test_IncompatibleSchemaUpd
 	)
 
 	// When
-	_, err := suite.testObj.Process(context.Background(), contentConfiguration)
+	result, err := suite.testObj.Process(context.Background(), contentConfiguration)
+	suite.Require().Equal(result.RequeueAfter, 5*time.Minute)
 
 	// Then: should keep previously valid and currently invalid result
 	suite.Require().Nil(err)

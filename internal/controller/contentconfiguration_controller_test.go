@@ -132,13 +132,6 @@ func (suite *ContentConfigurationTestSuite) TestUpdateReconcile() {
 			ObjectMeta: metaV1.ObjectMeta{
 				Name:      "extension-manager",
 				Namespace: defaultNamespace,
-				Labels: map[string]string{
-					"argocd.argoproj.io/instance":                     "extension-manager-ui-dev",
-					"extension.dxp.sap.com/extension-class-namespace": "root-universe",
-					"extension.openmfp.io/extension-class-namespace":  "root-universe",
-					"extensions.dxp.sap.com":                          "dxp-extension-management",
-				},
-				Generation: 1,
 			},
 			Spec: cachev1alpha1.ContentConfigurationSpec{
 				RemoteConfiguration: cachev1alpha1.RemoteConfiguration{
@@ -207,11 +200,7 @@ func (suite *ContentConfigurationTestSuite) TestUpdateReconcile() {
 		)
 
 		updatedInstance.ObjectMeta.Labels = map[string]string{
-			"argocd.argoproj.io/instance":                     "extension-manager-ui-dev",
-			"extension.dxp.sap.com/extension-class-namespace": "root-universe",
-			"extension.openmfp.io/extension-class-namespace":  "root-universe",
-			"extensions.dxp.sap.com":                          "dxp-extension-management",
-			"somelabel":                                       "somevalue",
+			"somelabel": "somevalue",
 		}
 
 		// When
