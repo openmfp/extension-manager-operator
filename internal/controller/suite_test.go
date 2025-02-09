@@ -51,6 +51,7 @@ type ContentConfigurationTestSuite struct {
 	kubernetesClient  client.Client
 	kubernetesManager ctrl.Manager
 	testEnv           *envtest.Environment
+	logger            *logger.Logger
 
 	cancel context.CancelFunc
 }
@@ -60,6 +61,7 @@ func (suite *ContentConfigurationTestSuite) SetupSuite() {
 	logConfig.NoJSON = true
 	logConfig.Name = "ContentConfigurationTestSuite"
 	log, err := logger.New(logConfig)
+	suite.logger = log
 	suite.Nil(err)
 	// Disable color logging as vs-code does not support color logging in the test output
 	log = logger.NewFromZerolog(log.Output(&zerolog.ConsoleWriter{Out: os.Stdout, NoColor: true}))
