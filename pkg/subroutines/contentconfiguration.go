@@ -88,7 +88,7 @@ func (r *ContentConfigurationSubroutine) Process(
 	}
 
 	validatedConfig, merr := r.validator.Validate(rawConfig, contentType)
-	if merr.Len() > 0 {
+	if merr != nil && merr.Len() > 0 {
 		log.Err(merr).Msg("failed to validate configuration")
 		condition := apimachinery.Condition{
 			Type:    ValidationConditionType,
