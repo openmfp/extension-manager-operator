@@ -71,8 +71,8 @@ func (r *ContentConfigurationSubroutine) Process(
 		rawConfig = []byte(instance.Spec.InlineConfiguration.Content)
 	case instance.Spec.RemoteConfiguration.URL != "":
 		url := instance.Spec.RemoteConfiguration.URL
-		if instance.Spec.RemoteConfiguration.OperatorURL != "" {
-			url = instance.Spec.RemoteConfiguration.OperatorURL
+		if instance.Spec.RemoteConfiguration.InternalUrl != "" {
+			url = instance.Spec.RemoteConfiguration.InternalUrl
 		}
 		bytes, err, retry := r.getRemoteConfig(url, log)
 		if err != nil {

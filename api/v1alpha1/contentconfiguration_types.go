@@ -45,7 +45,7 @@ type RemoteConfiguration struct {
 	// +kubebuilder:validation:Enum=yaml;json
 	ContentType    string         `json:"contentType,omitempty"`
 	URL            string         `json:"url,omitempty"`
-	OperatorURL    string         `json:"operatorURL,omitempty"`
+	InternalUrl    string         `json:"internalURL,omitempty"`
 	Authentication Authentication `json:"authentication,omitempty"`
 }
 
