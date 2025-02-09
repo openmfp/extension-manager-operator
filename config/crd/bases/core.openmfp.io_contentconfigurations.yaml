@@ -87,6 +87,8 @@ spec:
                     - yaml
                     - json
                     type: string
+                  operatorURL:
+                    type: string
                   url:
                     type: string
                 type: object

@@ -70,7 +70,11 @@ func (r *ContentConfigurationSubroutine) Process(
 		contentType = instance.Spec.InlineConfiguration.ContentType
 		rawConfig = []byte(instance.Spec.InlineConfiguration.Content)
 	case instance.Spec.RemoteConfiguration.URL != "":
-		bytes, err, retry := r.getRemoteConfig(instance.Spec.RemoteConfiguration.URL, log)
+		url := instance.Spec.RemoteConfiguration.URL
+		if instance.Spec.RemoteConfiguration.OperatorURL != "" {
+			url = instance.Spec.RemoteConfiguration.OperatorURL
+		}
+		bytes, err, retry := r.getRemoteConfig(url, log)
 		if err != nil {
 			log.Err(err).Msg("failed to fetch remote configuration")
 
@@ -94,18 +98,18 @@ func (r *ContentConfigurationSubroutine) Process(
 		}
 		meta.SetStatusCondition(&instance.Status.Conditions, condition)
 		return ctrl.Result{RequeueAfter: 5 * time.Minute}, nil
-	} else {
-		condition := apimachinery.Condition{
-			Type:    ValidationConditionType,
-			Status:  ConditionStatusTrue,
-			Reason:  ValidationConditionReasonSuccess,
-			Message: "OK",
-		}
-		meta.SetStatusCondition(&instance.Status.Conditions, condition)
 	}
 
+	condition := apimachinery.Condition{
+		Type:    ValidationConditionType,
+		Status:  ConditionStatusTrue,
+		Reason:  ValidationConditionReasonSuccess,
+		Message: "OK",
+	}
+	meta.SetStatusCondition(&instance.Status.Conditions, condition)
+
 	instance.Status.ConfigurationResult = validatedConfig
-	return ctrl.Result{RequeueAfter: 5 * time.Minute}, nil
+	return ctrl.Result{}, nil
 }
 
 // Do makes an HTTP request to the specified URL.
