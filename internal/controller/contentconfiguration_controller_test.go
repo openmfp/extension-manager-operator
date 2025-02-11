@@ -20,6 +20,7 @@ import (
 	"context"
 	"fmt"
 	"testing"
+	"time"
 
 	"github.com/jarcoal/httpmock"
 	"github.com/rs/zerolog/log"
@@ -231,4 +232,77 @@ func (suite *ContentConfigurationTestSuite) TestUpdateReconcile() {
 	equal, err := commonTesting.CompareJSON(validation_test.GetValidJSON(), updatedInstanceSameUrl.Status.ConfigurationResult)
 	suite.NoError(err)
 	suite.True(equal)
+}
+
+func (suite *ContentConfigurationTestSuite) TestContentConfigurationCreationInternalURL() {
+	remoteURL := "https://this-address-should-be-mocked-by-httpmock"
+	internalURL := "http://internal-url"
+
+	// Given
+	testContext := context.Background()
+	contentConfiguration := &cachev1alpha1.ContentConfiguration{
+		ObjectMeta: metaV1.ObjectMeta{
+			Name:      "extension-manager-internal",
+			Namespace: defaultNamespace,
+		},
+		Spec: cachev1alpha1.ContentConfigurationSpec{
+			RemoteConfiguration: cachev1alpha1.RemoteConfiguration{
+				ContentType: "json",
+				InternalUrl: internalURL,
+				URL:         remoteURL,
+			},
+		},
+	}
+
+	// setup mocks
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+	httpmock.RegisterResponder(
+		"GET", remoteURL, httpmock.NewStringResponder(200, validation_test.GetJSONFixture(validation_test.GetValidJSON())),
+	)
+
+	// When
+	err := suite.kubernetesClient.Create(testContext, contentConfiguration)
+	suite.Nil(err)
+
+	// Then
+	createdInstance := cachev1alpha1.ContentConfiguration{}
+	suite.Assert().Eventually(
+		func() bool {
+			err := suite.kubernetesClient.Get(testContext, types.NamespacedName{
+				Name:      contentConfiguration.Name,
+				Namespace: contentConfiguration.Namespace,
+			}, &createdInstance)
+			return err == nil && createdInstance.Status.ConfigurationResult == ""
+		},
+		defaultTestTimeout, defaultTickInterval,
+	)
+
+	// Update InternalURL and make it valid by mocking
+	// Given
+	httpmock.RegisterResponder(
+		"GET", internalURL, httpmock.NewStringResponder(200, validation_test.GetJSONFixture(validation_test.GetValidJSON())),
+	)
+
+	// When
+	err = suite.kubernetesClient.Update(testContext, &createdInstance)
+	suite.Nil(err)
+
+	time.Sleep(1 * time.Second)
+
+	// Then
+	updatedInstance := cachev1alpha1.ContentConfiguration{}
+	suite.Assert().Eventually(
+		func() bool {
+			err := suite.kubernetesClient.Get(testContext, types.NamespacedName{
+				Name:      contentConfiguration.Name,
+				Namespace: contentConfiguration.Namespace,
+			}, &updatedInstance)
+
+			return err == nil &&
+				updatedInstance.Status.ConfigurationResult == validation_test.GetJSONFixture(validation_test.GetValidJSON())
+		},
+		defaultTestTimeout, defaultTickInterval,
+	)
+
 }
