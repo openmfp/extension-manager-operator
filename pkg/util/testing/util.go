@@ -3,7 +3,6 @@ package testing
 import (
 	"encoding/json"
 	"fmt"
-	"reflect"
 
 	"github.com/google/go-cmp/cmp"
 )
@@ -21,8 +20,7 @@ func CompareJSON(json1, json2 string) (bool, error) {
 		return false, err
 	}
 
-	equal := reflect.DeepEqual(obj1, obj2)
-
+	equal := cmp.Equal(obj1, obj2)
 	if !equal {
 		diff := cmp.Diff(obj1, obj2)
 		if diff != "" {
