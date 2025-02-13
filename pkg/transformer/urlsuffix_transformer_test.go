@@ -3,7 +3,7 @@ package transformer
 import (
 	"testing"
 
-	"github.com/magiconair/properties/assert"
+	"github.com/stretchr/testify/assert"
 
 	"github.com/openmfp/extension-manager-operator/api/v1alpha1"
 	"github.com/openmfp/extension-manager-operator/pkg/validation"
@@ -66,7 +66,8 @@ func TestUrlSuffixTransformer_Transform(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		transformer.Transform(test.before, test.instance)
+		err := transformer.Transform(test.before, test.instance)
+		assert.NoError(t, err)
 		assert.Equal(t, test.before, test.expected)
 	}
 }
