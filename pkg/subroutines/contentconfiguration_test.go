@@ -4,18 +4,15 @@ import (
 	"context"
 	"errors"
 	"net/http"
-	"reflect"
 	"testing"
 	"time"
 
 	"github.com/jarcoal/httpmock"
+	golangCommonErrors "github.com/openmfp/golang-commons/errors"
 	"github.com/openmfp/golang-commons/logger"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
-	"gopkg.in/yaml.v3"
-
-	golangCommonErrors "github.com/openmfp/golang-commons/errors"
 	apimachinery "k8s.io/apimachinery/pkg/apis/meta/v1"
 
 	cachev1alpha1 "github.com/openmfp/extension-manager-operator/api/v1alpha1"
@@ -79,10 +76,7 @@ func (suite *ContentConfigurationSubroutineTestSuite) TestCreateAndUpdate_OK() {
 
 	// Then
 	suite.Require().Nil(err2)
-	equal, cmpErr = compareYAML(
-		validation_test.GetValidJSONButDifferentName(),
-		contentConfiguration.Status.ConfigurationResult,
-	)
+	equal, cmpErr = commonTesting.CompareJSON(validation_test.GetValidJSONButDifferentName(), contentConfiguration.Status.ConfigurationResult)
 	suite.Require().Nil(cmpErr)
 	suite.Require().True(equal)
 }
@@ -105,10 +99,7 @@ func (suite *ContentConfigurationSubroutineTestSuite) TestCreateAndUpdate_Error(
 	suite.Require().Nil(errCmp)
 
 	// compare configuration and result YAMLs
-	cmp, cmpErr := compareYAML(
-		validation_test.GetValidYAML(),
-		contentConfiguration.Status.ConfigurationResult,
-	)
+	cmp, cmpErr := commonTesting.CompareJSON(validation_test.GetValidJSON(), contentConfiguration.Status.ConfigurationResult)
 	suite.Require().Nil(cmpErr)
 	suite.Require().True(cmp)
 
@@ -122,8 +113,7 @@ func (suite *ContentConfigurationSubroutineTestSuite) TestCreateAndUpdate_Error(
 	// Then
 	suite.Require().Nil(errProcessInvalidConfig)
 	// result shoundn't change
-	equal, cmpErr := compareYAML(
-		validation_test.GetValidYAML(), contentConfiguration.Status.ConfigurationResult)
+	equal, cmpErr := commonTesting.CompareJSON(validation_test.GetValidJSON(), contentConfiguration.Status.ConfigurationResult)
 	suite.Require().Nil(cmpErr)
 	suite.Require().True(equal)
 }
@@ -168,7 +158,7 @@ func (suite *ContentConfigurationSubroutineTestSuite) TestProcessingConfig() {
 					ContentType: "yaml",
 				},
 			},
-			expectedConfigResult: validation_test.GetValidYAML(),
+			expectedConfigResult: validation_test.GetValidJSON(),
 		},
 		{
 			name: "InlineConfigYAML_ValidationError",
@@ -255,9 +245,13 @@ func (suite *ContentConfigurationSubroutineTestSuite) TestProcessingConfig() {
 				suite.Nil(err)
 			}
 
-			cmp, cmpErr := compareYAML(tt.expectedConfigResult, contentConfiguration.Status.ConfigurationResult)
-			suite.Require().Nil(cmpErr)
-			suite.Require().True(cmp)
+			if tt.expectedConfigResult == "" {
+				assert.Equal(suite.T(), "", contentConfiguration.Status.ConfigurationResult)
+			} else {
+				cmp, cmpErr := commonTesting.CompareJSON(tt.expectedConfigResult, contentConfiguration.Status.ConfigurationResult)
+				suite.Require().Nil(cmpErr)
+				suite.Require().True(cmp)
+			}
 		})
 	}
 }
@@ -356,20 +350,6 @@ func TestService_Do(t *testing.T) {
 	}
 }
 
-func compareYAML(doc1 string, doc2 string) (bool, error) {
-	var obj1, obj2 map[string]interface{}
-	errConfig := yaml.Unmarshal([]byte(doc1), &obj1)
-	if errConfig != nil {
-		return false, errConfig
-	}
-	errResult := yaml.Unmarshal([]byte(doc2), &obj2)
-	if errResult != nil {
-		return false, errResult
-	}
-
-	return reflect.DeepEqual(obj1, obj2), nil
-}
-
 func (suite *ContentConfigurationSubroutineTestSuite) Test_IncompatibleSchemaUpdate() {
 	// Given
 	contentConfiguration := &cachev1alpha1.ContentConfiguration{
@@ -394,7 +374,7 @@ func (suite *ContentConfigurationSubroutineTestSuite) Test_IncompatibleSchemaUpd
 					Type:    "ContentConfigurationSubroutine_Ready",
 				},
 			},
-			ConfigurationResult: validation_test.GetValidYAML(),
+			ConfigurationResult: validation_test.GetValidJSON(),
 		},
 	}
 
@@ -402,16 +382,11 @@ func (suite *ContentConfigurationSubroutineTestSuite) Test_IncompatibleSchemaUpd
 	contentConfiguration.Spec.InlineConfiguration.Content = validation_test.GetValidIncompatibleYAML()
 
 	// When
-	result, err := suite.testObj.Process(context.Background(), contentConfiguration)
-	suite.Require().Equal(result.RequeueAfter, 5*time.Minute)
-
+	_, err := suite.testObj.Process(context.Background(), contentConfiguration)
 	// Then: should keep previously valid and currently invalid result
 	suite.Require().Nil(err)
 
-	cmp, cmpErr := compareYAML(
-		validation_test.GetValidJSON(),
-		contentConfiguration.Status.ConfigurationResult,
-	)
+	cmp, cmpErr := commonTesting.CompareJSON(validation_test.GetValidJSON(), contentConfiguration.Status.ConfigurationResult)
 	suite.Require().Nil(cmpErr)
 	suite.Require().True(cmp)
 	suite.Require().True(
@@ -428,10 +403,7 @@ func (suite *ContentConfigurationSubroutineTestSuite) Test_IncompatibleSchemaUpd
 	_, err = suite.testObj.Process(context.Background(), contentConfiguration)
 	suite.Require().Nil(err)
 
-	cmp, cmpErr = compareYAML(
-		validation_test.GetValidYAML(),
-		contentConfiguration.Status.ConfigurationResult,
-	)
+	cmp, cmpErr = commonTesting.CompareJSON(validation_test.GetValidJSON(), contentConfiguration.Status.ConfigurationResult)
 	suite.Require().NoError(cmpErr)
 	suite.Require().True(cmp)
 

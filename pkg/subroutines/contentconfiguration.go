@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"time"
 
 	ctrl "sigs.k8s.io/controller-runtime"
 
@@ -39,13 +38,13 @@ type ContentConfigurationSubroutine struct {
 func NewContentConfigurationSubroutine(validator validation.ExtensionConfiguration,
 	client *http.Client) *ContentConfigurationSubroutine {
 
-	transformer := []transformer.ContentConfigurationTransformer{
+	transformers := []transformer.ContentConfigurationTransformer{
 		&transformer.UrlSuffixTransformer{},
 	}
 	return &ContentConfigurationSubroutine{
 		client:      client,
 		validator:   validator,
-		transformer: transformer,
+		transformer: transformers,
 	}
 }
 
@@ -87,7 +86,7 @@ func (r *ContentConfigurationSubroutine) Process(
 			Message: valErr.Error(),
 		}
 		meta.SetStatusCondition(&instance.Status.Conditions, condition)
-		return ctrl.Result{RequeueAfter: 5 * time.Minute}, nil
+		return ctrl.Result{}, nil
 	}
 
 	condition := apimachinery.Condition{
@@ -105,7 +104,10 @@ func (r *ContentConfigurationSubroutine) Process(
 		return ctrl.Result{}, errors.NewOperatorError(errors.Wrap(err, "failed to unmarshal contentConfiguration"), false, false)
 	}
 	for _, configurationTransformer := range r.transformer {
-		configurationTransformer.Transform(contentConfiguration, instance)
+		err := configurationTransformer.Transform(contentConfiguration, instance)
+		if err != nil {
+			return ctrl.Result{}, errors.NewOperatorError(errors.Wrap(err, "failed to transform contentConfiguration"), false, true)
+		}
 	}
 
 	validatedConfigBytes, err := json.Marshal(contentConfiguration)
