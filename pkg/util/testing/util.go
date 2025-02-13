@@ -7,7 +7,8 @@ import (
 	"github.com/google/go-cmp/cmp"
 )
 
-func CompareJSON(json1, json2 string) (bool, error) {
+// CompareJSON This function is used to compare two JSON strings in unit tests
+func CompareJSON(json1, json2 string) (bool, error) { // coverage-ignore
 	var obj1, obj2 map[string]interface{}
 
 	err := json.Unmarshal([]byte(json1), &obj1)
