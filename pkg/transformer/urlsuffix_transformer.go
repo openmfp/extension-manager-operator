@@ -2,7 +2,7 @@ package transformer
 
 import (
 	"fmt"
-	url2 "net/url"
+	"net/url"
 	"strings"
 
 	"github.com/pkg/errors"
@@ -15,11 +15,11 @@ type UrlSuffixTransformer struct{}
 
 func (*UrlSuffixTransformer) Transform(contentConfiguration *validation.ContentConfiguration, instance *v1alpha1.ContentConfiguration) error {
 	if instance.Spec.RemoteConfiguration != nil {
-		url, err := url2.Parse(instance.Spec.RemoteConfiguration.URL)
+		parsedUrl, err := url.Parse(instance.Spec.RemoteConfiguration.URL)
 		if err != nil {
 			return errors.Wrap(err, "failed to parse URL")
 		}
-		domain := fmt.Sprintf("%s://%s", url.Scheme, url.Host)
+		domain := fmt.Sprintf("%s://%s", parsedUrl.Scheme, parsedUrl.Host)
 
 		for i := range contentConfiguration.LuigiConfigFragment.Data.Nodes {
 			err = transformNode(&contentConfiguration.LuigiConfigFragment.Data.Nodes[i], domain)
