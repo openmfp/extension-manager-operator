@@ -1,37 +1,5 @@
 package validation_test
 
-import (
-	"bytes"
-	"encoding/json"
-	"log"
-
-	"gopkg.in/yaml.v3"
-)
-
-func GetJSONFixture(input string) string {
-	var buf bytes.Buffer
-	if err := json.Compact(&buf, []byte(input)); err != nil {
-		return ""
-	}
-
-	return buf.String()
-}
-
-func GetYAMLFixture(input string) string {
-	var data interface{}
-	err := yaml.Unmarshal([]byte(input), &data)
-	if err != nil {
-		log.Fatalf("failed to unmarshal YAML: %v", err)
-	}
-
-	compactYAML, err := yaml.Marshal(&data)
-	if err != nil {
-		log.Fatalf("failed to marshal YAML: %v", err)
-	}
-
-	return string(compactYAML)
-}
-
 func GetValidJSON() string {
 	return `{
 		"luigiConfigFragment": {
@@ -60,6 +28,26 @@ func GetValidJSON() string {
 		},
 		"name": "overview"
 	}`
+}
+
+func GetValidYAML() string {
+	return `
+name: overview
+luigiConfigFragment:
+ data:
+  nodeDefaults:
+    entityType: global
+    isolateView: true
+  nodes:
+  - entityType: global
+    pathSegment: home
+    label: Overview
+    icon: home
+  texts:
+  - locale: de
+    textDictionary:
+      hello: Hallo
+`
 }
 
 func GetValidJSONWithEmptyLocale() string {
@@ -96,26 +84,6 @@ func GetValidJSONWithEmptyLocale() string {
 		},
 		"name": "overview"
 	}`
-}
-
-func GetValidYAML() string {
-	return `
-name: overview
-luigiConfigFragment:
- data:
-  nodeDefaults:
-    entityType: global
-    isolateView: true
-  nodes:
-  - entityType: global
-    pathSegment: home
-    label: Overview
-    icon: home
-  texts:
-  - locale: de
-    textDictionary:
-      hello: Hallo
-`
 }
 
 func GetValidIncompatibleYAML() string {
@@ -364,6 +332,37 @@ luigiConfigFragment:
 `
 }
 
+func GetValidJSON_node_category_string() string {
+	return `{
+  "name": "overview2",
+  "luigiConfigFragment": {
+    "data": {
+      "nodeDefaults": {
+        "entityType": "global",
+        "isolateView": true
+      },
+      "nodes": [
+        {
+          "entityType": "global",
+          "pathSegment": "home",
+          "label": "Overview",
+          "icon": "home",
+          "category": "cat1"
+        }
+      ],
+      "texts": [
+        {
+          "locale": "de",
+          "textDictionary": {
+            "hello": "Hallo"
+          }
+        }
+      ]
+    }
+  }
+}`
+}
+
 func GetValidYAML_node_category_object() string {
 	return `
 name: overview2
@@ -386,6 +385,41 @@ luigiConfigFragment:
     textDictionary:
       hello: Hallo
 `
+}
+
+func GetValidJSON_node_category_object() string {
+	return `{
+  "name": "overview2",
+  "luigiConfigFragment": {
+    "data": {
+      "nodeDefaults": {
+        "entityType": "global",
+        "isolateView": true
+      },
+      "nodes": [
+        {
+          "entityType": "global",
+          "pathSegment": "home",
+          "label": "Overview",
+          "icon": "home",
+          "category": {
+            "label": "cat1",
+            "icon": "icon1",
+            "collapsible": false
+          }
+        }
+      ],
+      "texts": [
+        {
+          "locale": "de",
+          "textDictionary": {
+            "hello": "Hallo"
+          }
+        }
+      ]
+    }
+  }
+}`
 }
 
 func GetInalidYAML_node_category_object() string {

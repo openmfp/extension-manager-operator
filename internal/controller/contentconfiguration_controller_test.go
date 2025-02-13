@@ -23,12 +23,12 @@ import (
 
 	"github.com/jarcoal/httpmock"
 	"github.com/rs/zerolog/log"
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 	metaV1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"
 
 	cachev1alpha1 "github.com/openmfp/extension-manager-operator/api/v1alpha1"
+	commonTesting "github.com/openmfp/extension-manager-operator/pkg/util/testing"
 	"github.com/openmfp/extension-manager-operator/pkg/validation/validation_test"
 )
 
@@ -50,37 +50,38 @@ func (suite *ContentConfigurationTestSuite) TestContentConfigurationCreation() {
 			name:         "TestInlineContentConfiguration",
 			instanceName: "inline",
 			spec: cachev1alpha1.ContentConfigurationSpec{
-				InlineConfiguration: cachev1alpha1.InlineConfiguration{
+				InlineConfiguration: &cachev1alpha1.InlineConfiguration{
 					ContentType: "yaml",
-					Content:     validation_test.GetYAMLFixture(validation_test.GetValidYAML()),
+					Content:     validation_test.GetValidYAML(),
 				},
 			},
-			expectedResult: validation_test.GetYAMLFixture(validation_test.GetValidYAML()),
+			expectedResult: validation_test.GetValidJSON(),
 		},
 		{
 			name:         "TestBothInlineAndRemoteConfiguration",
 			instanceName: "inline-and-remote",
 			spec: cachev1alpha1.ContentConfigurationSpec{
-				InlineConfiguration: cachev1alpha1.InlineConfiguration{
+				InlineConfiguration: &cachev1alpha1.InlineConfiguration{
 					ContentType: "yaml",
-					Content:     validation_test.GetYAMLFixture(validation_test.GetValidYAML()),
+					Content:     validation_test.GetValidYAML(),
 				},
-				RemoteConfiguration: cachev1alpha1.RemoteConfiguration{
-					URL: "this-url-should-not-be-used",
+				RemoteConfiguration: &cachev1alpha1.RemoteConfiguration{
+					URL:         "this-url-should-not-be-used",
+					ContentType: "yaml",
 				},
 			},
-			expectedResult: validation_test.GetYAMLFixture(validation_test.GetValidYAML()),
+			expectedResult: validation_test.GetValidJSON(),
 		},
 		{
 			name:         "TestRemoteContentConfiguration",
 			instanceName: "remote",
 			spec: cachev1alpha1.ContentConfigurationSpec{
-				RemoteConfiguration: cachev1alpha1.RemoteConfiguration{
+				RemoteConfiguration: &cachev1alpha1.RemoteConfiguration{
 					ContentType: "json",
 					URL:         remoteURL,
 				},
 			},
-			expectedResult: validation_test.GetJSONFixture(validation_test.GetValidJSON()),
+			expectedResult: validation_test.GetValidJSON(),
 		},
 	}
 
@@ -91,7 +92,7 @@ func (suite *ContentConfigurationTestSuite) TestContentConfigurationCreation() {
 			defer httpmock.DeactivateAndReset()
 
 			httpmock.RegisterResponder(
-				"GET", remoteURL, httpmock.NewStringResponder(200, validation_test.GetJSONFixture(validation_test.GetValidJSON())),
+				"GET", remoteURL, httpmock.NewStringResponder(200, validation_test.GetValidJSON()),
 			)
 
 			// Given
@@ -116,7 +117,9 @@ func (suite *ContentConfigurationTestSuite) TestContentConfigurationCreation() {
 						Name:      tc.instanceName,
 						Namespace: defaultNamespace,
 					}, &createdInstance)
-					return err == nil && createdInstance.Status.ConfigurationResult == tc.expectedResult
+
+					equal, cErr := commonTesting.CompareJSON(tc.expectedResult, createdInstance.Status.ConfigurationResult)
+					return err == nil && cErr == nil && equal
 				},
 				defaultTestTimeout, defaultTickInterval,
 			)
@@ -135,7 +138,7 @@ func (suite *ContentConfigurationTestSuite) TestUpdateReconcile() {
 			Namespace: defaultNamespace,
 		},
 		Spec: cachev1alpha1.ContentConfigurationSpec{
-			RemoteConfiguration: cachev1alpha1.RemoteConfiguration{
+			RemoteConfiguration: &cachev1alpha1.RemoteConfiguration{
 				ContentType: "json",
 				URL:         remoteURL,
 			},
@@ -146,7 +149,7 @@ func (suite *ContentConfigurationTestSuite) TestUpdateReconcile() {
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
 	httpmock.RegisterResponder(
-		"GET", remoteURL, httpmock.NewStringResponder(200, validation_test.GetJSONFixture(validation_test.GetValidJSON())),
+		"GET", remoteURL, httpmock.NewStringResponder(200, validation_test.GetValidJSON()),
 	)
 
 	// When
@@ -161,7 +164,9 @@ func (suite *ContentConfigurationTestSuite) TestUpdateReconcile() {
 				Name:      contentConfiguration.Name,
 				Namespace: contentConfiguration.Namespace,
 			}, &createdInstance)
-			return err == nil && createdInstance.Status.ConfigurationResult == validation_test.GetJSONFixture(validation_test.GetValidJSON())
+
+			equal, cErr := commonTesting.CompareJSON(validation_test.GetValidJSON(), createdInstance.Status.ConfigurationResult)
+			return err == nil && cErr == nil && equal
 		},
 		defaultTestTimeout, defaultTickInterval,
 	)
@@ -171,7 +176,7 @@ func (suite *ContentConfigurationTestSuite) TestUpdateReconcile() {
 	remoteURL = "https://new.url"
 	createdInstance.Spec.RemoteConfiguration.URL = remoteURL
 	httpmock.RegisterResponder(
-		"GET", remoteURL, httpmock.NewStringResponder(200, validation_test.GetJSONFixture(validation_test.GetValidJSONButDifferentName())),
+		"GET", remoteURL, httpmock.NewStringResponder(200, validation_test.GetValidJSONButDifferentName()),
 	)
 
 	// When
@@ -187,8 +192,8 @@ func (suite *ContentConfigurationTestSuite) TestUpdateReconcile() {
 				Namespace: contentConfiguration.Namespace,
 			}, &updatedInstance)
 
-			return err == nil &&
-				updatedInstance.Status.ConfigurationResult == validation_test.GetJSONFixture(validation_test.GetValidJSONButDifferentName())
+			equal, cerr := commonTesting.CompareJSON(validation_test.GetValidJSONButDifferentName(), updatedInstance.Status.ConfigurationResult)
+			return err == nil && cerr == nil && equal
 		},
 		defaultTestTimeout, defaultTickInterval,
 	)
@@ -199,7 +204,7 @@ func (suite *ContentConfigurationTestSuite) TestUpdateReconcile() {
 	updatedInstance.Spec.RemoteConfiguration.URL = remoteURL
 	httpmock.Reset()
 	httpmock.RegisterResponder(
-		"GET", remoteURL, httpmock.NewStringResponder(200, validation_test.GetJSONFixture(validation_test.GetValidJSON())),
+		"GET", remoteURL, httpmock.NewStringResponder(200, validation_test.GetValidJSON()),
 	)
 
 	// When
@@ -223,5 +228,7 @@ func (suite *ContentConfigurationTestSuite) TestUpdateReconcile() {
 		},
 		defaultTestTimeout, defaultTickInterval,
 	)
-	assert.Equal(suite.T(), validation_test.GetJSONFixture(validation_test.GetValidJSON()), updatedInstanceSameUrl.Status.ConfigurationResult)
+	equal, err := commonTesting.CompareJSON(validation_test.GetValidJSON(), updatedInstanceSameUrl.Status.ConfigurationResult)
+	suite.NoError(err)
+	suite.True(equal)
 }

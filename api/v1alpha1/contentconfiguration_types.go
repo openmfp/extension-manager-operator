@@ -30,21 +30,21 @@ type ContentConfigurationSpec struct {
 	// Important: Run "make" to regenerate code after modifying this file
 
 	// +kubebuilder:validation:RemoteConfiguration:
-	RemoteConfiguration RemoteConfiguration `json:"remoteConfiguration,omitempty"`
+	RemoteConfiguration *RemoteConfiguration `json:"remoteConfiguration,omitempty"`
 
-	InlineConfiguration InlineConfiguration `json:"inlineConfiguration,omitempty"`
+	InlineConfiguration *InlineConfiguration `json:"inlineConfiguration,omitempty"`
 }
 
 type InlineConfiguration struct {
 	// +kubebuilder:validation:Enum=yaml;json
-	ContentType string `json:"contentType,omitempty"`
-	Content     string `json:"content,omitempty"`
+	ContentType string `json:"contentType"`
+	Content     string `json:"content"`
 }
 
 type RemoteConfiguration struct {
 	// +kubebuilder:validation:Enum=yaml;json
-	ContentType    string         `json:"contentType,omitempty"`
-	URL            string         `json:"url,omitempty"`
+	ContentType    string         `json:"contentType"`
+	URL            string         `json:"url"`
 	InternalUrl    string         `json:"internalUrl,omitempty"`
 	Authentication Authentication `json:"authentication,omitempty"`
 }

@@ -71,7 +71,7 @@ func (cC *contentConfiguration) Validate(input []byte, contentType string) (stri
 	}
 	merr := validateSchemaBytes(cC.schema, rawJSON)
 	if merr.Len() == 0 {
-		return string(input), merr
+		return string(rawJSON), merr
 	} else {
 		return "", merr
 	}

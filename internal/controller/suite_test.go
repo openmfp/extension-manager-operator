@@ -18,8 +18,10 @@ package controller
 
 import (
 	"context"
+	"fmt"
 	"os"
 	"path/filepath"
+	"runtime"
 	"time"
 
 	//+kubebuilder:scaffold:imports
@@ -76,7 +78,7 @@ func (suite *ContentConfigurationTestSuite) SetupSuite() {
 	suite.testEnv = &envtest.Environment{
 		CRDDirectoryPaths:     []string{filepath.Join("..", "..", "config", "crd", "bases")},
 		ErrorIfCRDPathMissing: true,
-		BinaryAssetsDirectory: filepath.Join("..", "..", "bin", "k8s", "1.29.0-linux-amd64"),
+		BinaryAssetsDirectory: filepath.Join("..", "..", "bin", "k8s", fmt.Sprintf("1.29.0-%s-%s", runtime.GOOS, runtime.GOARCH)),
 	}
 
 	cfg, err := suite.testEnv.Start()

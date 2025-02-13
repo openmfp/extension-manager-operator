@@ -2,6 +2,7 @@ package subroutines
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
@@ -16,6 +17,7 @@ import (
 	apimachinery "k8s.io/apimachinery/pkg/apis/meta/v1"
 
 	"github.com/openmfp/extension-manager-operator/api/v1alpha1"
+	"github.com/openmfp/extension-manager-operator/pkg/transformer"
 	"github.com/openmfp/extension-manager-operator/pkg/validation"
 )
 
@@ -29,15 +31,21 @@ const (
 )
 
 type ContentConfigurationSubroutine struct {
-	client    *http.Client
-	validator validation.ExtensionConfiguration
+	client      *http.Client
+	validator   validation.ExtensionConfiguration
+	transformer []transformer.ContentConfigurationTransformer
 }
 
 func NewContentConfigurationSubroutine(validator validation.ExtensionConfiguration,
 	client *http.Client) *ContentConfigurationSubroutine {
+
+	transformer := []transformer.ContentConfigurationTransformer{
+		&transformer.UrlSuffixTransformer{},
+	}
 	return &ContentConfigurationSubroutine{
-		client:    client,
-		validator: validator,
+		client:      client,
+		validator:   validator,
+		transformer: transformer,
 	}
 }
 
@@ -62,39 +70,21 @@ func (r *ContentConfigurationSubroutine) Process(
 
 	log.Debug().Str("name", instance.Name).Msg("processing content configuration")
 
-	var contentType string
-	var rawConfig []byte
-	// InlineConfiguration has higher priority than RemoteConfiguration
-	switch {
-	case instance.Spec.InlineConfiguration.Content != "":
-		contentType = instance.Spec.InlineConfiguration.ContentType
-		rawConfig = []byte(instance.Spec.InlineConfiguration.Content)
-	case instance.Spec.RemoteConfiguration.URL != "":
-		url := instance.Spec.RemoteConfiguration.URL
-		if instance.Spec.RemoteConfiguration.InternalUrl != "" {
-			url = instance.Spec.RemoteConfiguration.InternalUrl
-		}
-		bytes, err, retry := r.getRemoteConfig(url, log)
-		if err != nil {
-			log.Err(err).Msg("failed to fetch remote configuration")
-
-			return ctrl.Result{}, errors.NewOperatorError(err, retry, true)
-		}
-		log.Info().Msg("fetched remote configuration")
-		contentType = instance.Spec.RemoteConfiguration.ContentType
-		rawConfig = bytes
-	default:
-		return ctrl.Result{}, errors.NewOperatorError(errors.New("no configuration provided"), false, true)
+	// Download or Retrieve ContentConfiguration Json
+	contentType, rawConfig, err := r.retrieveContentConfigurationData(instance, log)
+	if err != nil {
+		return ctrl.Result{}, errors.NewOperatorError(err, true, false)
 	}
 
-	validatedConfig, merr := r.validator.Validate(rawConfig, contentType)
-	if merr != nil && merr.Len() > 0 {
-		log.Err(merr).Msg("failed to validate configuration")
+	// Validate ContentConfiguration Json
+	validatedConfig, valErr := r.validator.Validate(rawConfig, contentType)
+	if valErr != nil && valErr.Len() > 0 {
+		log.Err(valErr).Msg("failed to validate configuration")
 		condition := apimachinery.Condition{
 			Type:    ValidationConditionType,
 			Status:  ConditionStatusFalse,
 			Reason:  ValidationConditionReasonFailed,
-			Message: merr.Error(),
+			Message: valErr.Error(),
 		}
 		meta.SetStatusCondition(&instance.Status.Conditions, condition)
 		return ctrl.Result{RequeueAfter: 5 * time.Minute}, nil
@@ -108,45 +98,89 @@ func (r *ContentConfigurationSubroutine) Process(
 	}
 	meta.SetStatusCondition(&instance.Status.Conditions, condition)
 
+	// Transform ContentConfiguration Json
+	contentConfiguration := &validation.ContentConfiguration{}
+	err = json.Unmarshal([]byte(validatedConfig), contentConfiguration)
+	if err != nil {
+		return ctrl.Result{}, errors.NewOperatorError(errors.Wrap(err, "failed to unmarshal contentConfiguration"), false, false)
+	}
+	for _, configurationTransformer := range r.transformer {
+		configurationTransformer.Transform(contentConfiguration, instance)
+	}
+
+	validatedConfigBytes, err := json.Marshal(contentConfiguration)
+	if err != nil {
+		return ctrl.Result{}, errors.NewOperatorError(errors.Wrap(err, "failed to marshal contentConfiguration"), false, false)
+	}
+	validatedConfig = string(validatedConfigBytes)
+
+	// Store resulting configuration in the status
 	instance.Status.ConfigurationResult = validatedConfig
 	return ctrl.Result{}, nil
 }
 
+func (r *ContentConfigurationSubroutine) retrieveContentConfigurationData(instance *v1alpha1.ContentConfiguration, log *logger.Logger) (string, []byte, error) {
+	var contentType string
+	var rawConfig []byte
+	// InlineConfiguration has higher priority than RemoteConfiguration
+	switch {
+	case instance.Spec.InlineConfiguration != nil && instance.Spec.InlineConfiguration.Content != "":
+		contentType = instance.Spec.InlineConfiguration.ContentType
+		rawConfig = []byte(instance.Spec.InlineConfiguration.Content)
+	case instance.Spec.RemoteConfiguration != nil && instance.Spec.RemoteConfiguration.URL != "":
+		url := instance.Spec.RemoteConfiguration.URL
+		if instance.Spec.RemoteConfiguration.InternalUrl != "" {
+			url = instance.Spec.RemoteConfiguration.InternalUrl
+		}
+		bytes, err := r.getRemoteConfig(url, log)
+		if err != nil {
+			log.Err(err).Msg("failed to fetch remote configuration")
+
+			return "", nil, err
+		}
+		log.Info().Msg("fetched remote configuration")
+		contentType = instance.Spec.RemoteConfiguration.ContentType
+		rawConfig = bytes
+	default:
+		return "", nil, errors.New("no configuration provided")
+	}
+	return contentType, rawConfig, nil
+}
+
 // Do makes an HTTP request to the specified URL.
-func (r *ContentConfigurationSubroutine) getRemoteConfig(url string, log *logger.Logger) (res []byte, err error, retry bool) {
+func (r *ContentConfigurationSubroutine) getRemoteConfig(url string, log *logger.Logger) ([]byte, error) {
 	req, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
-		return nil, fmt.Errorf("failed to create request: %v", err), false
+		return nil, fmt.Errorf("failed to create request: %v", err)
 	}
 
 	resp, err := r.client.Do(req)
 	if err != nil {
-		return nil, fmt.Errorf("request failed: %v", err), false
+		return nil, fmt.Errorf("request failed: %v", err)
 	}
 	defer func() {
-		if cerr := resp.Body.Close(); cerr != nil {
-			log.Err(cerr).Msg("failed to close response body")
+		if closeErr := resp.Body.Close(); closeErr != nil {
+			log.Err(closeErr).Msg("failed to close response body")
 		}
 	}()
 
 	if resp.StatusCode != http.StatusOK {
 		// Give the caller signal to retry if we have 5xx status codes
 		if resp.StatusCode >= http.StatusInternalServerError && resp.StatusCode < 600 {
-			return nil, fmt.Errorf("received non-200 status code: %d", resp.StatusCode), true
+			return nil, fmt.Errorf("received non-200 status code: %d", resp.StatusCode)
 		}
 
-		return nil, fmt.Errorf("received non-200 status code: %d", resp.StatusCode), false
+		return nil, fmt.Errorf("received non-200 status code: %d", resp.StatusCode)
 	}
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return nil, fmt.Errorf("failed to read response body: %v", err), false
+		return nil, fmt.Errorf("failed to read response body: %v", err)
 	}
-
 	// TODO
 	// we need to check the size of the received body before loading it to memory.
 	// In case it exceeds a certain size we should reject it.
 	// https://github.com/openmfp/extension-manager-operator/pull/23#discussion_r1622598363
 
-	return body, nil, false
+	return body, nil
 }

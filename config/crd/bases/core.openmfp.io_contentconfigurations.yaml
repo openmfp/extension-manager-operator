@@ -58,6 +58,9 @@ spec:
                     - yaml
                     - json
                     type: string
+                required:
+                - content
+                - contentType
                 type: object
               remoteConfiguration:
                 properties:
@@ -91,6 +94,9 @@ spec:
                     type: string
                   url:
                     type: string
+                required:
+                - contentType
+                - url
                 type: object
             type: object
           status:

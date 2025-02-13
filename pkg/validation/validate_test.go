@@ -6,8 +6,10 @@ import (
 	"testing"
 
 	"github.com/hashicorp/go-multierror"
-	"github.com/openmfp/extension-manager-operator/pkg/validation/validation_test"
 	"github.com/stretchr/testify/assert"
+
+	commonTesting "github.com/openmfp/extension-manager-operator/pkg/util/testing"
+	"github.com/openmfp/extension-manager-operator/pkg/validation/validation_test"
 )
 
 func TestValidate(t *testing.T) {
@@ -22,29 +24,29 @@ func TestValidate(t *testing.T) {
 	}{
 		{
 			name:        "valid_JSON",
-			input:       validation_test.GetJSONFixture(validation_test.GetValidJSON()),
+			input:       validation_test.GetValidJSON(),
 			contentType: "Json",
-			expected:    validation_test.GetJSONFixture(validation_test.GetValidJSON()),
+			expected:    validation_test.GetValidJSON(),
 			expectError: false,
 		},
 		{
 			name:        "invalid_JSON_empty_input_ERROR",
-			input:       validation_test.GetJSONFixture(`{"name": "overview",`),
+			input:       `{"name": "overview",`,
 			contentType: "JSON",
 			expected:    "",
 			expectError: true,
-			errorMsg:    "empty input provided",
+			errorMsg:    "unexpected EOF",
 		},
 		{
 			name:        "valid_YAML",
-			input:       validation_test.GetYAMLFixture(validation_test.GetValidYAML()),
+			input:       validation_test.GetValidYAML(),
 			contentType: "yaml",
-			expected:    validation_test.GetYAMLFixture(validation_test.GetValidYAML()),
+			expected:    validation_test.GetValidJSON(),
 			expectError: false,
 		},
 		{
 			name:        "unmarshalling_YAML_ERROR",
-			input:       validation_test.GetYAMLFixture("!2"),
+			input:       "!2",
 			contentType: "Yaml",
 			expected:    "",
 			expectError: true,
@@ -52,7 +54,7 @@ func TestValidate(t *testing.T) {
 		},
 		{
 			name:        "the_document_is_not_valid_ERROR",
-			input:       validation_test.GetYAMLFixture(`2!`),
+			input:       `2!`,
 			contentType: "YAML",
 			expected:    "",
 			expectError: true,
@@ -61,7 +63,7 @@ func TestValidate(t *testing.T) {
 		},
 		{
 			name:        "unsupported_content_type_ERROR",
-			input:       validation_test.GetJSONFixture(validation_test.GetValidJSON()),
+			input:       validation_test.GetValidJSON(),
 			contentType: "xml",
 			expected:    "",
 			expectError: true,
@@ -79,7 +81,7 @@ func TestValidate(t *testing.T) {
 			name:        "validating_with_incorrect_schema_ERROR",
 			schema:      []byte("123"),
 			contentType: "json",
-			input:       validation_test.GetJSONFixture(validation_test.GetValidJSON()),
+			input:       validation_test.GetValidJSON(),
 			expected:    "",
 			expectError: true,
 			errorMsg:    "error validating JSON data",
@@ -87,7 +89,7 @@ func TestValidate(t *testing.T) {
 		{
 			name:        "unmarshal_string_into_Go_struct_ERROR",
 			schema:      getJSONSchemaFixture(),
-			input:       validation_test.GetYAMLFixture(validation_test.GetInvalidTypeYAML()),
+			input:       validation_test.GetInvalidTypeYAML(),
 			contentType: "yaml",
 			expected:    "",
 			expectError: true,
@@ -95,45 +97,45 @@ func TestValidate(t *testing.T) {
 		},
 		{
 			name:        "valid_JSON_empty_locale",
-			input:       validation_test.GetJSONFixture(validation_test.GetValidJSONWithEmptyLocale()),
+			input:       validation_test.GetValidJSONWithEmptyLocale(),
 			contentType: "json",
-			expected:    validation_test.GetJSONFixture(validation_test.GetValidJSONWithEmptyLocale()),
+			expected:    validation_test.GetValidJSONWithEmptyLocale(),
 			expectError: false,
 		},
 		{
 			name:        "test_luigiConfigFragment",
-			input:       validation_test.GetJSONFixture(validation_test.GetluigiConfigFragment()),
+			input:       validation_test.GetluigiConfigFragment(),
 			contentType: "json",
-			expected:    validation_test.GetJSONFixture(validation_test.GetluigiConfigFragment()),
+			expected:    validation_test.GetluigiConfigFragment(),
 			expectError: false,
 		},
 		{
 			name:        "test_luigiConfigFragment",
-			input:       validation_test.GetYAMLFixture(validation_test.GetValidYaml_targetAppConfig_viewGroup()),
+			input:       validation_test.GetValidYaml_targetAppConfig_viewGroup(),
 			contentType: "yaml",
-			expected:    validation_test.GetYAMLFixture(validation_test.GetValidYaml_targetAppConfig_viewGroup()),
+			expected:    validation_test.GetValidYaml_targetAppConfig_viewGroup(),
 			expectError: false,
 			schema:      nil,
 		},
 		{
 			name:        "test_node_category_string",
-			input:       validation_test.GetYAMLFixture(validation_test.GetValidYAML_node_category_string()),
+			input:       validation_test.GetValidYAML_node_category_string(),
 			contentType: "yaml",
-			expected:    validation_test.GetYAMLFixture(validation_test.GetValidYAML_node_category_string()),
+			expected:    validation_test.GetValidJSON_node_category_string(),
 			expectError: false,
 			schema:      nil,
 		},
 		{
 			name:        "test_node_category_object",
-			input:       validation_test.GetYAMLFixture(validation_test.GetValidYAML_node_category_object()),
+			input:       validation_test.GetValidYAML_node_category_object(),
 			contentType: "yaml",
-			expected:    validation_test.GetYAMLFixture(validation_test.GetValidYAML_node_category_object()),
+			expected:    validation_test.GetValidJSON_node_category_object(),
 			expectError: false,
 			schema:      nil,
 		},
 		{
 			name:        "test_node_category_invalidobject",
-			input:       validation_test.GetYAMLFixture(validation_test.GetInalidYAML_node_category_object()),
+			input:       validation_test.GetInalidYAML_node_category_object(),
 			contentType: "yaml",
 			expected:    "",
 			expectError: true,
@@ -141,113 +143,113 @@ func TestValidate(t *testing.T) {
 		},
 		{
 			name:        "test_luigiConfigFragment",
-			input:       validation_test.GetYAMLFixture(validation_test.GetValidYaml_targetAppConfig_viewGroup2()),
+			input:       validation_test.GetValidYaml_targetAppConfig_viewGroup2(),
 			contentType: "yaml",
-			expected:    validation_test.GetYAMLFixture(validation_test.GetValidYaml_targetAppConfig_viewGroup2()),
+			expected:    validation_test.GetValidYaml_targetAppConfig_viewGroup2(),
 			expectError: false,
 			schema:      nil,
 		},
 		{
 			name:        "extension-manager-ui1",
-			input:       validation_test.GetJSONFixture(validation_test.GetValidJSON_extension_manager_ui1()),
+			input:       validation_test.GetValidJSON_extension_manager_ui1(),
 			contentType: "json",
-			expected:    validation_test.GetJSONFixture(validation_test.GetValidJSON_extension_manager_ui1()),
+			expected:    validation_test.GetValidJSON_extension_manager_ui1(),
 			expectError: false,
 			schema:      nil,
 		},
 		{
 			name:        "extension-manager-ui2",
-			input:       validation_test.GetJSONFixture(validation_test.GetValidJSON_extension_manager_ui2()),
+			input:       validation_test.GetValidJSON_extension_manager_ui2(),
 			contentType: "json",
-			expected:    validation_test.GetJSONFixture(validation_test.GetValidJSON_extension_manager_ui2()),
+			expected:    validation_test.GetValidJSON_extension_manager_ui2(),
 			expectError: false,
 			schema:      nil,
 		},
 		{
 			name:        "github-ui1",
-			input:       validation_test.GetJSONFixture(validation_test.GetValidJSON_github_ui1()),
+			input:       validation_test.GetValidJSON_github_ui1(),
 			contentType: "json",
-			expected:    validation_test.GetJSONFixture(validation_test.GetValidJSON_github_ui1()),
+			expected:    validation_test.GetValidJSON_github_ui1(),
 			expectError: false,
 			schema:      nil,
 		},
 		{
 			name:        "github-wc1",
-			input:       validation_test.GetJSONFixture(validation_test.GetValidJSON_github_wc()),
+			input:       validation_test.GetValidJSON_github_wc(),
 			contentType: "json",
-			expected:    validation_test.GetJSONFixture(validation_test.GetValidJSON_github_wc()),
+			expected:    validation_test.GetValidJSON_github_wc(),
 			expectError: false,
 			schema:      nil,
 		},
 		{
 			name:        "iam-ui1",
-			input:       validation_test.GetJSONFixture(validation_test.GetValidJSON_iam_ui()),
+			input:       validation_test.GetValidJSON_iam_ui(),
 			contentType: "json",
-			expected:    validation_test.GetJSONFixture(validation_test.GetValidJSON_iam_ui()),
+			expected:    validation_test.GetValidJSON_iam_ui(),
 			expectError: false,
 			schema:      nil,
 		},
 		{
 			name:        "learnings",
-			input:       validation_test.GetJSONFixture(validation_test.GetValidJSON_learnings()),
+			input:       validation_test.GetValidJSON_learnings(),
 			contentType: "json",
-			expected:    validation_test.GetJSONFixture(validation_test.GetValidJSON_learnings()),
+			expected:    validation_test.GetValidJSON_learnings(),
 			expectError: false,
 			schema:      nil,
 		},
 		{
 			name:        "organization-ui",
-			input:       validation_test.GetJSONFixture(validation_test.GetValidJSON_organization_ui()),
+			input:       validation_test.GetValidJSON_organization_ui(),
 			contentType: "json",
-			expected:    validation_test.GetJSONFixture(validation_test.GetValidJSON_organization_ui()),
+			expected:    validation_test.GetValidJSON_organization_ui(),
 			expectError: false,
 			schema:      nil,
 		},
 		{
 			name:        "organization-ui2",
-			input:       validation_test.GetJSONFixture(validation_test.GetValidJSON_organization_ui2()),
+			input:       validation_test.GetValidJSON_organization_ui2(),
 			contentType: "json",
-			expected:    validation_test.GetJSONFixture(validation_test.GetValidJSON_organization_ui2()),
+			expected:    validation_test.GetValidJSON_organization_ui2(),
 			expectError: false,
 			schema:      nil,
 		},
 		{
 			name:        "search-ui",
-			input:       validation_test.GetJSONFixture(validation_test.GetValidJSON_search_ui()),
+			input:       validation_test.GetValidJSON_search_ui(),
 			contentType: "json",
-			expected:    validation_test.GetJSONFixture(validation_test.GetValidJSON_search_ui()),
+			expected:    validation_test.GetValidJSON_search_ui(),
 			expectError: false,
 			schema:      nil,
 		},
 		{
 			name:        "metadata-registry-wc",
-			input:       validation_test.GetJSONFixture(validation_test.GetValidJSON_metadata_registry_wc()),
+			input:       validation_test.GetValidJSON_metadata_registry_wc(),
 			contentType: "json",
-			expected:    validation_test.GetJSONFixture(validation_test.GetValidJSON_metadata_registry_wc()),
+			expected:    validation_test.GetValidJSON_metadata_registry_wc(),
 			expectError: false,
 			schema:      nil,
 		},
 		{
 			name:        "review-extension",
-			input:       validation_test.GetJSONFixture(validation_test.GetValidJSON_review_extension()),
+			input:       validation_test.GetValidJSON_review_extension(),
 			contentType: "json",
-			expected:    validation_test.GetJSONFixture(validation_test.GetValidJSON_review_extension()),
+			expected:    validation_test.GetValidJSON_review_extension(),
 			expectError: false,
 			schema:      nil,
 		},
 		{
 			name:        "tech-docs",
-			input:       validation_test.GetJSONFixture(validation_test.GetValidJSON_tech_docs()),
+			input:       validation_test.GetValidJSON_tech_docs(),
 			contentType: "json",
-			expected:    validation_test.GetJSONFixture(validation_test.GetValidJSON_tech_docs()),
+			expected:    validation_test.GetValidJSON_tech_docs(),
 			expectError: false,
 			schema:      nil,
 		},
 		{
 			name:        "url",
-			input:       validation_test.GetJSONFixture(validation_test.GetValidJSON_url()),
+			input:       validation_test.GetValidJSON_url(),
 			contentType: "json",
-			expected:    validation_test.GetJSONFixture(validation_test.GetValidJSON_url()),
+			expected:    validation_test.GetValidJSON_url(),
 			expectError: false,
 			schema:      nil,
 		},
@@ -259,15 +261,17 @@ func TestValidate(t *testing.T) {
 			if tc.schema != nil {
 				cC.WithSchema(tc.schema) // nolint: errcheck
 			}
-			result, merr := cC.Validate([]byte(tc.input), tc.contentType)
+			result, err := cC.Validate([]byte(tc.input), tc.contentType)
 
 			if tc.expectError {
-				assert.GreaterOrEqual(t, merr.Len(), 1)
+				assert.GreaterOrEqual(t, err.Len(), 1)
 				assert.Equal(t, tc.expected, result)
-				assert.Contains(t, merr.Error(), tc.errorMsg)
+				assert.Contains(t, err.Error(), tc.errorMsg)
 			} else {
-				assert.Equal(t, merr.Len(), 0)
-				assert.Equal(t, tc.expected, result)
+				assert.Equal(t, err.Len(), 0)
+				equal, err := commonTesting.CompareJSON(tc.expected, result)
+				assert.NoError(t, err)
+				assert.True(t, equal)
 			}
 		})
 	}

@@ -20,6 +20,7 @@ import (
 
 	cachev1alpha1 "github.com/openmfp/extension-manager-operator/api/v1alpha1"
 	"github.com/openmfp/extension-manager-operator/pkg/subroutines/mocks"
+	commonTesting "github.com/openmfp/extension-manager-operator/pkg/util/testing"
 	"github.com/openmfp/extension-manager-operator/pkg/validation"
 	"github.com/openmfp/extension-manager-operator/pkg/validation/validation_test"
 )
@@ -49,8 +50,8 @@ func (suite *ContentConfigurationSubroutineTestSuite) TestCreateAndUpdate_OK() {
 	// Given
 	contentConfiguration := &cachev1alpha1.ContentConfiguration{
 		Spec: cachev1alpha1.ContentConfigurationSpec{
-			InlineConfiguration: cachev1alpha1.InlineConfiguration{
-				Content:     validation_test.GetYAMLFixture(validation_test.GetValidYAML()),
+			InlineConfiguration: &cachev1alpha1.InlineConfiguration{
+				Content:     validation_test.GetValidYAML(),
 				ContentType: "yaml",
 			},
 		},
@@ -62,37 +63,36 @@ func (suite *ContentConfigurationSubroutineTestSuite) TestCreateAndUpdate_OK() {
 	// Then
 	suite.Require().Nil(err)
 
-	cmp, cmpErr := compareYAML(
-		validation_test.GetJSONFixture(validation_test.GetValidJSON()),
+	equal, cmpErr := commonTesting.CompareJSON(
+		validation_test.GetValidJSON(),
 		contentConfiguration.Status.ConfigurationResult,
 	)
 	suite.Require().Nil(cmpErr)
-	suite.Require().True(cmp)
+	suite.Require().True(equal)
 
 	// Now lets take the same object and update it
 	// Given
-	contentConfiguration.Spec.InlineConfiguration.Content = validation_test.GetYAMLFixture(
-		validation_test.GetValidYAMLFixtureButDifferentName())
+	contentConfiguration.Spec.InlineConfiguration.Content = validation_test.GetValidYAMLFixtureButDifferentName()
 
 	// When
 	_, err2 := suite.testObj.Process(context.Background(), contentConfiguration)
 
 	// Then
 	suite.Require().Nil(err2)
-	cmp, cmpErr = compareYAML(
-		validation_test.GetJSONFixture(validation_test.GetValidJSONButDifferentName()),
+	equal, cmpErr = compareYAML(
+		validation_test.GetValidJSONButDifferentName(),
 		contentConfiguration.Status.ConfigurationResult,
 	)
 	suite.Require().Nil(cmpErr)
-	suite.Require().True(cmp)
+	suite.Require().True(equal)
 }
 
 func (suite *ContentConfigurationSubroutineTestSuite) TestCreateAndUpdate_Error() {
 	// Given
 	contentConfiguration := &cachev1alpha1.ContentConfiguration{
 		Spec: cachev1alpha1.ContentConfigurationSpec{
-			InlineConfiguration: cachev1alpha1.InlineConfiguration{
-				Content:     validation_test.GetYAMLFixture(validation_test.GetValidYAML()),
+			InlineConfiguration: &cachev1alpha1.InlineConfiguration{
+				Content:     validation_test.GetValidYAML(),
 				ContentType: "yaml",
 			},
 		},
@@ -106,7 +106,7 @@ func (suite *ContentConfigurationSubroutineTestSuite) TestCreateAndUpdate_Error(
 
 	// compare configuration and result YAMLs
 	cmp, cmpErr := compareYAML(
-		validation_test.GetYAMLFixture(validation_test.GetValidYAML()),
+		validation_test.GetValidYAML(),
 		contentConfiguration.Status.ConfigurationResult,
 	)
 	suite.Require().Nil(cmpErr)
@@ -123,7 +123,7 @@ func (suite *ContentConfigurationSubroutineTestSuite) TestCreateAndUpdate_Error(
 	suite.Require().Nil(errProcessInvalidConfig)
 	// result shoundn't change
 	equal, cmpErr := compareYAML(
-		validation_test.GetYAMLFixture(validation_test.GetValidYAML()), contentConfiguration.Status.ConfigurationResult)
+		validation_test.GetValidYAML(), contentConfiguration.Status.ConfigurationResult)
 	suite.Require().Nil(cmpErr)
 	suite.Require().True(equal)
 }
@@ -163,17 +163,17 @@ func (suite *ContentConfigurationSubroutineTestSuite) TestProcessingConfig() {
 		{
 			name: "InlineConfigYAML_OK",
 			spec: cachev1alpha1.ContentConfigurationSpec{
-				InlineConfiguration: cachev1alpha1.InlineConfiguration{
-					Content:     validation_test.GetYAMLFixture(validation_test.GetValidYAML()),
+				InlineConfiguration: &cachev1alpha1.InlineConfiguration{
+					Content:     validation_test.GetValidYAML(),
 					ContentType: "yaml",
 				},
 			},
-			expectedConfigResult: validation_test.GetYAMLFixture(validation_test.GetValidYAML()),
+			expectedConfigResult: validation_test.GetValidYAML(),
 		},
 		{
 			name: "InlineConfigYAML_ValidationError",
 			spec: cachev1alpha1.ContentConfigurationSpec{
-				InlineConfiguration: cachev1alpha1.InlineConfiguration{
+				InlineConfiguration: &cachev1alpha1.InlineConfiguration{
 					Content:     "I am not a valid yaml",
 					ContentType: "yaml",
 				},
@@ -182,17 +182,17 @@ func (suite *ContentConfigurationSubroutineTestSuite) TestProcessingConfig() {
 		{
 			name: "InlineConfigJSON_OK",
 			spec: cachev1alpha1.ContentConfigurationSpec{
-				InlineConfiguration: cachev1alpha1.InlineConfiguration{
-					Content:     validation_test.GetJSONFixture(validation_test.GetValidJSON()),
+				InlineConfiguration: &cachev1alpha1.InlineConfiguration{
+					Content:     validation_test.GetValidJSON(),
 					ContentType: "json",
 				},
 			},
-			expectedConfigResult: validation_test.GetJSONFixture(validation_test.GetValidJSON()),
+			expectedConfigResult: validation_test.GetValidJSON(),
 		},
 		{
 			name: "InlineConfigJSON_ValidationError",
 			spec: cachev1alpha1.ContentConfigurationSpec{
-				InlineConfiguration: cachev1alpha1.InlineConfiguration{
+				InlineConfiguration: &cachev1alpha1.InlineConfiguration{
 					Content:     "I am not a valid json",
 					ContentType: "json",
 				},
@@ -201,7 +201,7 @@ func (suite *ContentConfigurationSubroutineTestSuite) TestProcessingConfig() {
 		{
 			name: "RemoteConfig_OK",
 			spec: cachev1alpha1.ContentConfigurationSpec{
-				RemoteConfiguration: cachev1alpha1.RemoteConfiguration{
+				RemoteConfiguration: &cachev1alpha1.RemoteConfiguration{
 					ContentType: "json",
 					URL:         remoteURL,
 				},
@@ -213,7 +213,7 @@ func (suite *ContentConfigurationSubroutineTestSuite) TestProcessingConfig() {
 		{
 			name: "RemoteConfig_http_error",
 			spec: cachev1alpha1.ContentConfigurationSpec{
-				RemoteConfiguration: cachev1alpha1.RemoteConfiguration{
+				RemoteConfiguration: &cachev1alpha1.RemoteConfiguration{
 					URL: remoteURL,
 				},
 			},
@@ -345,7 +345,7 @@ func TestService_Do(t *testing.T) {
 
 			r := NewContentConfigurationSubroutine(validation.NewContentConfiguration(), http.DefaultClient)
 
-			body, err, _ := r.getRemoteConfig(tt.url, log)
+			body, err := r.getRemoteConfig(tt.url, log)
 			if tt.expectError {
 				assert.Error(t, err)
 			} else {
@@ -374,8 +374,8 @@ func (suite *ContentConfigurationSubroutineTestSuite) Test_IncompatibleSchemaUpd
 	// Given
 	contentConfiguration := &cachev1alpha1.ContentConfiguration{
 		Spec: cachev1alpha1.ContentConfigurationSpec{
-			InlineConfiguration: cachev1alpha1.InlineConfiguration{
-				Content:     validation_test.GetYAMLFixture(validation_test.GetValidYAML()),
+			InlineConfiguration: &cachev1alpha1.InlineConfiguration{
+				Content:     validation_test.GetValidYAML(),
 				ContentType: "yaml",
 			},
 		},
@@ -394,14 +394,12 @@ func (suite *ContentConfigurationSubroutineTestSuite) Test_IncompatibleSchemaUpd
 					Type:    "ContentConfigurationSubroutine_Ready",
 				},
 			},
-			ConfigurationResult: validation_test.GetYAMLFixture(validation_test.GetValidYAML()),
+			ConfigurationResult: validation_test.GetValidYAML(),
 		},
 	}
 
 	// Simulate incompatible schema update
-	contentConfiguration.Spec.InlineConfiguration.Content = validation_test.GetYAMLFixture(
-		validation_test.GetValidIncompatibleYAML(),
-	)
+	contentConfiguration.Spec.InlineConfiguration.Content = validation_test.GetValidIncompatibleYAML()
 
 	// When
 	result, err := suite.testObj.Process(context.Background(), contentConfiguration)
@@ -411,7 +409,7 @@ func (suite *ContentConfigurationSubroutineTestSuite) Test_IncompatibleSchemaUpd
 	suite.Require().Nil(err)
 
 	cmp, cmpErr := compareYAML(
-		validation_test.GetJSONFixture(validation_test.GetValidJSON()),
+		validation_test.GetValidJSON(),
 		contentConfiguration.Status.ConfigurationResult,
 	)
 	suite.Require().Nil(cmpErr)
@@ -424,14 +422,14 @@ func (suite *ContentConfigurationSubroutineTestSuite) Test_IncompatibleSchemaUpd
 	)
 
 	// make it valid and check if condition is removed
-	contentConfiguration.Spec.InlineConfiguration.Content = validation_test.GetYAMLFixture(validation_test.GetValidYAML())
+	contentConfiguration.Spec.InlineConfiguration.Content = validation_test.GetValidYAML()
 
 	// When
 	_, err = suite.testObj.Process(context.Background(), contentConfiguration)
 	suite.Require().Nil(err)
 
 	cmp, cmpErr = compareYAML(
-		validation_test.GetYAMLFixture(validation_test.GetValidYAML()),
+		validation_test.GetValidYAML(),
 		contentConfiguration.Status.ConfigurationResult,
 	)
 	suite.Require().NoError(cmpErr)
