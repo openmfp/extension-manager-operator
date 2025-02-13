@@ -158,7 +158,7 @@ func (r *ContentConfigurationSubroutine) getRemoteConfig(url string, log *logger
 
 	resp, err := r.client.Do(req)
 	if err != nil {
-		return nil, fmt.Errorf("request failed: %v", err), true
+		return nil, fmt.Errorf("request failed: %v", err)
 	}
 	defer func() {
 		if closeErr := resp.Body.Close(); closeErr != nil {

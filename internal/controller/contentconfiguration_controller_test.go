@@ -246,7 +246,7 @@ func (suite *ContentConfigurationTestSuite) TestContentConfigurationCreationInte
 			Namespace: defaultNamespace,
 		},
 		Spec: cachev1alpha1.ContentConfigurationSpec{
-			RemoteConfiguration: cachev1alpha1.RemoteConfiguration{
+			RemoteConfiguration: &cachev1alpha1.RemoteConfiguration{
 				ContentType: "json",
 				InternalUrl: internalURL,
 				URL:         remoteURL,
@@ -258,7 +258,7 @@ func (suite *ContentConfigurationTestSuite) TestContentConfigurationCreationInte
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
 	httpmock.RegisterResponder(
-		"GET", remoteURL, httpmock.NewStringResponder(200, validation_test.GetJSONFixture(validation_test.GetValidJSON())),
+		"GET", remoteURL, httpmock.NewStringResponder(200, validation_test.GetValidJSON()),
 	)
 
 	// When
@@ -281,7 +281,7 @@ func (suite *ContentConfigurationTestSuite) TestContentConfigurationCreationInte
 	// Update InternalURL and make it valid by mocking
 	// Given
 	httpmock.RegisterResponder(
-		"GET", internalURL, httpmock.NewStringResponder(200, validation_test.GetJSONFixture(validation_test.GetValidJSON())),
+		"GET", internalURL, httpmock.NewStringResponder(200, validation_test.GetValidJSON()),
 	)
 
 	// When
@@ -299,8 +299,8 @@ func (suite *ContentConfigurationTestSuite) TestContentConfigurationCreationInte
 				Namespace: contentConfiguration.Namespace,
 			}, &updatedInstance)
 
-			return err == nil &&
-				updatedInstance.Status.ConfigurationResult == validation_test.GetJSONFixture(validation_test.GetValidJSON())
+			equal, cErr := commonTesting.CompareJSON(validation_test.GetValidJSON(), updatedInstance.Status.ConfigurationResult)
+			return err == nil && cErr == nil && equal
 		},
 		defaultTestTimeout, defaultTickInterval,
 	)
