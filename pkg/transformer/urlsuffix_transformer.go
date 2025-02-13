@@ -16,24 +16,20 @@ type UrlSuffixTransformer struct{}
 func (*UrlSuffixTransformer) Transform(contentConfiguration *validation.ContentConfiguration, instance *v1alpha1.ContentConfiguration) error {
 	if instance.Spec.RemoteConfiguration != nil {
 		parsedUrl, err := url.Parse(instance.Spec.RemoteConfiguration.URL)
-		if err != nil {
+		if err != nil { // coverage-ignore
 			return errors.Wrap(err, "failed to parse URL")
 		}
 		domain := fmt.Sprintf("%s://%s", parsedUrl.Scheme, parsedUrl.Host)
 
 		for i := range contentConfiguration.LuigiConfigFragment.Data.Nodes {
-			err = transformNode(&contentConfiguration.LuigiConfigFragment.Data.Nodes[i], domain)
-			if err != nil {
-				return err
-			}
+			transformNode(&contentConfiguration.LuigiConfigFragment.Data.Nodes[i], domain)
 		}
 		return nil
 	}
-
 	return nil
 }
 
-func transformNode(node *validation.Node, domain string) error {
+func transformNode(node *validation.Node, domain string) {
 	if node.UrlSuffix != "" {
 		domain = strings.TrimRight(domain, "/")
 		urlSuffix := strings.TrimLeft(node.UrlSuffix, "/")
@@ -42,10 +38,6 @@ func transformNode(node *validation.Node, domain string) error {
 		node.UrlSuffix = ""
 	}
 	for i := range node.Children {
-		err := transformNode(&node.Children[i], domain)
-		if err != nil {
-			return err
-		}
+		transformNode(&node.Children[i], domain)
 	}
-	return nil
 }
