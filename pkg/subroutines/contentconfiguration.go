@@ -86,7 +86,7 @@ func (r *ContentConfigurationSubroutine) Process(
 			Message: valErr.Error(),
 		}
 		meta.SetStatusCondition(&instance.Status.Conditions, condition)
-		return ctrl.Result{}, nil
+		return ctrl.Result{}, errors.NewOperatorError(valErr, true, false)
 	}
 
 	condition := apimachinery.Condition{

@@ -111,7 +111,7 @@ func (suite *ContentConfigurationSubroutineTestSuite) TestCreateAndUpdate_Error(
 	time.Sleep(1 * time.Second)
 
 	// Then
-	suite.Require().Nil(errProcessInvalidConfig)
+	suite.Require().NotNil(errProcessInvalidConfig)
 	// result shoundn't change
 	equal, cmpErr := commonTesting.CompareJSON(validation_test.GetValidJSON(), contentConfiguration.Status.ConfigurationResult)
 	suite.Require().Nil(cmpErr)
@@ -168,6 +168,7 @@ func (suite *ContentConfigurationSubroutineTestSuite) TestProcessingConfig() {
 					ContentType: "yaml",
 				},
 			},
+			expectedError: golangCommonErrors.NewOperatorError(errors.New("1 error occurred:\n\t* error unmarshalling YAML: yaml: unmarshal errors:\n  line 1: cannot unmarshal !!str `I am no...` into map[string]interface {}\n\n"), true, false),
 		},
 		{
 			name: "InlineConfigJSON_OK",
@@ -187,6 +188,7 @@ func (suite *ContentConfigurationSubroutineTestSuite) TestProcessingConfig() {
 					ContentType: "json",
 				},
 			},
+			expectedError: golangCommonErrors.NewOperatorError(errors.New("2 errors occurred:\n\t* invalid character 'I' looking for beginning of value\n\t* error validating JSON data\n\n"), true, false),
 		},
 		{
 			name: "RemoteConfig_OK",
@@ -384,7 +386,7 @@ func (suite *ContentConfigurationSubroutineTestSuite) Test_IncompatibleSchemaUpd
 	// When
 	_, err := suite.testObj.Process(context.Background(), contentConfiguration)
 	// Then: should keep previously valid and currently invalid result
-	suite.Require().Nil(err)
+	suite.Require().NotNil(err)
 
 	cmp, cmpErr := commonTesting.CompareJSON(validation_test.GetValidJSON(), contentConfiguration.Status.ConfigurationResult)
 	suite.Require().Nil(cmpErr)
