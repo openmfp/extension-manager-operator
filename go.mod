@@ -5,7 +5,7 @@ go 1.23.2
 require (
 	github.com/go-chi/chi/v5 v5.2.1
 	github.com/go-http-utils/headers v0.0.0-20181008091004-fed159eddc2a
-	github.com/google/go-cmp v0.6.0
+	github.com/google/go-cmp v0.7.0
 	github.com/hashicorp/go-multierror v1.1.1
 	github.com/invopop/jsonschema v0.13.0
 	github.com/jarcoal/httpmock v1.3.1
