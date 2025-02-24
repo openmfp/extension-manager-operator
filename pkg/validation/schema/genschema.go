@@ -15,8 +15,10 @@ func reflectContentConfiguration() {
 	r := new(jsonschema.Reflector)
 	// r.ExpandedStruct = false
 	schemaCategory := r.Reflect(&validation.Category{})
+	schemaWebcomponent := r.Reflect(&validation.Webcomponent{})
 	schemaRoot := r.Reflect(&validation.ContentConfiguration{})
 	schemaRoot.Definitions["Category"] = schemaCategory.Definitions["Category"]
+	schemaRoot.Definitions["Webcomponent"] = schemaWebcomponent.Definitions["Webcomponent"]
 	data, err := json.MarshalIndent(schemaRoot, "", "  ")
 	if err != nil {
 		panic(err.Error())

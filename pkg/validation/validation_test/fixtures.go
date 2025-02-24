@@ -3406,3 +3406,270 @@ func GetValidJSON_url() string {
 		"name": "overview"
 	}`
 }
+
+func GetValidJSON_home_ui() string {
+	return `{
+  "name": "home-ui",
+  "luigiConfigFragment": {
+    "data": {
+      "viewGroup": {
+        "preloadSuffix": "/#/preload"
+      },
+      "nodes": [
+        {
+          "entityType": "global",
+          "label": "Home",
+          "icon": "home",
+          "hideSideNav": true,
+          "pathSegment": "home",
+          "dxpOrder": 1,
+          "order": 1,
+          "urlSuffix": "/main.js#home",
+          "defineEntity": {
+            "id": "home"
+          },
+          "compound": {},
+          "webcomponent": {
+            "selfRegistered": true
+          }
+        },
+        {
+          "pathSegment": "users",
+          "label": "Users",
+          "hideSideNav": true,
+          "hideFromNav": true,
+          "entityType": "global",
+          "navigationContext": "users",
+          "children": [
+            {
+              "pathSegment": ":profileUserId",
+              "hideFromNav": true,
+              "defineEntity": {
+                "id": "user",
+                "contextKey": "profileUserId",
+                "label": "User",
+                "pluralLabel": "Users"
+              },
+              "context": {
+                "profileUserId": ":profileUserId"
+              },
+              "navigationContext": "user"
+            }
+          ]
+        },
+        {
+          "entityType": "user",
+          "pathSegment": "overview",
+          "hideSideNav": true,
+          "showBreadcrumbs": false,
+          "defineEntity": {
+            "id": "overview"
+          },
+          "webcomponent": true,
+          "urlSuffix": "/microfrontends/dynamicPageDashboard.js",
+          "context": {
+            "columns": [
+              {
+                "max": "655px",
+                "layout": "minmax(0,1fr)",
+                "ignoreItemLayout": true
+              },
+              {
+                "min": "656px",
+                "max": "975px",
+                "layout": "minmax(0,1fr)",
+                "ignoreItemLayout": true
+              },
+              {
+                "min": "976px",
+                "max": "1359px",
+                "layout": "minmax(0,1fr) minmax(0,1fr)",
+                "ignoreItemLayout": true
+              },
+              {
+                "min": "1360px",
+                "max": "1679px",
+                "layout": "minmax(0,1fr) minmax(0,1fr)",
+                "ignoreItemLayout": true
+              },
+              {
+                "min": "1680px",
+                "max": "1999px",
+                "layout": "minmax(0,1fr) minmax(0,1fr) minmax(0,1fr) minmax(0,1fr)"
+              },
+              {
+                "min": "2000px",
+                "layout": "minmax(0,1fr) minmax(0,1fr) minmax(0,1fr) minmax(0,1fr) minmax(0,1fr)"
+              }
+            ],
+            "rows": "[first] repeat(20, auto ) [last]",
+            "dashboardPersistencePrefix": "dxp_bounded_context_overview",
+            "headerCollapseHeight": "50px",
+            "itemMargin": "10px"
+          },
+          "compound": {
+            "children": []
+          }
+        },
+        {
+          "entityType": "project.boundedContext",
+          "pathSegment": "overview",
+          "label": "Overview",
+          "icon": "course-book",
+          "defineEntity": {
+            "id": "overview"
+          },
+          "webcomponent": true,
+          "urlSuffix": "/microfrontends/dynamicPageDashboard.js",
+          "context": {
+            "columns": [
+              {
+                "max": "655px",
+                "layout": "minmax(0,1fr)",
+                "ignoreItemLayout": true
+              },
+              {
+                "min": "656px",
+                "max": "975px",
+                "layout": "minmax(0,1fr)",
+                "ignoreItemLayout": true
+              },
+              {
+                "min": "976px",
+                "max": "1359px",
+                "layout": "minmax(0,1fr) minmax(0,1fr)"
+              },
+              {
+                "min": "1360px",
+                "max": "1679px",
+                "layout": "minmax(0,1fr) minmax(0,1fr) minmax(0,1fr)"
+              },
+              {
+                "min": "1680px",
+                "max": "1999px",
+                "layout": "minmax(0,1fr) minmax(0,1fr) minmax(0,1fr) minmax(0,1fr)"
+              },
+              {
+                "min": "2000px",
+                "layout": "minmax(0,1fr) minmax(0,1fr) minmax(0,1fr) minmax(0,1fr) minmax(0,1fr)"
+              }
+            ],
+            "rows": "[first] repeat(20, auto ) [last]",
+            "dashboardPersistencePrefix": "dxp_bounded_context_overview",
+            "headerCollapseHeight": "50px",
+            "itemMargin": "10px"
+          },
+          "compound": {
+            "children": []
+          }
+        },
+        {
+          "entityType": "project.apiDefinition",
+          "pathSegment": "overview",
+          "label": "Overview",
+          "icon": "course-book",
+          "defineEntity": {
+            "id": "overview"
+          },
+          "webcomponent": true,
+          "urlSuffix": "/microfrontends/dynamicPageDashboard.js",
+          "context": {
+            "columns": [
+              {
+                "max": "655px",
+                "layout": "minmax(0,1fr)",
+                "ignoreItemLayout": true
+              },
+              {
+                "min": "656px",
+                "max": "975px",
+                "layout": "minmax(0,1fr)",
+                "ignoreItemLayout": true
+              },
+              {
+                "min": "976px",
+                "max": "1359px",
+                "layout": "minmax(0,1fr) minmax(0,1fr)"
+              },
+              {
+                "min": "1360px",
+                "max": "1679px",
+                "layout": "minmax(0,1fr) minmax(0,1fr) minmax(0,1fr)"
+              },
+              {
+                "min": "1680px",
+                "max": "1999px",
+                "layout": "minmax(0,1fr) minmax(0,1fr) minmax(0,1fr) minmax(0,1fr)"
+              },
+              {
+                "min": "2000px",
+                "layout": "minmax(0,1fr) minmax(0,1fr) minmax(0,1fr) minmax(0,1fr) minmax(0,1fr)"
+              }
+            ],
+            "rows": "[first] repeat(20, auto ) [last]",
+            "dashboardPersistencePrefix": "dxp_api_definition_overview",
+            "headerCollapseHeight": "50px",
+            "itemMargin": "10px"
+          },
+          "compound": {
+            "children": []
+          }
+        },
+        {
+          "entityType": "team",
+          "pathSegment": "overview",
+          "label": "Overview",
+          "icon": "business-by-design",
+          "defineEntity": {
+            "id": "overview"
+          },
+          "navSlot": "main",
+          "webcomponent": true,
+          "urlSuffix": "/microfrontends/dynamicPageDashboard.js",
+          "context": {
+            "columns": [
+              {
+                "max": "655px",
+                "layout": "minmax(0,1fr)",
+                "ignoreItemLayout": true
+              },
+              {
+                "min": "656px",
+                "max": "975px",
+                "layout": "minmax(0,1fr)",
+                "ignoreItemLayout": true
+              },
+              {
+                "min": "976px",
+                "max": "1359px",
+                "layout": "minmax(0,1fr) minmax(0,1fr)"
+              },
+              {
+                "min": "1360px",
+                "max": "1679px",
+                "layout": "minmax(0,1fr) minmax(0,1fr) minmax(0,1fr)"
+              },
+              {
+                "min": "1680px",
+                "max": "1999px",
+                "layout": "minmax(0,1fr) minmax(0,1fr) minmax(0,1fr) minmax(0,1fr)"
+              },
+              {
+                "min": "2000px",
+                "layout": "minmax(0,1fr) minmax(0,1fr) minmax(0,1fr) minmax(0,1fr) minmax(0,1fr)"
+              }
+            ],
+            "rows": "[first] repeat(20, auto ) [last]",
+            "dashboardPersistencePrefix": "dxp_team_overview",
+            "headerCollapseHeight": "50px",
+            "itemMargin": "10px"
+          },
+          "compound": {
+            "children": []
+          }
+        }
+      ]
+    }
+  }
+}`
+}

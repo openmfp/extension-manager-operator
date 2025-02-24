@@ -93,7 +93,7 @@ type Node struct {
 	InitialRoute              string                   `json:"initialRoute,omitempty" yaml:"initialRoute,omitempty"`
 	LayoutConfig              interface{}              `json:"layoutConfig,omitempty" yaml:"layoutConfig,omitempty" jsonschema:"anyof_type=object"`
 	Context                   interface{}              `json:"context,omitempty" yaml:"context,omitempty" jsonschema:"anyof_type=object"`
-	Webcomponent              *Webcomponent            `json:"webcomponent,omitempty" yaml:"webcomponent,omitempty" jsonschema:"anyof_ref=#/$defs/Webcomponent,anyof_type=boolean"`
+	Webcomponent              interface{}              `json:"webcomponent,omitempty" yaml:"webcomponent,omitempty" jsonschema:"anyof_ref=#/$defs/Webcomponent,anyof_type=boolean"`
 	LoadingIndicator          interface{}              `json:"loadingIndicator,omitempty" yaml:"loadingIndicator,omitempty" jsonschema:"anyof_type=object"`
 	DefineEntity              *DefineEntity            `json:"defineEntity,omitempty" yaml:"defineEntity,omitempty"`
 	KeepSelectedForChildren   *bool                    `json:"keepSelectedForChildren,omitempty" yaml:"keepSelectedForChildren,omitempty"`

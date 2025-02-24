@@ -253,6 +253,14 @@ func TestValidate(t *testing.T) {
 			expectError: false,
 			schema:      nil,
 		},
+		{
+			name:        "home-ui",
+			input:       validation_test.GetValidJSON_home_ui(),
+			contentType: "json",
+			expected:    validation_test.GetValidJSON_home_ui(),
+			expectError: false,
+			schema:      nil,
+		},
 	}
 
 	cC := NewContentConfiguration()
