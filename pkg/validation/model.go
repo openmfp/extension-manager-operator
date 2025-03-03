@@ -85,9 +85,9 @@ type Node struct {
 	Icon                      string                   `json:"icon,omitempty" yaml:"icon,omitempty"`
 	Category                  interface{}              `json:"category,omitempty" yaml:"category,omitempty" jsonschema:"anyof_ref=#/$defs/Category,anyof_type=string"`
 	Url                       string                   `json:"url,omitempty" yaml:"url,omitempty"`
-	HideFromNav               bool                     `json:"hideFromNav,omitempty" yaml:"hideFromNav,omitempty"`
+	HideFromNav               *bool                    `json:"hideFromNav,omitempty" yaml:"hideFromNav,omitempty"`
 	VisibleForFeatureToggles  []string                 `json:"visibleForFeatureToggles,omitempty" yaml:"visibleForFeatureToggles,omitempty"`
-	VirtualTree               bool                     `json:"virtualTree,omitempty" yaml:"virtualTree,omitempty"`
+	VirtualTree               *bool                    `json:"virtualTree,omitempty" yaml:"virtualTree,omitempty"`
 	RequiredIFramePermissions interface{}              `json:"requiredIFramePermissions,omitempty" yaml:"requiredIFramePermissions,omitempty" jsonschema:"anyof_type=object"`
 	Compound                  interface{}              `json:"compound,omitempty" yaml:"compound,omitempty" jsonschema:"anyof_type=object"`
 	InitialRoute              string                   `json:"initialRoute,omitempty" yaml:"initialRoute,omitempty"`
@@ -99,15 +99,15 @@ type Node struct {
 	KeepSelectedForChildren   *bool                    `json:"keepSelectedForChildren,omitempty" yaml:"keepSelectedForChildren,omitempty"`
 	Children                  []Node                   `json:"children,omitempty" yaml:"children,omitempty"`
 	UrlSuffix                 string                   `json:"urlSuffix,omitempty" yaml:"urlSuffix,omitempty"`
-	HideSideNav               bool                     `json:"hideSideNav,omitempty" yaml:"hideSideNav,omitempty"`
-	TabNav                    bool                     `json:"tabNav,omitempty" yaml:"tabNav,omitempty"`
-	ShowBreadcrumbs           bool                     `json:"showBreadcrumbs,omitempty" yaml:"showBreadcrumbs,omitempty"`
+	HideSideNav               *bool                    `json:"hideSideNav,omitempty" yaml:"hideSideNav,omitempty"`
+	TabNav                    *bool                    `json:"tabNav,omitempty" yaml:"tabNav,omitempty"`
+	ShowBreadcrumbs           *bool                    `json:"showBreadcrumbs,omitempty" yaml:"showBreadcrumbs,omitempty"`
 	DxpOrder                  float32                  `json:"dxpOrder,omitempty" yaml:"dxpOrder,omitempty"`
 	Order                     float32                  `json:"order,omitempty" yaml:"order,omitempty"`
 	TestId                    string                   `json:"testId,omitempty" yaml:"testId,omitempty"`
 	NavSlot                   string                   `json:"navSlot,omitempty" yaml:"navSlot,omitempty"`
-	VisibleForPlugin          bool                     `json:"visibleForPlugin,omitempty" yaml:"visibleForPlugin,omitempty"`
-	IsolateView               bool                     `json:"isolateView,omitempty" yaml:"isolateView,omitempty"`
+	VisibleForPlugin          *bool                    `json:"visibleForPlugin,omitempty" yaml:"visibleForPlugin,omitempty"`
+	IsolateView               *bool                    `json:"isolateView,omitempty" yaml:"isolateView,omitempty"`
 	VisibleForContext         string                   `json:"visibleForContext,omitempty" yaml:"visibleForContext,omitempty"`
 	VisibleForEntityContext   *VisibleForEntityContext `json:"visibleForEntityContext,omitempty" yaml:"visibleForEntityContext,omitempty"`
 	NetworkVisibility         string                   `json:"networkVisibility,omitempty" yaml:"networkVisibility,omitempty"`
@@ -116,7 +116,7 @@ type Node struct {
 	NavHeader                 *NavHeader               `json:"navHeader,omitempty" yaml:"navHeader,omitempty"`
 	TitleResolver             *TitleResolver           `json:"titleResolver,omitempty" yaml:"titleResolver,omitempty"`
 	DefineSlot                string                   `json:"defineSlot,omitempty" yaml:"defineSlot,omitempty"`
-	IgnoreInDocumentTitle     bool                     `json:"ignoreInDocumentTitle,omitempty" yaml:"ignoreInDocumentTitle,omitempty"`
+	IgnoreInDocumentTitle     *bool                    `json:"ignoreInDocumentTitle,omitempty" yaml:"ignoreInDocumentTitle,omitempty"`
 	ExternalLink              *ExternalLink            `json:"externalLink,omitempty" yaml:"externalLink,omitempty"`
 }
 
