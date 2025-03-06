@@ -9,7 +9,7 @@ require (
 	github.com/hashicorp/go-multierror v1.1.1
 	github.com/invopop/jsonschema v0.13.0
 	github.com/jarcoal/httpmock v1.3.1
-	github.com/openmfp/golang-commons v0.142.6
+	github.com/openmfp/golang-commons v0.142.7
 	github.com/pkg/errors v0.9.1
 	github.com/rs/cors v1.11.1
 	github.com/rs/zerolog v1.33.0
@@ -74,9 +74,9 @@ require (
 	github.com/xeipuuv/gojsonpointer v0.0.0-20180127040702-4e3ac2762d5f // indirect
 	github.com/xeipuuv/gojsonreference v0.0.0-20180127040603-bd5ef7bd5415 // indirect
 	go.opentelemetry.io/auto/sdk v1.1.0 // indirect
-	go.opentelemetry.io/otel v1.34.0 // indirect
-	go.opentelemetry.io/otel/metric v1.34.0 // indirect
-	go.opentelemetry.io/otel/trace v1.34.0 // indirect
+	go.opentelemetry.io/otel v1.35.0 // indirect
+	go.opentelemetry.io/otel/metric v1.35.0 // indirect
+	go.opentelemetry.io/otel/trace v1.35.0 // indirect
 	golang.org/x/crypto v0.33.0 // indirect
 	golang.org/x/exp v0.0.0-20250305212735-054e65f0b394 // indirect
 	golang.org/x/net v0.35.0 // indirect
