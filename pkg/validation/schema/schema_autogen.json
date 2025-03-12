@@ -42,6 +42,24 @@
       "additionalProperties": false,
       "type": "object"
     },
+    "Component": {
+      "properties": {
+        "annotations": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "type": "object"
+        },
+        "id": {
+          "type": "string"
+        },
+        "type": {
+          "$ref": "#/$defs/Type"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
     "ContentConfiguration": {
       "oneOf": [
         {
@@ -341,6 +359,18 @@
         },
         "externalLink": {
           "$ref": "#/$defs/ExternalLink"
+        },
+        "viewGroup": {
+          "type": "string"
+        },
+        "configurationMissing": {
+          "type": "string"
+        },
+        "configurationHint": {
+          "type": "string"
+        },
+        "configurationLink": {
+          "type": "string"
         }
       },
       "additionalProperties": false,
@@ -508,6 +538,15 @@
       "additionalProperties": false,
       "type": "object"
     },
+    "Type": {
+      "properties": {
+        "name": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
     "Url": {
       "properties": {
         "read": {
@@ -600,6 +639,9 @@
       "properties": {
         "project": {
           "$ref": "#/$defs/Project"
+        },
+        "component": {
+          "$ref": "#/$defs/Component"
         }
       },
       "additionalProperties": false,

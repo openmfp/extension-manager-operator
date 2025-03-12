@@ -118,6 +118,10 @@ type Node struct {
 	DefineSlot                string                   `json:"defineSlot,omitempty" yaml:"defineSlot,omitempty"`
 	IgnoreInDocumentTitle     *bool                    `json:"ignoreInDocumentTitle,omitempty" yaml:"ignoreInDocumentTitle,omitempty"`
 	ExternalLink              *ExternalLink            `json:"externalLink,omitempty" yaml:"externalLink,omitempty"`
+	ViewGroup                 string                   `json:"viewGroup,omitempty" yaml:"viewGroup,omitempty"`
+	ConfigurationMissing      string                   `json:"configurationMissing,omitempty" yaml:"configurationMissing,omitempty"`
+	ConfigurationHint         string                   `json:"configurationHint,omitempty" yaml:"configurationHint,omitempty"`
+	ConfigurationLink         string                   `json:"configurationLink,omitempty" yaml:"configurationLink,omitempty"`
 }
 
 type ExternalLink struct {
@@ -162,7 +166,18 @@ type Url struct {
 }
 
 type VisibleForEntityContext struct {
-	Project Project `json:"project,omitempty" yaml:"project,omitempty"`
+	Project   Project   `json:"project,omitempty" yaml:"project,omitempty"`
+	Component Component `json:"component,omitempty" yaml:"component,omitempty"`
+}
+
+type Type struct {
+	Name string `json:"name,omitempty" yaml:"name,omitempty"`
+}
+
+type Component struct {
+	Annotations map[string]string `json:"annotations,omitempty" yaml:"annotations,omitempty"`
+	Id          string            `json:"id,omitempty" yaml:"id,omitempty"`
+	Type        Type              `json:"type,omitempty" yaml:"type,omitempty"`
 }
 
 type Project struct {
