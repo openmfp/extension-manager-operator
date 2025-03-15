@@ -1,5 +1,5 @@
-github.com/99designs/gqlgen v0.17.67 h1:Fuu2s74iqWCslv7oOHjb+xTW5+KwRuMATVHNC6gb6WM=
-github.com/99designs/gqlgen v0.17.67/go.mod h1:VFKZgBh0FrQYKbiGc5iB8AqnUpDiGY5l/Tu/nLhe+Jw=
+github.com/99designs/gqlgen v0.17.68 h1:vH6jTShCv7sgz1ejXEDNqho7KWlA4ZwSWzVsxyhypAM=
+github.com/99designs/gqlgen v0.17.68/go.mod h1:fvCiqQAu2VLhKXez2xFvLmE47QgAPf/KTPN5XQ4rsHQ=
 github.com/andreyvit/diff v0.0.0-20170406064948-c7f18ee00883 h1:bvNMNQO63//z+xNgfBlViaCIJKLlCJ6/fmUseuG0wVQ=
 github.com/andreyvit/diff v0.0.0-20170406064948-c7f18ee00883/go.mod h1:rCTlJbsFo29Kk6CurOXKm700vrz8f0KW0JNfpkRJY/8=
 github.com/bahlo/generic-list-go v0.2.0 h1:5sz/EEAK+ls5wF+NeqDpk5+iNdMDXrh3z3nPnH1Wvgk=
@@ -125,8 +125,8 @@ github.com/onsi/ginkgo/v2 v2.22.0 h1:Yed107/8DjTr0lKCNt7Dn8yQ6ybuDRQoMGrNFKzMfHg
 github.com/onsi/ginkgo/v2 v2.22.0/go.mod h1:7Du3c42kxCUegi0IImZ1wUQzMBVecgIHjR1C+NkhLQo=
 github.com/onsi/gomega v1.36.1 h1:bJDPBO7ibjxcbHMgSCoo4Yj18UWbKDlLwX1x9sybDcw=
 github.com/onsi/gomega v1.36.1/go.mod h1:PvZbdDc8J6XJEpDK4HCuRBm8a6Fzp9/DmhC9C7yFlog=
-github.com/openmfp/golang-commons v0.142.10 h1:M5W5pxxT0mUe8ySgcYh6XP22RYcHXtgDhoJLD3HMqQg=
-github.com/openmfp/golang-commons v0.142.10/go.mod h1:rWgRghLs3wLwqcobhTZQufyVdyaE/K8HuOlu6uCZoGo=
+github.com/openmfp/golang-commons v0.142.11 h1:Qe6FGjhjJjERXIAXZxqXOYzPHE5NBWAgOscWTQETvEc=
+github.com/openmfp/golang-commons v0.142.11/go.mod h1:y8fvFdmbXwrKnUbYJjAeONXL72GL473QM3x0oSIPeck=
 github.com/pingcap/errors v0.11.4 h1:lFuQV/oaUMGcD2tqt+01ROSmJs75VG1ToEOkZIZ4nE4=
 github.com/pingcap/errors v0.11.4/go.mod h1:Oi8TUi2kEtXXLMJk9l1cGmz20kV3TaQ0usTwv5KuLY8=
 github.com/pkg/errors v0.9.1 h1:FEBLx1zS214owpjy7qsBeixbURkuhQAwrK5UwLGTwt4=
