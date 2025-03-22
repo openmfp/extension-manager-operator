@@ -12,7 +12,7 @@ require (
 	github.com/openmfp/golang-commons v0.142.12
 	github.com/pkg/errors v0.9.1
 	github.com/rs/cors v1.11.1
-	github.com/rs/zerolog v1.33.0
+	github.com/rs/zerolog v1.34.0
 	github.com/spf13/cobra v1.9.1
 	github.com/stretchr/testify v1.10.0
 	github.com/vrischmann/envconfig v1.4.1
