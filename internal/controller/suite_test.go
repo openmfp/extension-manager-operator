@@ -68,10 +68,7 @@ func (suite *ContentConfigurationTestSuite) SetupSuite() {
 	// Disable color logging as vs-code does not support color logging in the test output
 	log = logger.NewFromZerolog(log.Output(&zerolog.ConsoleWriter{Out: os.Stdout, NoColor: true}))
 
-	appConfig, err := config.NewFromEnv()
-	suite.Nil(err)
-
-	testContext, _, _ := openmfpcontext.StartContext(log, appConfig, appConfig.ShutdownTimeout)
+	testContext, _, _ := openmfpcontext.StartContext(log, nil, 1*time.Second)
 
 	testContext = logger.SetLoggerInContext(testContext, log.ComponentLogger("TestSuite"))
 
@@ -100,8 +97,11 @@ func (suite *ContentConfigurationTestSuite) SetupSuite() {
 	})
 	suite.Nil(err)
 
-	contentConfigurationReconciler := NewContentConfigurationReconciler(log, suite.kubernetesManager, appConfig)
-	err = contentConfigurationReconciler.SetupWithManager(suite.kubernetesManager, appConfig, log)
+	appCfg := config.Config{}
+	appCfg.Subroutines.ContentConfiguration.Enabled = true
+
+	contentConfigurationReconciler := NewContentConfigurationReconciler(log, suite.kubernetesManager, appCfg)
+	err = contentConfigurationReconciler.SetupWithManager(suite.kubernetesManager, appCfg, log)
 	suite.Nil(err)
 
 	go suite.startController()

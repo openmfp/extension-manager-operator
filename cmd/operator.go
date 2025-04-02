@@ -19,7 +19,6 @@ package cmd
 import (
 	"context"
 	"crypto/tls"
-	"os"
 
 	openmfpcontext "github.com/openmfp/golang-commons/context"
 	"github.com/spf13/cobra"
@@ -27,9 +26,7 @@ import (
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/healthz"
 	metricsserver "sigs.k8s.io/controller-runtime/pkg/metrics/server"
-	"sigs.k8s.io/controller-runtime/pkg/webhook"
 
-	"github.com/openmfp/extension-manager-operator/internal/config"
 	"github.com/openmfp/extension-manager-operator/internal/controller"
 )
 
@@ -39,82 +36,35 @@ var operatorCmd = &cobra.Command{
 	Run:   RunController,
 }
 
-var (
-	metricsAddr          string
-	enableLeaderElection bool
-	probeAddr            string
-	loglevel             string
-	logNoJSON            bool
-	secureMetrics        bool
-	enableHTTP2          bool
-	cfg                  config.Config
-)
-
-func init() { // coverage-ignore
-	var err error
-	cfg, err = config.NewFromEnv()
-	if err != nil {
-		setupLog.Error(err, "unable to load config")
-		os.Exit(1)
-	}
-	operatorCmd.Flags().StringVar(&metricsAddr, "metrics-bind-address", cfg.Metrics.BindAddress,
-		"The address the metric endpoint binds to.")
-	operatorCmd.Flags().StringVar(&probeAddr, "health-probe-bind-address", cfg.Probes.BindAddress,
-		"The address the probe endpoint binds to.")
-	operatorCmd.Flags().StringVar(&loglevel, "log-level", cfg.Log.Level,
-		"The log level for the application. Default is info.")
-	operatorCmd.Flags().BoolVar(&logNoJSON, "log-no-json", cfg.Log.NoJSON,
-		"Flag to disable JSON logging. Default is false.")
-	operatorCmd.Flags().BoolVar(&enableLeaderElection, "leader-elect", cfg.LeaderElection.Enabled,
-		"Enable leader election for controller manager. "+
-			"Enabling this will ensure there is only one active controller manager.")
-	operatorCmd.Flags().BoolVar(&secureMetrics, "metrics-secure", cfg.Metrics.Secure,
-		"If set the metrics endpoint is served securely")
-	operatorCmd.Flags().BoolVar(&enableHTTP2, "enable-http2", cfg.EnableHTTP2,
-		"If set, HTTP/2 will be enabled for the metrics and webhook servers")
-}
-
 func RunController(cmd *cobra.Command, args []string) { // coverage-ignore
-	_, log := initApp()
 	ctrl.SetLogger(log.ComponentLogger("controller-runtime").Logr())
 
-	ctx, _, shutdown := openmfpcontext.StartContext(log, cfg, cfg.ShutdownTimeout)
+	ctx, _, shutdown := openmfpcontext.StartContext(log, appConfig, appConfig.ShutdownTimeout)
 	defer shutdown()
-
-	disableHTTP2 := func(c *tls.Config) {
-		log.Info().Msg("disabling http/2")
-		c.NextProtos = []string{"http/1.1"}
-	}
-
-	tlsOpts := []func(*tls.Config){}
-	if !enableHTTP2 {
-		tlsOpts = append(tlsOpts, disableHTTP2)
-	}
-
-	webhookServer := webhook.NewServer(webhook.Options{
-		TLSOpts: tlsOpts,
-	})
 
 	mgr, err := ctrl.NewManager(ctrl.GetConfigOrDie(), ctrl.Options{
 		Scheme: scheme,
 		Metrics: metricsserver.Options{
-			BindAddress:   metricsAddr,
-			SecureServing: secureMetrics,
-			TLSOpts:       tlsOpts,
+			BindAddress: appConfig.MetricsBindAddress,
+			TLSOpts: []func(*tls.Config){
+				func(c *tls.Config) {
+					log.Info().Msg("disabling http/2")
+					c.NextProtos = []string{"http/1.1"}
+				},
+			},
 		},
 		BaseContext:                   func() context.Context { return ctx },
-		WebhookServer:                 webhookServer,
-		HealthProbeBindAddress:        probeAddr,
-		LeaderElection:                enableLeaderElection,
-		LeaderElectionID:              "eengiex4.openmfp.io",
+		HealthProbeBindAddress:        appConfig.HealthProbeBindAddress,
+		LeaderElection:                appConfig.LeaderElection.Enabled,
+		LeaderElectionID:              "eengiex4.openmfp.org",
 		LeaderElectionReleaseOnCancel: true,
 	})
 	if err != nil {
 		log.Fatal().Err(err).Msg("unable to start manager")
 	}
 
-	contentConfigurationReconciler := controller.NewContentConfigurationReconciler(log, mgr, cfg)
-	if err := contentConfigurationReconciler.SetupWithManager(mgr, cfg, log); err != nil {
+	contentConfigurationReconciler := controller.NewContentConfigurationReconciler(log, mgr, appConfig)
+	if err := contentConfigurationReconciler.SetupWithManager(mgr, appConfig, log); err != nil {
 		log.Fatal().Err(err).Str("controller", "ContentConfiguration").Msg("unable to create controller")
 	}
 
