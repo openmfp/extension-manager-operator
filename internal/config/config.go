@@ -9,7 +9,7 @@ type ServerConfig struct {
 type OperatorConfig struct {
 	Subroutines struct {
 		ContentConfiguration struct {
-			Enabled bool `mapstructure:"subroutines-contentconfiguration-enabled"`
+			Enabled bool `mapstructure:"subroutines-content-configuration-enabled"`
 		} `mapstructure:",squash"`
 	} `mapstructure:",squash"`
 }
