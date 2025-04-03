@@ -50,6 +50,10 @@ func init() { // coverage-ignore
 		os.Exit(1)
 	}
 
+	if !v.IsSet("subroutines-contentconfiguration-enabled") {
+		v.SetDefault("subroutines-contentconfiguration-enabled", true)
+	}
+
 	err = openmfpconfig.BindConfigToFlags(v, operatorCmd, &operatorCfg)
 	if err != nil {
 		setupLog.Error(err, "Failed to bind config to flags")
