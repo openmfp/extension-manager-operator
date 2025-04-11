@@ -651,6 +651,9 @@
       "properties": {
         "selfRegistered": {
           "type": "boolean"
+        },
+        "tagName": {
+          "type": "string"
         }
       },
       "additionalProperties": false,

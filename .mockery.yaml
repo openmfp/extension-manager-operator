@@ -19,3 +19,11 @@ packages:
       ResponseWriter:
         config:
           mockname: ResponseWriter
+  sigs.k8s.io/controller-runtime/pkg/client:
+    config:
+      dir: pkg/subroutines/mocks
+      outpkg: mocks
+    interfaces:
+      Client:
+        config:
+          mockname: Client
