@@ -118,6 +118,7 @@ type Node struct {
 	DefineSlot                string                   `json:"defineSlot,omitempty" yaml:"defineSlot,omitempty"`
 	IgnoreInDocumentTitle     *bool                    `json:"ignoreInDocumentTitle,omitempty" yaml:"ignoreInDocumentTitle,omitempty"`
 	ExternalLink              *ExternalLink            `json:"externalLink,omitempty" yaml:"externalLink,omitempty"`
+	Link                      string                   `json:"link,omitempty" yaml:"link,omitempty"`
 	ViewGroup                 string                   `json:"viewGroup,omitempty" yaml:"viewGroup,omitempty"`
 	ConfigurationMissing      string                   `json:"configurationMissing,omitempty" yaml:"configurationMissing,omitempty"`
 	ConfigurationHint         string                   `json:"configurationHint,omitempty" yaml:"configurationHint,omitempty"`
