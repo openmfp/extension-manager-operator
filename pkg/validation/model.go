@@ -167,8 +167,8 @@ type Url struct {
 }
 
 type VisibleForEntityContext struct {
-	Project   Project   `json:"project,omitempty" yaml:"project,omitempty"`
-	Component Component `json:"component,omitempty" yaml:"component,omitempty"`
+	Project   Project    `json:"project,omitempty" yaml:"project,omitempty"`
+	Component *Component `json:"component,omitempty" yaml:"component,omitempty"`
 }
 
 type Type struct {
