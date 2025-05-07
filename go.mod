@@ -107,4 +107,4 @@ require (
 	sigs.k8s.io/yaml v1.4.0 // indirect
 )
 
-replace dario.cat/mergo => github.com/imdario/mergo v1.0.1
+replace dario.cat/mergo => github.com/imdario/mergo v1.0.2
