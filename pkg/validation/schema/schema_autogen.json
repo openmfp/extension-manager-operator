@@ -111,6 +111,9 @@
         },
         "notFoundConfig": {
           "$ref": "#/$defs/NotFoundConfig"
+        },
+        "graphqlEntity": {
+          "$ref": "#/$defs/GraphqlEntity"
         }
       },
       "additionalProperties": false,
@@ -123,6 +126,21 @@
         },
         "sameWindow": {
           "type": "boolean"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "GraphqlEntity": {
+      "properties": {
+        "group": {
+          "type": "string"
+        },
+        "kind": {
+          "type": "string"
+        },
+        "query": {
+          "type": "string"
         }
       },
       "additionalProperties": false,

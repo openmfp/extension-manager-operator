@@ -194,6 +194,13 @@ type DefineEntity struct {
 	Label          string          `json:"label,omitempty" yaml:"label,omitempty"`
 	PluralLabel    string          `json:"pluralLabel,omitempty" yaml:"pluralLabel,omitempty"`
 	NotFoundConfig *NotFoundConfig `json:"notFoundConfig,omitempty" yaml:"notFoundConfig,omitempty"`
+	GraphqlEntity  *GraphqlEntity  `json:"graphqlEntity,omitempty" yaml:"graphqlEntity,omitempty"`
+}
+
+type GraphqlEntity struct {
+	Group string `json:"group,omitempty" yaml:"group,omitempty"`
+	Kind  string `json:"kind,omitempty" yaml:"kind,omitempty"`
+	Query string `json:"query,omitempty" yaml:"query,omitempty"`
 }
 
 type NotFoundConfig struct {
