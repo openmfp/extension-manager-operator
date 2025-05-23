@@ -33,3 +33,4 @@ test/tester.go
 test/v2/gojsonschema.go
 coverage.html
 .env
+test/test.go
