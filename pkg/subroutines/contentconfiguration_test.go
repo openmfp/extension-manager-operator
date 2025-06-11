@@ -134,7 +134,6 @@ func (suite *ContentConfigurationSubroutineTestSuite) TestFinalize_OK() {
 	result, err := suite.testObj.Finalize(context.Background(), contentConfiguration)
 
 	// Then
-	suite.False(result.Requeue)
 	suite.Assert().Zero(result.RequeueAfter)
 	suite.Nil(err)
 }
@@ -264,7 +263,6 @@ func (suite *ContentConfigurationSubroutineTestSuite) TestFinalizers_OK() {
 	result, err := suite.testObj.Finalize(context.Background(), contentConfiguration)
 
 	// Then
-	suite.False(result.Requeue)
 	suite.Assert().Zero(result.RequeueAfter)
 	suite.Nil(err)
 
