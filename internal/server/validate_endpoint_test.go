@@ -185,6 +185,32 @@ func TestValidation_Error(t *testing.T) {
 	assert.GreaterOrEqual(t, len(r.ValidationErrors), 1)
 }
 
+type errorReadCloser struct {
+	io.Reader
+}
+
+func (e *errorReadCloser) Close() error {
+	return errors.New("simulated close error")
+}
+
+func TestHandlerValidate_BodyCloseError(t *testing.T) {
+	logcfg := logger.DefaultConfig()
+	log, _ := logger.New(logcfg)
+	handler := NewHttpValidateHandler(log, validation.NewContentConfiguration())
+
+	reqBody := OK_VALID_JSON_CONTENT // or any valid JSON
+	req := httptest.NewRequest(http.MethodPost, "/validate", &errorReadCloser{Reader: bytes.NewBufferString(reqBody)})
+	w := httptest.NewRecorder()
+
+	handler.HandlerValidate(w, req)
+
+	resp := w.Result()
+	defer resp.Body.Close()
+
+	assert.Equal(t, http.StatusOK, resp.StatusCode)
+	// Optionally, check logs or sentry if you have hooks/mocks for them
+}
+
 func TestValidation_ErrorMarshallingValidatedResponse(t *testing.T) {
 
 	logcfg := logger.DefaultConfig()
