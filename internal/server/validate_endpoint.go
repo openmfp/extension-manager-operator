@@ -61,7 +61,13 @@ func (h *HttpValidateHandler) HandlerValidate(w http.ResponseWriter, r *http.Req
 	decoder := json.NewDecoder(r.Body)
 	decoder.DisallowUnknownFields()
 	err := decoder.Decode(&request)
-	defer r.Body.Close()
+	defer func() {
+		err := r.Body.Close()
+		if err != nil {
+			h.log.Error().Err(err).Msg("Closing request body failed")
+			sentry.CaptureError(err, sentry.Tags{"error": "Closing request body failed"})
+		}
+	}()
 
 	if err != nil {
 		_, errResponse := h.writeErrorHelper(w, http.StatusInternalServerError, err)

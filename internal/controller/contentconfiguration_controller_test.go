@@ -224,7 +224,7 @@ func (suite *ContentConfigurationTestSuite) TestUpdateReconcile() {
 			}, &updatedInstanceSameUrl)
 
 			log.Info().Msg(fmt.Sprintf("ObservedGeneration: %d", updatedInstance.Status.ObservedGeneration))
-			result := err == nil && updatedInstanceSameUrl.Status.ObservedGeneration == updatedInstanceSameUrl.ObjectMeta.Generation
+			result := err == nil && updatedInstanceSameUrl.Status.ObservedGeneration == updatedInstanceSameUrl.Generation
 			return result
 		},
 		defaultTestTimeout, defaultTickInterval,

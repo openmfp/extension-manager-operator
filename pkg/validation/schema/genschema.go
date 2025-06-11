@@ -8,6 +8,7 @@ import (
 	"runtime"
 
 	"github.com/invopop/jsonschema"
+
 	"github.com/openmfp/extension-manager-operator/pkg/validation"
 )
 
@@ -38,7 +39,12 @@ func reflectContentConfiguration() {
 	if err != nil {
 		panic(err.Error())
 	}
-	defer file.Close()
+	defer func() {
+		err := file.Close()
+		if err != nil {
+			panic(err)
+		}
+	}()
 
 	_, err = file.Write(data)
 	if err != nil {
@@ -48,7 +54,10 @@ func reflectContentConfiguration() {
 	if err != nil {
 		panic(err.Error())
 	}
-	file.Close()
+	err = file.Close()
+	if err != nil {
+		panic(err)
+	}
 
 	// // print data
 	// fmt.Println(string(data))

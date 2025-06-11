@@ -98,7 +98,7 @@ func (suite *ContentConfigurationTestSuite) SetupSuite() {
 	})
 	suite.Nil(err)
 
-	defaultConfig := openmfpconfig.CommonServiceConfig{}
+	defaultConfig := &openmfpconfig.CommonServiceConfig{}
 	appCfg := config.OperatorConfig{}
 	appCfg.Subroutines.ContentConfiguration.Enabled = true
 
