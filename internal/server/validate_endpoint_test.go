@@ -205,7 +205,10 @@ func TestHandlerValidate_BodyCloseError(t *testing.T) {
 	handler.HandlerValidate(w, req)
 
 	resp := w.Result()
-	defer resp.Body.Close()
+	defer func() {
+		err := resp.Body.Close()
+		assert.NoError(t, err)
+	}()
 
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
 	// Optionally, check logs or sentry if you have hooks/mocks for them
