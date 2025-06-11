@@ -23,13 +23,14 @@ import (
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/predicate"
 
+	openmfpconfig "github.com/openmfp/golang-commons/config"
+	"github.com/openmfp/golang-commons/controller/lifecycle"
+	"github.com/openmfp/golang-commons/logger"
+
 	cachev1alpha1 "github.com/openmfp/extension-manager-operator/api/v1alpha1"
 	"github.com/openmfp/extension-manager-operator/internal/config"
 	"github.com/openmfp/extension-manager-operator/pkg/subroutines"
 	"github.com/openmfp/extension-manager-operator/pkg/validation"
-	openmfpconfig "github.com/openmfp/golang-commons/config"
-	"github.com/openmfp/golang-commons/controller/lifecycle"
-	"github.com/openmfp/golang-commons/logger"
 )
 
 var (
@@ -56,6 +57,6 @@ func (r *ContentConfigurationReconciler) Reconcile(ctx context.Context, req ctrl
 	return r.lifecycle.Reconcile(ctx, req, &cachev1alpha1.ContentConfiguration{})
 }
 
-func (r *ContentConfigurationReconciler) SetupWithManager(mgr ctrl.Manager, cfg openmfpconfig.CommonServiceConfig, log *logger.Logger, eventPredicates ...predicate.Predicate) error {
+func (r *ContentConfigurationReconciler) SetupWithManager(mgr ctrl.Manager, cfg *openmfpconfig.CommonServiceConfig, log *logger.Logger, eventPredicates ...predicate.Predicate) error {
 	return r.lifecycle.SetupWithManager(mgr, cfg.MaxConcurrentReconciles, contentConfigurationReconcilerName, &cachev1alpha1.ContentConfiguration{}, cfg.DebugLabelValue, r, log, eventPredicates...)
 }

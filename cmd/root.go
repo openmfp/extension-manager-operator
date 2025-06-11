@@ -10,10 +10,11 @@ import (
 	clientgoscheme "k8s.io/client-go/kubernetes/scheme"
 	ctrl "sigs.k8s.io/controller-runtime"
 
-	corev1alpha1 "github.com/openmfp/extension-manager-operator/api/v1alpha1"
-	"github.com/openmfp/extension-manager-operator/internal/config"
 	openmfpconfig "github.com/openmfp/golang-commons/config"
 	"github.com/openmfp/golang-commons/logger"
+
+	corev1alpha1 "github.com/openmfp/extension-manager-operator/api/v1alpha1"
+	"github.com/openmfp/extension-manager-operator/internal/config"
 )
 
 var (
@@ -22,7 +23,7 @@ var (
 
 	operatorCfg config.OperatorConfig
 	serverCfg   config.ServerConfig
-	defaultCfg  openmfpconfig.CommonServiceConfig
+	defaultCfg  *openmfpconfig.CommonServiceConfig
 	v           *viper.Viper
 	log         *logger.Logger
 )
@@ -44,7 +45,7 @@ func init() { // coverage-ignore
 	cobra.OnInitialize(initConfig, initLog)
 
 	var err error
-	v, err = openmfpconfig.NewDefaultConfig(rootCmd)
+	v, defaultCfg, err = openmfpconfig.NewDefaultConfig(rootCmd)
 	if err != nil {
 		setupLog.Error(err, "Failed to create config")
 		os.Exit(1)
