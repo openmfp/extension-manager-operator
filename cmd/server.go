@@ -22,6 +22,7 @@ import (
 	"time"
 
 	openmfpcontext "github.com/openmfp/golang-commons/context"
+	"github.com/openmfp/golang-commons/traces"
 	"github.com/spf13/cobra"
 	_ "k8s.io/client-go/plugin/pkg/client/auth"
 	ctrl "sigs.k8s.io/controller-runtime"
@@ -41,6 +42,26 @@ func RunServer(cmd *cobra.Command, args []string) { // coverage-ignore
 
 	ctx, cancelMain, shutdown := openmfpcontext.StartContext(log, operatorCfg, defaultCfg.ShutdownTimeout)
 	defer shutdown()
+
+	var err error
+	var providerShutdown func(ctx context.Context) error
+	if defaultCfg.Tracing.Enabled {
+		providerShutdown, err = traces.InitProvider(ctx, defaultCfg.Tracing.Collector)
+		if err != nil {
+			log.Fatal().Err(err).Msg("unable to start gRPC-Sidecar TracerProvider")
+		}
+	} else {
+		providerShutdown, err = traces.InitLocalProvider(ctx, defaultCfg.Tracing.Collector, false)
+		if err != nil {
+			log.Fatal().Err(err).Msg("unable to start local TracerProvider")
+		}
+	}
+
+	defer func() {
+		if err := providerShutdown(ctx); err != nil {
+			log.Fatal().Err(err).Msg("failed to shutdown TracerProvider")
+		}
+	}()
 
 	rt := server.CreateRouter(serverCfg, log, validation.NewContentConfiguration())
 
@@ -64,7 +85,7 @@ func RunServer(cmd *cobra.Command, args []string) { // coverage-ignore
 	shutdownCtx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	err := server.Shutdown(shutdownCtx)
+	err = server.Shutdown(shutdownCtx)
 	if err != nil {
 		log.Panic().Err(err).Msg("Graceful shutdown failed")
 	}
