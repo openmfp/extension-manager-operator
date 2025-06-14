@@ -27,7 +27,6 @@ import (
 	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 	_ "k8s.io/client-go/plugin/pkg/client/auth"
 	ctrl "sigs.k8s.io/controller-runtime"
-	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/healthz"
 	metricsserver "sigs.k8s.io/controller-runtime/pkg/metrics/server"
 
@@ -40,7 +39,7 @@ var operatorCmd = &cobra.Command{
 	Run:   RunController,
 }
 
-func RunController(cmd *cobra.Command, args []string) { // coverage-ignore
+func RunController(_ *cobra.Command, _ []string) { // coverage-ignore
 	ctrl.SetLogger(log.ComponentLogger("controller-runtime").Logr())
 
 	ctx, _, shutdown := openmfpcontext.StartContext(log, operatorCfg, defaultCfg.ShutdownTimeout)
@@ -66,12 +65,12 @@ func RunController(cmd *cobra.Command, args []string) { // coverage-ignore
 		}
 	}()
 
-	mgr, err := ctrl.NewManager(ctrl.GetConfigOrDie(), ctrl.Options{
-		Client: client.Options{
-			HTTPClient: &http.Client{
-				Transport: otelhttp.NewTransport(http.DefaultTransport),
-			},
-		},
+	restCfg := ctrl.GetConfigOrDie()
+	restCfg.Wrap(func(rt http.RoundTripper) http.RoundTripper {
+		return otelhttp.NewTransport(rt)
+	})
+
+	mgr, err := ctrl.NewManager(restCfg, ctrl.Options{
 		Scheme: scheme,
 		Metrics: metricsserver.Options{
 			BindAddress: defaultCfg.Metrics.BindAddress,
