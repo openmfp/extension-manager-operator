@@ -211,6 +211,7 @@ type NotFoundConfig struct {
 type Webcomponent struct {
 	SelfRegistered bool   `json:"selfRegistered,omitempty" yaml:"selfRegistered,omitempty"`
 	TagName        string `json:"tagName,omitempty" yaml:"tagName,omitempty"`
+	Type           string `json:"type,omitempty" yaml:"type,omitempty"`
 }
 
 type Category struct {
