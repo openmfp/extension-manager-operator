@@ -9,7 +9,7 @@ require (
 	github.com/hashicorp/go-multierror v1.1.1
 	github.com/invopop/jsonschema v0.13.0
 	github.com/jarcoal/httpmock v1.4.0
-	github.com/openmfp/golang-commons v0.150.2
+	github.com/openmfp/golang-commons v0.150.3
 	github.com/pkg/errors v0.9.1
 	github.com/rs/cors v1.11.1
 	github.com/rs/zerolog v1.34.0
@@ -19,9 +19,9 @@ require (
 	github.com/xeipuuv/gojsonschema v1.2.0
 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.61.0
 	gopkg.in/yaml.v3 v3.0.1
-	k8s.io/api v0.33.1
-	k8s.io/apimachinery v0.33.1
-	k8s.io/client-go v0.33.1
+	k8s.io/api v0.33.2
+	k8s.io/apimachinery v0.33.2
+	k8s.io/client-go v0.33.2
 	sigs.k8s.io/controller-runtime v0.21.0
 )
 
