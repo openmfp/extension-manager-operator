@@ -3,7 +3,7 @@ module github.com/openmfp/extension-manager-operator
 go 1.24.3
 
 require (
-	github.com/go-chi/chi/v5 v5.2.1
+	github.com/go-chi/chi/v5 v5.2.2
 	github.com/go-http-utils/headers v0.0.0-20181008091004-fed159eddc2a
 	github.com/google/go-cmp v0.7.0
 	github.com/hashicorp/go-multierror v1.1.1
