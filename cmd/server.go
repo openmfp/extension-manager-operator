@@ -23,6 +23,7 @@ import (
 
 	openmfpcontext "github.com/openmfp/golang-commons/context"
 	"github.com/openmfp/golang-commons/traces"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/spf13/cobra"
 	_ "k8s.io/client-go/plugin/pkg/client/auth"
 	ctrl "sigs.k8s.io/controller-runtime"
@@ -63,7 +64,12 @@ func RunServer(cmd *cobra.Command, args []string) { // coverage-ignore
 		}
 	}()
 
+	// Create Prometheus metrics handler
+	metricsHandler := promhttp.Handler()
+
+	// Register Prometheus metrics endpoint
 	rt := server.CreateRouter(serverCfg, log, validation.NewContentConfiguration())
+	rt.Handle("/metrics", metricsHandler)
 
 	server := &http.Server{
 		Addr:         ":" + serverCfg.ServerPort,
