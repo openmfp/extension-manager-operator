@@ -7,6 +7,7 @@ vars:
   ENVTEST_K8S_VERSION: "1.29.0"
   ENVTEST_VERSION: release-0.17
   CRD_DIRECTORY: config/crd/bases
+  KCP_APIGEN_VERSION: v0.27.1
 tasks:
   ## Setup
   setup:mockery:
@@ -29,6 +30,11 @@ tasks:
     internal: true
     cmds:
       - test -s {{.LOCAL_BIN}}/go-test-coverage || GOBIN=$(pwd)/{{.LOCAL_BIN}} go install github.com/vladopajic/go-test-coverage/v2@latest
+  setup:kcp-api-gen:
+    internal: true
+    cmds:
+      - test -s {{.LOCAL_BIN}}/apigen || GOBIN=$(pwd)/{{.LOCAL_BIN}} go install github.com/kcp-dev/kcp/sdk/cmd/apigen@{{.KCP_APIGEN_VERSION}}
+
   ## Development
   mockery:
     deps: [setup:mockery]
@@ -39,11 +45,13 @@ tasks:
     cmds:
       - "{{.LOCAL_BIN}}/controller-gen rbac:roleName=manager-role crd paths=./... output:crd:artifacts:config={{.CRD_DIRECTORY}}"
   generate:
+    deps: [setup:controller-gen, setup:kcp-api-gen]
     cmds:
       - task: manifests
       - "{{.LOCAL_BIN}}/controller-gen object:headerFile=hack/boilerplate.go.txt paths=./..."
       - task: copynamespacedcrd
       - task: schemagen
+      - "{{.LOCAL_BIN}}/apigen --input-dir {{.CRD_DIRECTORY}} --output-dir ./config/resources"
   build:
     cmds:
       - go build ./...
