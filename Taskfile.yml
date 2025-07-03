@@ -96,4 +96,9 @@ tasks:
         - cp -rf config/crd/bases/* config/crds
         - cp config/crds/core.openmfp.io_contentconfigurations.yaml config/crds/core.openmfp.io_contentconfigurations_namespaced.yaml
         - yq -i '.spec.scope = "Namespaced"' ./config/crds/core.openmfp.io_contentconfigurations_namespaced.yaml
+        - sed -i '' '1s;^;\{\{ if .Values.crds.namespaced \}\}\n;' ./config/crds/core.openmfp.io_contentconfigurations_namespaced.yaml
+        - echo "{{ `{{- end }}` }}" >> ./config/crds/core.openmfp.io_contentconfigurations_namespaced.yaml
+        - sed -i '' '1s;^;\{\{ if not .Values.crds.namespaced \}\}\n;' ./config/crds/core.openmfp.io_contentconfigurations.yaml
+        - echo "{{ `{{- end }}` }}" >> ./config/crds/core.openmfp.io_contentconfigurations.yaml
+
 
