@@ -54,16 +54,10 @@ func reflectContentConfiguration() {
 	if err != nil {
 		panic(err.Error())
 	}
-	err = file.Close()
-	if err != nil {
-		panic(err)
-	}
-
 	// // print data
 	// fmt.Println(string(data))
 
 	fmt.Println("Schema saved to schema_autogen.json")
-
 }
 
 func main() {
