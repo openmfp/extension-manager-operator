@@ -21,8 +21,8 @@ import (
 	"net/http"
 	"time"
 
-	openmfpcontext "github.com/openmfp/golang-commons/context"
-	"github.com/openmfp/golang-commons/traces"
+	openmfpcontext "github.com/platform-mesh/golang-commons/context"
+	"github.com/platform-mesh/golang-commons/traces"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/spf13/cobra"
 	_ "k8s.io/client-go/plugin/pkg/client/auth"

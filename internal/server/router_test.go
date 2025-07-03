@@ -10,7 +10,7 @@ import (
 
 	"github.com/openmfp/extension-manager-operator/internal/config"
 	"github.com/openmfp/extension-manager-operator/pkg/validation"
-	"github.com/openmfp/golang-commons/logger"
+	"github.com/platform-mesh/golang-commons/logger"
 )
 
 func initLog() *logger.Logger {

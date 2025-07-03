@@ -21,13 +21,11 @@ import (
 	"net/http"
 
 	openmfpconfig "github.com/platform-mesh/golang-commons/config"
-	"github.com/platform-mesh/golang-commons/controller/lifecycle/multicluster"
+	"github.com/platform-mesh/golang-commons/controller/lifecycle/controllerruntime"
 	"github.com/platform-mesh/golang-commons/controller/lifecycle/subroutine"
 	"github.com/platform-mesh/golang-commons/logger"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/predicate"
-	mcmanager "sigs.k8s.io/multicluster-runtime/pkg/manager"
-	mcreconcile "sigs.k8s.io/multicluster-runtime/pkg/reconcile"
 
 	cachev1alpha1 "github.com/openmfp/extension-manager-operator/api/v1alpha1"
 	"github.com/openmfp/extension-manager-operator/internal/config"
@@ -35,30 +33,25 @@ import (
 	"github.com/openmfp/extension-manager-operator/pkg/validation"
 )
 
-var (
-	operatorName                       = "extension-manager-operator"
-	contentConfigurationReconcilerName = "ContentConfigurationReconciler"
-)
-
-// ContentConfigurationReconciler reconciles a ContentConfiguration object
-type ContentConfigurationReconciler struct {
-	lifecycle *multicluster.LifecycleManager
+// ContentConfigurationReconcilerCR ContentConfigurationReconciler reconciles a ContentConfiguration object
+type ContentConfigurationReconcilerCR struct {
+	lifecycle *controllerruntime.LifecycleManager
 }
 
-func NewContentConfigurationReconciler(log *logger.Logger, mgr mcmanager.Manager, cfg config.OperatorConfig) *ContentConfigurationReconciler {
+func NewContentConfigurationReconcilerCR(log *logger.Logger, mgr ctrl.Manager, cfg config.OperatorConfig) *ContentConfigurationReconcilerCR {
 	var subs []subroutine.Subroutine
 	if cfg.Subroutines.ContentConfiguration.Enabled {
 		subs = append(subs, subroutines.NewContentConfigurationSubroutine(validation.NewContentConfiguration(), http.DefaultClient))
 	}
-	return &ContentConfigurationReconciler{
-		lifecycle: multicluster.NewLifecycleManager(log, operatorName, contentConfigurationReconcilerName, mgr, subs).WithSpreadingReconciles().WithConditionManagement(),
+	return &ContentConfigurationReconcilerCR{
+		lifecycle: controllerruntime.NewLifecycleManager(log, operatorName, contentConfigurationReconcilerName, mgr.GetClient(), subs).WithSpreadingReconciles().WithConditionManagement(),
 	}
 }
 
-func (r *ContentConfigurationReconciler) Reconcile(ctx context.Context, req mcreconcile.Request) (ctrl.Result, error) {
+func (r *ContentConfigurationReconcilerCR) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 	return r.lifecycle.Reconcile(ctx, req, &cachev1alpha1.ContentConfiguration{})
 }
 
-func (r *ContentConfigurationReconciler) SetupWithManager(mgr mcmanager.Manager, cfg *openmfpconfig.CommonServiceConfig, log *logger.Logger, eventPredicates ...predicate.Predicate) error {
+func (r *ContentConfigurationReconcilerCR) SetupWithManager(mgr ctrl.Manager, cfg *openmfpconfig.CommonServiceConfig, log *logger.Logger, eventPredicates ...predicate.Predicate) error {
 	return r.lifecycle.SetupWithManager(mgr, cfg.MaxConcurrentReconciles, contentConfigurationReconcilerName, &cachev1alpha1.ContentConfiguration{}, cfg.DebugLabelValue, r, log, eventPredicates...)
 }

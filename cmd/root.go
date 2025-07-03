@@ -10,8 +10,8 @@ import (
 	clientgoscheme "k8s.io/client-go/kubernetes/scheme"
 	ctrl "sigs.k8s.io/controller-runtime"
 
-	openmfpconfig "github.com/openmfp/golang-commons/config"
-	"github.com/openmfp/golang-commons/logger"
+	openmfpconfig "github.com/platform-mesh/golang-commons/config"
+	"github.com/platform-mesh/golang-commons/logger"
 
 	corev1alpha1 "github.com/openmfp/extension-manager-operator/api/v1alpha1"
 	"github.com/openmfp/extension-manager-operator/internal/config"

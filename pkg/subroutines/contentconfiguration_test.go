@@ -8,8 +8,8 @@ import (
 	"time"
 
 	"github.com/jarcoal/httpmock"
-	golangCommonErrors "github.com/openmfp/golang-commons/errors"
-	"github.com/openmfp/golang-commons/logger"
+	golangCommonErrors "github.com/platform-mesh/golang-commons/errors"
+	"github.com/platform-mesh/golang-commons/logger"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"

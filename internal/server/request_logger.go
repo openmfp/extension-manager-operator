@@ -4,7 +4,7 @@ import (
 	"html"
 	"net/http"
 
-	"github.com/openmfp/golang-commons/logger"
+	"github.com/platform-mesh/golang-commons/logger"
 )
 
 type requestLogger struct {

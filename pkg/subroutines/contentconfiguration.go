@@ -9,9 +9,9 @@ import (
 
 	ctrl "sigs.k8s.io/controller-runtime"
 
-	"github.com/openmfp/golang-commons/controller/lifecycle"
-	"github.com/openmfp/golang-commons/errors"
-	"github.com/openmfp/golang-commons/logger"
+	"github.com/platform-mesh/golang-commons/controller/lifecycle/runtimeobject"
+	"github.com/platform-mesh/golang-commons/errors"
+	"github.com/platform-mesh/golang-commons/logger"
 	"k8s.io/apimachinery/pkg/api/meta"
 	apimachinery "k8s.io/apimachinery/pkg/apis/meta/v1"
 
@@ -52,7 +52,7 @@ func (r *ContentConfigurationSubroutine) GetName() string {
 	return ContentConfigurationSubroutineName
 }
 
-func (r *ContentConfigurationSubroutine) Finalize(_ context.Context, _ lifecycle.RuntimeObject) (ctrl.Result, errors.OperatorError) {
+func (r *ContentConfigurationSubroutine) Finalize(_ context.Context, _ runtimeobject.RuntimeObject) (ctrl.Result, errors.OperatorError) {
 	return ctrl.Result{}, nil
 }
 
@@ -61,7 +61,7 @@ func (r *ContentConfigurationSubroutine) Finalizers() []string {
 }
 
 func (r *ContentConfigurationSubroutine) Process(
-	ctx context.Context, runtimeObj lifecycle.RuntimeObject,
+	ctx context.Context, runtimeObj runtimeobject.RuntimeObject,
 ) (ctrl.Result, errors.OperatorError) {
 	log := logger.LoadLoggerFromContext(ctx)
 

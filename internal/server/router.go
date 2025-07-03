@@ -5,7 +5,7 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-http-utils/headers"
-	"github.com/openmfp/golang-commons/logger"
+	"github.com/platform-mesh/golang-commons/logger"
 	"github.com/rs/cors"
 
 	"github.com/openmfp/extension-manager-operator/internal/config"
