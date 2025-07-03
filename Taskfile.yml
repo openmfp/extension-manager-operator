@@ -42,6 +42,7 @@ tasks:
     cmds:
       - task: manifests
       - "{{.LOCAL_BIN}}/controller-gen object:headerFile=hack/boilerplate.go.txt paths=./..."
+      - task: copynamespacedcrd
       - task: schemagen
   build:
     cmds:
@@ -90,3 +91,9 @@ tasks:
   run:
     cmds:
       - go run ./main.go operator
+  copynamespacedcrd:
+    cmds:
+        - cp -rf config/crd/bases/* config/crds
+        - cp config/crds/core.openmfp.io_contentconfigurations.yaml config/crds/core.openmfp.io_contentconfigurations_namespaced.yaml
+        - yq -i '.spec.scope = "Namespaced"' ./config/crds/core.openmfp.io_contentconfigurations_namespaced.yaml
+

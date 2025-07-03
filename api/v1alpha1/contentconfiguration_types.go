@@ -71,7 +71,7 @@ type ContentConfigurationStatus struct {
 //+kubebuilder:subresource:status
 
 // ContentConfiguration is the Schema for the contentconfigurations API
-// +kubebuilder:resource:shortName=cc
+// +kubebuilder:resource:scope=Cluster,shortName=cc
 // +kubebuilder:printcolumn:name="Ready",type=string,JSONPath=`.status.conditions[?(@.type=="Ready")].status`
 // +kubebuilder:printcolumn:name="Valid",type=string,JSONPath=`.status.conditions[?(@.type=="Valid")].status`
 type ContentConfiguration struct {
