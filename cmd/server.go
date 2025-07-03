@@ -38,8 +38,8 @@ var serverCmd = &cobra.Command{
 	Run:   RunServer,
 }
 
-func RunServer(cmd *cobra.Command, args []string) { // coverage-ignore
-	ctrl.SetLogger(log.ComponentLogger("server").Logr())
+func RunServer(_ *cobra.Command, _ []string) { // coverage-ignore
+	ctrl.SetLogger(log.ComponentLogger("srv").Logr())
 
 	ctx, cancelMain, shutdown := openmfpcontext.StartContext(log, operatorCfg, defaultCfg.ShutdownTimeout)
 	defer shutdown()
@@ -71,7 +71,7 @@ func RunServer(cmd *cobra.Command, args []string) { // coverage-ignore
 	rt := server.CreateRouter(serverCfg, log, validation.NewContentConfiguration())
 	rt.Handle("/metrics", metricsHandler)
 
-	server := &http.Server{
+	srv := &http.Server{
 		Addr:         ":" + serverCfg.ServerPort,
 		Handler:      rt,
 		ReadTimeout:  10 * time.Second,
@@ -79,7 +79,7 @@ func RunServer(cmd *cobra.Command, args []string) { // coverage-ignore
 	}
 
 	go func() {
-		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			log.Error().Err(err).Msg("Server failed")
 			cancelMain(err)
 		}
@@ -91,7 +91,7 @@ func RunServer(cmd *cobra.Command, args []string) { // coverage-ignore
 	shutdownCtx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	err = server.Shutdown(shutdownCtx)
+	err = srv.Shutdown(shutdownCtx)
 	if err != nil {
 		log.Panic().Err(err).Msg("Graceful shutdown failed")
 	}
