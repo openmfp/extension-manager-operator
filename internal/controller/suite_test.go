@@ -102,7 +102,7 @@ func (suite *ContentConfigurationTestSuite) SetupSuite() {
 	appCfg := config.OperatorConfig{}
 	appCfg.Subroutines.ContentConfiguration.Enabled = true
 
-	contentConfigurationReconciler := NewContentConfigurationReconciler(log, suite.kubernetesManager, appCfg)
+	contentConfigurationReconciler := NewContentConfigurationReconcilerCR(log, suite.kubernetesManager, appCfg)
 	err = contentConfigurationReconciler.SetupWithManager(suite.kubernetesManager, defaultConfig, log)
 	suite.Nil(err)
 
