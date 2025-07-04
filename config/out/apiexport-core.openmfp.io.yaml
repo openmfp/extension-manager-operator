@@ -1,3 +1,4 @@
+{{ if .Values.kcp.enabled }}
 apiVersion: apis.kcp.io/v1alpha1
 kind: APIExport
 metadata:
@@ -7,3 +8,4 @@ spec:
   latestResourceSchemas:
   - v250704-6d57f16.contentconfigurations.core.openmfp.io
 status: {}
+{{- end }}

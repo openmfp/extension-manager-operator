@@ -49,9 +49,9 @@ tasks:
     cmds:
       - task: manifests
       - "{{.LOCAL_BIN}}/controller-gen object:headerFile=hack/boilerplate.go.txt paths=./..."
-      - task: copynamespacedcrd
       - task: schemagen
       - "{{.LOCAL_BIN}}/apigen --input-dir {{.CRD_DIRECTORY}} --output-dir ./config/resources"
+      - task: copynamespacedcrd
   build:
     cmds:
       - go build ./...
@@ -101,12 +101,18 @@ tasks:
       - go run ./main.go operator
   copynamespacedcrd:
     cmds:
-        - cp -rf config/crd/bases/* config/crds
-        - cp config/crds/core.openmfp.io_contentconfigurations.yaml config/crds/core.openmfp.io_contentconfigurations_namespaced.yaml
-        - yq -i '.spec.scope = "Namespaced"' ./config/crds/core.openmfp.io_contentconfigurations_namespaced.yaml
-        - sed -i '' '1s;^;\{\{ if .Values.crds.namespaced \}\}\n;' ./config/crds/core.openmfp.io_contentconfigurations_namespaced.yaml
-        - echo "{{ `{{- end }}` }}" >> ./config/crds/core.openmfp.io_contentconfigurations_namespaced.yaml
-        - sed -i '' '1s;^;\{\{ if not .Values.crds.namespaced \}\}\n;' ./config/crds/core.openmfp.io_contentconfigurations.yaml
-        - echo "{{ `{{- end }}` }}" >> ./config/crds/core.openmfp.io_contentconfigurations.yaml
+        - cp -rf config/crd/bases/* config/out/
+        - yq -i '.spec.scope = "Namespaced"' ./config/out/core.openmfp.io_contentconfigurations.yaml
+        - sed -i '' '1s;^;\{\{ if not .Values.kcp.enabled \}\}\n;' ./config/out/core.openmfp.io_contentconfigurations.yaml
+        - echo "{{ `{{- end }}` }}" >> ./config/out/core.openmfp.io_contentconfigurations.yaml
+        - cp -rf config/resources/* config/out
+        - sed -i '' '1s;^;\{\{ if .Values.kcp.enabled \}\}\n;' ./config/out/apiexport-core.openmfp.io.yaml
+        - echo "{{ `{{- end }}` }}" >> ./config/out/apiexport-core.openmfp.io.yaml
+        - sed -i '' '1s;^;\{\{ if .Values.kcp.enabled \}\}\n;' ./config/out/apiresourceschema-contentconfigurations.core.openmfp.io.yaml
+        - echo "{{ `{{- end }}` }}" >> ./config/out/apiresourceschema-contentconfigurations.core.openmfp.io.yaml
+  copytocharts:
+    cmds:
+      - cp -rf config/out/* ../helm-charts/charts/extension-manager-operator-crds/templates
+
 
 

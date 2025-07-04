@@ -1,3 +1,4 @@
+{{ if .Values.kcp.enabled }}
 apiVersion: apis.kcp.io/v1alpha1
 kind: APIResourceSchema
 metadata:
@@ -172,3 +173,4 @@ spec:
     storage: true
     subresources:
       status: {}
+{{- end }}
