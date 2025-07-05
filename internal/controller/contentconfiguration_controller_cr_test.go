@@ -28,7 +28,7 @@ import (
 	metaV1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"
 
-	cachev1alpha1 "github.com/openmfp/extension-manager-operator/api/v1alpha1"
+	"github.com/openmfp/extension-manager-operator/api/v1alpha1"
 	commonTesting "github.com/openmfp/extension-manager-operator/pkg/util/testing"
 	"github.com/openmfp/extension-manager-operator/pkg/validation/validation_test"
 )
@@ -44,14 +44,14 @@ func (suite *ContentConfigurationTestSuite) TestContentConfigurationCreation() {
 	testCases := []struct {
 		name           string
 		instanceName   string
-		spec           cachev1alpha1.ContentConfigurationSpec
+		spec           v1alpha1.ContentConfigurationSpec
 		expectedResult string
 	}{
 		{
 			name:         "TestInlineContentConfiguration",
 			instanceName: "inline",
-			spec: cachev1alpha1.ContentConfigurationSpec{
-				InlineConfiguration: &cachev1alpha1.InlineConfiguration{
+			spec: v1alpha1.ContentConfigurationSpec{
+				InlineConfiguration: &v1alpha1.InlineConfiguration{
 					ContentType: "yaml",
 					Content:     validation_test.GetValidYAML(),
 				},
@@ -61,12 +61,12 @@ func (suite *ContentConfigurationTestSuite) TestContentConfigurationCreation() {
 		{
 			name:         "TestBothInlineAndRemoteConfiguration",
 			instanceName: "inline-and-remote",
-			spec: cachev1alpha1.ContentConfigurationSpec{
-				InlineConfiguration: &cachev1alpha1.InlineConfiguration{
+			spec: v1alpha1.ContentConfigurationSpec{
+				InlineConfiguration: &v1alpha1.InlineConfiguration{
 					ContentType: "yaml",
 					Content:     validation_test.GetValidYAML(),
 				},
-				RemoteConfiguration: &cachev1alpha1.RemoteConfiguration{
+				RemoteConfiguration: &v1alpha1.RemoteConfiguration{
 					URL:         "this-url-should-not-be-used",
 					ContentType: "yaml",
 				},
@@ -76,8 +76,8 @@ func (suite *ContentConfigurationTestSuite) TestContentConfigurationCreation() {
 		{
 			name:         "TestRemoteContentConfiguration",
 			instanceName: "remote",
-			spec: cachev1alpha1.ContentConfigurationSpec{
-				RemoteConfiguration: &cachev1alpha1.RemoteConfiguration{
+			spec: v1alpha1.ContentConfigurationSpec{
+				RemoteConfiguration: &v1alpha1.RemoteConfiguration{
 					ContentType: "json",
 					URL:         remoteURL,
 				},
@@ -98,7 +98,7 @@ func (suite *ContentConfigurationTestSuite) TestContentConfigurationCreation() {
 
 			// Given
 			testContext := context.Background()
-			instance := &cachev1alpha1.ContentConfiguration{
+			instance := &v1alpha1.ContentConfiguration{
 				ObjectMeta: metaV1.ObjectMeta{
 					Name:      tc.instanceName,
 					Namespace: defaultNamespace,
@@ -111,7 +111,7 @@ func (suite *ContentConfigurationTestSuite) TestContentConfigurationCreation() {
 			suite.Nil(err)
 
 			// Then
-			createdInstance := cachev1alpha1.ContentConfiguration{}
+			createdInstance := v1alpha1.ContentConfiguration{}
 			suite.Assert().Eventually(
 				func() bool {
 					err := suite.kubernetesClient.Get(testContext, types.NamespacedName{
@@ -133,13 +133,13 @@ func (suite *ContentConfigurationTestSuite) TestUpdateReconcile() {
 
 	// Given
 	testContext := context.Background()
-	contentConfiguration := &cachev1alpha1.ContentConfiguration{
+	contentConfiguration := &v1alpha1.ContentConfiguration{
 		ObjectMeta: metaV1.ObjectMeta{
 			Name:      "extension-manager",
 			Namespace: defaultNamespace,
 		},
-		Spec: cachev1alpha1.ContentConfigurationSpec{
-			RemoteConfiguration: &cachev1alpha1.RemoteConfiguration{
+		Spec: v1alpha1.ContentConfigurationSpec{
+			RemoteConfiguration: &v1alpha1.RemoteConfiguration{
 				ContentType: "json",
 				URL:         remoteURL,
 			},
@@ -158,7 +158,7 @@ func (suite *ContentConfigurationTestSuite) TestUpdateReconcile() {
 	suite.Nil(err)
 
 	// Then
-	createdInstance := cachev1alpha1.ContentConfiguration{}
+	createdInstance := v1alpha1.ContentConfiguration{}
 	suite.Assert().Eventually(
 		func() bool {
 			err := suite.kubernetesClient.Get(testContext, types.NamespacedName{
@@ -185,7 +185,7 @@ func (suite *ContentConfigurationTestSuite) TestUpdateReconcile() {
 	suite.Nil(err)
 
 	// Then
-	updatedInstance := cachev1alpha1.ContentConfiguration{}
+	updatedInstance := v1alpha1.ContentConfiguration{}
 	suite.Assert().Eventually(
 		func() bool {
 			err := suite.kubernetesClient.Get(testContext, types.NamespacedName{
@@ -215,7 +215,7 @@ func (suite *ContentConfigurationTestSuite) TestUpdateReconcile() {
 	suite.logger.Info().Msg("--------------------- resource updated a 2nd time ---------------------")
 	log.Info().Msg(fmt.Sprintf("After Update ObservedGeneration: %d", updatedInstance.Status.ObservedGeneration))
 	// Then
-	updatedInstanceSameUrl := cachev1alpha1.ContentConfiguration{}
+	updatedInstanceSameUrl := v1alpha1.ContentConfiguration{}
 	suite.Assert().Eventually(
 		func() bool {
 			err := suite.kubernetesClient.Get(testContext, types.NamespacedName{
@@ -240,13 +240,13 @@ func (suite *ContentConfigurationTestSuite) TestContentConfigurationCreationInte
 
 	// Given
 	testContext := context.Background()
-	contentConfiguration := &cachev1alpha1.ContentConfiguration{
+	contentConfiguration := &v1alpha1.ContentConfiguration{
 		ObjectMeta: metaV1.ObjectMeta{
 			Name:      "extension-manager-internal",
 			Namespace: defaultNamespace,
 		},
-		Spec: cachev1alpha1.ContentConfigurationSpec{
-			RemoteConfiguration: &cachev1alpha1.RemoteConfiguration{
+		Spec: v1alpha1.ContentConfigurationSpec{
+			RemoteConfiguration: &v1alpha1.RemoteConfiguration{
 				ContentType: "json",
 				InternalUrl: internalURL,
 				URL:         remoteURL,
@@ -266,7 +266,7 @@ func (suite *ContentConfigurationTestSuite) TestContentConfigurationCreationInte
 	suite.Nil(err)
 
 	// Then
-	createdInstance := cachev1alpha1.ContentConfiguration{}
+	createdInstance := v1alpha1.ContentConfiguration{}
 	suite.Assert().Eventually(
 		func() bool {
 			err := suite.kubernetesClient.Get(testContext, types.NamespacedName{
@@ -291,7 +291,7 @@ func (suite *ContentConfigurationTestSuite) TestContentConfigurationCreationInte
 	time.Sleep(1 * time.Second)
 
 	// Then
-	updatedInstance := cachev1alpha1.ContentConfiguration{}
+	updatedInstance := v1alpha1.ContentConfiguration{}
 	suite.Assert().Eventually(
 		func() bool {
 			err := suite.kubernetesClient.Get(testContext, types.NamespacedName{

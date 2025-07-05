@@ -10,8 +10,12 @@ import (
 	clientgoscheme "k8s.io/client-go/kubernetes/scheme"
 	ctrl "sigs.k8s.io/controller-runtime"
 
-	openmfpconfig "github.com/openmfp/golang-commons/config"
-	"github.com/openmfp/golang-commons/logger"
+	kcpapisv1alpha1 "github.com/kcp-dev/kcp/sdk/apis/apis/v1alpha1"
+	kcpcorev1alpha1 "github.com/kcp-dev/kcp/sdk/apis/core/v1alpha1"
+	kcptenancyv1alpha1 "github.com/kcp-dev/kcp/sdk/apis/tenancy/v1alpha1"
+
+	openmfpconfig "github.com/platform-mesh/golang-commons/config"
+	"github.com/platform-mesh/golang-commons/logger"
 
 	corev1alpha1 "github.com/openmfp/extension-manager-operator/api/v1alpha1"
 	"github.com/openmfp/extension-manager-operator/internal/config"
@@ -35,6 +39,9 @@ var rootCmd = &cobra.Command{
 
 func init() { // coverage-ignore
 	utilruntime.Must(clientgoscheme.AddToScheme(scheme))
+	utilruntime.Must(kcptenancyv1alpha1.AddToScheme(scheme))
+	utilruntime.Must(kcpapisv1alpha1.AddToScheme(scheme))
+	utilruntime.Must(kcpcorev1alpha1.AddToScheme(scheme))
 
 	utilruntime.Must(corev1alpha1.AddToScheme(scheme))
 	//+kubebuilder:scaffold:scheme
@@ -68,7 +75,6 @@ func initConfig() {
 
 	v.SetDefault("is-local", false)
 	v.SetDefault("server-port", "8088")
-	v.SetDefault("subroutines-content-configuration-enabled", true)
 
 	// Parse environment variables into the Config struct
 	if err := v.Unmarshal(&defaultCfg); err != nil {

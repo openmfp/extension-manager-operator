@@ -1,0 +1,9 @@
+apiVersion: apis.kcp.io/v1alpha1
+kind: APIExport
+metadata:
+  creationTimestamp: null
+  name: core.openmfp.io
+spec:
+  latestResourceSchemas:
+  - v250704-6d57f16.contentconfigurations.core.openmfp.io
+status: {}

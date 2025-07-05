@@ -19,7 +19,7 @@ package v1alpha1
 import (
 	"time"
 
-	"github.com/openmfp/golang-commons/controller/lifecycle"
+	"github.com/platform-mesh/golang-commons/controller/lifecycle/spread"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
@@ -71,7 +71,7 @@ type ContentConfigurationStatus struct {
 //+kubebuilder:subresource:status
 
 // ContentConfiguration is the Schema for the contentconfigurations API
-// +kubebuilder:resource:shortName=cc
+// +kubebuilder:resource:scope=Cluster,shortName=cc
 // +kubebuilder:printcolumn:name="Ready",type=string,JSONPath=`.status.conditions[?(@.type=="Ready")].status`
 // +kubebuilder:printcolumn:name="Valid",type=string,JSONPath=`.status.conditions[?(@.type=="Valid")].status`
 type ContentConfiguration struct {
@@ -82,7 +82,7 @@ type ContentConfiguration struct {
 	Status ContentConfigurationStatus `json:"status,omitempty"`
 }
 
-var _ lifecycle.GenerateNextReconcileTimer = (*ContentConfiguration)(nil)
+var _ spread.GenerateNextReconcileTimer = (*ContentConfiguration)(nil)
 
 //+kubebuilder:object:root=true
 

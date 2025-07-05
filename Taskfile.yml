@@ -3,10 +3,11 @@ version: '3'
 dotenv: ['.taskenv', '.secret/.env', '{{.HOME}}/.env' ]
 vars:
   LOCAL_BIN: bin
-  CONTROLLER_TOOLS_VERSION: v0.16.3
-  ENVTEST_K8S_VERSION: "1.29.0"
+  CONTROLLER_TOOLS_VERSION: v0.18.0
+  ENVTEST_K8S_VERSION: "1.30.0"
   ENVTEST_VERSION: release-0.17
   CRD_DIRECTORY: config/crd/bases
+  KCP_APIGEN_VERSION: v0.27.1
 tasks:
   ## Setup
   setup:mockery:
@@ -20,7 +21,7 @@ tasks:
   setup:envtest:
     internal: true
     cmds:
-      - test -s {{.LOCAL_BIN}}/setup-envtest|| GOBIN=$(pwd)/{{.LOCAL_BIN}} go install sigs.k8s.io/controller-runtime/tools/setup-envtest@{{.ENVTEST_VERSION}}
+      - test -s {{.LOCAL_BIN}}/setup-envtest|| GOBIN=$(pwd)/{{.LOCAL_BIN}} go install sigs.k8s.io/controller-runtime/tools/setup-envtest@latest && $(pwd)/{{.LOCAL_BIN}}/setup-envtest use {{.ENVTEST_K8S_VERSION}} --bin-dir $(pwd)/{{.LOCAL_BIN}} -p path
   setup:golangci-lint:
     internal: true
     cmds:
@@ -29,6 +30,11 @@ tasks:
     internal: true
     cmds:
       - test -s {{.LOCAL_BIN}}/go-test-coverage || GOBIN=$(pwd)/{{.LOCAL_BIN}} go install github.com/vladopajic/go-test-coverage/v2@latest
+  setup:kcp-api-gen:
+    internal: true
+    cmds:
+      - test -s {{.LOCAL_BIN}}/apigen || GOBIN=$(pwd)/{{.LOCAL_BIN}} go install github.com/kcp-dev/kcp/sdk/cmd/apigen@{{.KCP_APIGEN_VERSION}}
+
   ## Development
   mockery:
     deps: [setup:mockery]
@@ -39,10 +45,13 @@ tasks:
     cmds:
       - "{{.LOCAL_BIN}}/controller-gen rbac:roleName=manager-role crd paths=./... output:crd:artifacts:config={{.CRD_DIRECTORY}}"
   generate:
+    deps: [setup:controller-gen, setup:kcp-api-gen]
     cmds:
       - task: manifests
       - "{{.LOCAL_BIN}}/controller-gen object:headerFile=hack/boilerplate.go.txt paths=./..."
       - task: schemagen
+      - "{{.LOCAL_BIN}}/apigen --input-dir {{.CRD_DIRECTORY}} --output-dir ./config/resources"
+      - task: copynamespacedcrd
   build:
     cmds:
       - go build ./...
@@ -90,3 +99,15 @@ tasks:
   run:
     cmds:
       - go run ./main.go operator
+  copynamespacedcrd:
+    cmds:
+        - cp -rf config/crd/bases/* config/out/
+        - yq -i '.spec.scope = "Namespaced"' ./config/out/core.openmfp.io_contentconfigurations.yaml
+        - sed -i '' '1s;^;\{\{ if not .Values.kcp.enabled \}\}\n;' ./config/out/core.openmfp.io_contentconfigurations.yaml
+        - echo "{{ `{{- end }}` }}" >> ./config/out/core.openmfp.io_contentconfigurations.yaml
+  copytocharts:
+    cmds:
+      - cp -rf config/out/* ../helm-charts/charts/extension-manager-operator-crds/templates
+
+
+

@@ -4,11 +4,11 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/openmfp/golang-commons/logger"
+	"github.com/platform-mesh/golang-commons/logger"
 
 	"github.com/openmfp/extension-manager-operator/pkg/validation"
 
-	"github.com/openmfp/golang-commons/sentry"
+	"github.com/platform-mesh/golang-commons/sentry"
 )
 
 type requestValidate struct {
@@ -37,7 +37,7 @@ type HttpValidateHandler struct {
 	log       *logger.Logger
 }
 
-func (h *HttpValidateHandler) HandlerHealthz(w http.ResponseWriter, r *http.Request) {
+func (h *HttpValidateHandler) HandlerHealthz(w http.ResponseWriter, _ *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	_, err := w.Write([]byte("OK"))
 	if err != nil {
@@ -80,7 +80,7 @@ func (h *HttpValidateHandler) HandlerValidate(w http.ResponseWriter, r *http.Req
 
 	// validation
 	parsedConfig, merr := h.validator.Validate([]byte(request.ContentConfiguration), request.ContentType)
-	if merr.Len() > 0 {
+	if merr != nil && merr.Len() > 0 {
 		var responseErr Response
 		for _, e := range merr.Errors {
 			responseErr.ValidationErrors = append(responseErr.ValidationErrors, validationError{
@@ -91,7 +91,11 @@ func (h *HttpValidateHandler) HandlerValidate(w http.ResponseWriter, r *http.Req
 		responseBytes, _ := json.Marshal(responseErr)
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		w.Write(responseBytes) // nolint: errcheck
+		_, err := w.Write(responseBytes)
+		if err != nil {
+			h.log.Error().Err(err).Msg("Writing response failed")
+			sentry.CaptureError(err, sentry.Tags{"error": "Writing response failed"}, sentry.Extras{"data": responseErr})
+		}
 		return
 	}
 

@@ -9,8 +9,8 @@ import (
 	"testing"
 
 	"github.com/hashicorp/go-multierror"
-	"github.com/openmfp/golang-commons/errors"
-	"github.com/openmfp/golang-commons/logger"
+	"github.com/platform-mesh/golang-commons/errors"
+	"github.com/platform-mesh/golang-commons/logger"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 
