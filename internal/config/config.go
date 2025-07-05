@@ -7,7 +7,8 @@ type ServerConfig struct {
 
 type OperatorConfig struct {
 	KCP struct {
-		Enabled bool `mapstructure:"kcp-enabled" default:"true"`
+		Enabled    bool   `mapstructure:"kcp-enabled" default:"false"`
+		Kubeconfig string `mapstructure:"kcp-kubeconfig" default:""`
 	} `mapstructure:",squash"`
 	Subroutines struct {
 		ContentConfiguration struct {

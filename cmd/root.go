@@ -10,6 +10,10 @@ import (
 	clientgoscheme "k8s.io/client-go/kubernetes/scheme"
 	ctrl "sigs.k8s.io/controller-runtime"
 
+	kcpapisv1alpha1 "github.com/kcp-dev/kcp/sdk/apis/apis/v1alpha1"
+	kcpcorev1alpha1 "github.com/kcp-dev/kcp/sdk/apis/core/v1alpha1"
+	kcptenancyv1alpha1 "github.com/kcp-dev/kcp/sdk/apis/tenancy/v1alpha1"
+
 	openmfpconfig "github.com/platform-mesh/golang-commons/config"
 	"github.com/platform-mesh/golang-commons/logger"
 
@@ -35,6 +39,9 @@ var rootCmd = &cobra.Command{
 
 func init() { // coverage-ignore
 	utilruntime.Must(clientgoscheme.AddToScheme(scheme))
+	utilruntime.Must(kcptenancyv1alpha1.AddToScheme(scheme))
+	utilruntime.Must(kcpapisv1alpha1.AddToScheme(scheme))
+	utilruntime.Must(kcpcorev1alpha1.AddToScheme(scheme))
 
 	utilruntime.Must(corev1alpha1.AddToScheme(scheme))
 	//+kubebuilder:scaffold:scheme

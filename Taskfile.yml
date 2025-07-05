@@ -105,11 +105,6 @@ tasks:
         - yq -i '.spec.scope = "Namespaced"' ./config/out/core.openmfp.io_contentconfigurations.yaml
         - sed -i '' '1s;^;\{\{ if not .Values.kcp.enabled \}\}\n;' ./config/out/core.openmfp.io_contentconfigurations.yaml
         - echo "{{ `{{- end }}` }}" >> ./config/out/core.openmfp.io_contentconfigurations.yaml
-        - cp -rf config/resources/* config/out
-        - sed -i '' '1s;^;\{\{ if .Values.kcp.enabled \}\}\n;' ./config/out/apiexport-core.openmfp.io.yaml
-        - echo "{{ `{{- end }}` }}" >> ./config/out/apiexport-core.openmfp.io.yaml
-        - sed -i '' '1s;^;\{\{ if .Values.kcp.enabled \}\}\n;' ./config/out/apiresourceschema-contentconfigurations.core.openmfp.io.yaml
-        - echo "{{ `{{- end }}` }}" >> ./config/out/apiresourceschema-contentconfigurations.core.openmfp.io.yaml
   copytocharts:
     cmds:
       - cp -rf config/out/* ../helm-charts/charts/extension-manager-operator-crds/templates
