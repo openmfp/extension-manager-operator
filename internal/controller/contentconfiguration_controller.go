@@ -29,7 +29,7 @@ import (
 	mcmanager "sigs.k8s.io/multicluster-runtime/pkg/manager"
 	mcreconcile "sigs.k8s.io/multicluster-runtime/pkg/reconcile"
 
-	cachev1alpha1 "github.com/openmfp/extension-manager-operator/api/v1alpha1"
+	"github.com/openmfp/extension-manager-operator/api/v1alpha1"
 	"github.com/openmfp/extension-manager-operator/internal/config"
 	"github.com/openmfp/extension-manager-operator/pkg/subroutines"
 	"github.com/openmfp/extension-manager-operator/pkg/validation"
@@ -56,9 +56,9 @@ func NewContentConfigurationReconciler(log *logger.Logger, mgr mcmanager.Manager
 }
 
 func (r *ContentConfigurationReconciler) Reconcile(ctx context.Context, req mcreconcile.Request) (ctrl.Result, error) {
-	return r.lifecycle.Reconcile(ctx, req, &cachev1alpha1.ContentConfiguration{})
+	return r.lifecycle.Reconcile(ctx, req, &v1alpha1.ContentConfiguration{})
 }
 
 func (r *ContentConfigurationReconciler) SetupWithManager(mgr mcmanager.Manager, cfg *openmfpconfig.CommonServiceConfig, log *logger.Logger, eventPredicates ...predicate.Predicate) error {
-	return r.lifecycle.SetupWithManager(mgr, cfg.MaxConcurrentReconciles, contentConfigurationReconcilerName, &cachev1alpha1.ContentConfiguration{}, cfg.DebugLabelValue, r, log, eventPredicates...)
+	return r.lifecycle.SetupWithManager(mgr, cfg.MaxConcurrentReconciles, contentConfigurationReconcilerName, &v1alpha1.ContentConfiguration{}, cfg.DebugLabelValue, r, log, eventPredicates...)
 }

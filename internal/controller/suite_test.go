@@ -38,7 +38,7 @@ import (
 	openmfpcontext "github.com/platform-mesh/golang-commons/context"
 	"github.com/platform-mesh/golang-commons/logger"
 
-	cachev1alpha1 "github.com/openmfp/extension-manager-operator/api/v1alpha1"
+	"github.com/openmfp/extension-manager-operator/api/v1alpha1"
 	"github.com/openmfp/extension-manager-operator/internal/config"
 )
 
@@ -82,7 +82,7 @@ func (suite *ContentConfigurationTestSuite) SetupSuite() {
 	cfg, err := suite.testEnv.Start()
 	suite.Nil(err)
 
-	utilruntime.Must(cachev1alpha1.AddToScheme(scheme.Scheme))
+	utilruntime.Must(v1alpha1.AddToScheme(scheme.Scheme))
 	utilruntime.Must(v1.AddToScheme(scheme.Scheme))
 
 	// +kubebuilder:scaffold:scheme
