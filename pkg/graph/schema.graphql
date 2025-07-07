@@ -1,0 +1,38 @@
+type LocalObjectReference {
+    name: String!
+}
+
+type Authentication {
+    type: String
+    secretRef: LocalObjectReference
+}
+
+type RemoteConfiguration {
+    contentType: String!
+    url: String!
+    internalUrl: String
+    authentication: Authentication
+}
+
+type InlineConfiguration {
+    contentType: String!
+    content: String!
+}
+
+type ContentConfigurationSpec {
+    remoteConfiguration: RemoteConfiguration
+    inlineConfiguration: InlineConfiguration
+}
+
+type ContentConfigurationStatus {
+    configurationResult: String
+}
+
+type ContentConfiguration {
+    spec: ContentConfigurationSpec
+    status: ContentConfigurationStatus
+}
+
+type Query {
+    contentConfigurations(path: String!): [ContentConfiguration!]
+}
