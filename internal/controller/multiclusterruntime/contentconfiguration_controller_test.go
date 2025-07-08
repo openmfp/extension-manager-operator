@@ -9,6 +9,7 @@ import (
 	"github.com/kcp-dev/multicluster-provider/apiexport"
 	openmfpconfig "github.com/platform-mesh/golang-commons/config"
 	"github.com/platform-mesh/golang-commons/logger"
+	"golang.org/x/sync/errgroup"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	mcmanager "sigs.k8s.io/multicluster-runtime/pkg/manager"
 	"sigs.k8s.io/yaml"
@@ -50,11 +51,12 @@ var (
 
 type ContentConfigurationTestSuite struct {
 	suite.Suite
-	cli                       clusterclient.ClusterClient
-	provider, consumer, other logicalcluster.Path
-	consumerWS                *tenancyv1alpha1.Workspace
-	ctx                       context.Context
-	cancel                    context.CancelFunc
+	cli                clusterclient.ClusterClient
+	provider, consumer logicalcluster.Path
+	consumerWS         *tenancyv1alpha1.Workspace
+	ctx                context.Context
+	cancel             context.CancelFunc
+	g                  *errgroup.Group
 }
 
 func init() {
@@ -76,7 +78,7 @@ func (suite *ContentConfigurationTestSuite) SetupSuite() {
 	// Prevent the metrics listener being created
 	metricsserver.DefaultBindAddress = "0"
 
-	env = &envtest.Environment{AttachKcpOutput: testing.Verbose()}
+	env = &envtest.Environment{}
 	env.BinaryAssetsDirectory = "../../../bin"
 	kcpConfig, err = env.Start()
 	suite.Require().NoError(err, "failed to start envtest environment")
@@ -84,7 +86,6 @@ func (suite *ContentConfigurationTestSuite) SetupSuite() {
 	suite.cli, err = clusterclient.New(kcpConfig, client.Options{})
 	_, suite.provider = envtest.NewWorkspaceFixture(suite.T(), suite.cli, core.RootCluster.Path(), envtest.WithNamePrefix("provider"))
 	suite.consumerWS, suite.consumer = envtest.NewWorkspaceFixture(suite.T(), suite.cli, core.RootCluster.Path(), envtest.WithNamePrefix("consumer"))
-	_, suite.other = envtest.NewWorkspaceFixture(suite.T(), suite.cli, core.RootCluster.Path(), envtest.WithNamePrefix("other"))
 	suite.ctx, suite.cancel = context.WithCancel(context.Background())
 
 	// Prepare apiexports and resource schema
@@ -122,8 +123,8 @@ func (suite *ContentConfigurationTestSuite) SetupSuite() {
 	suite.Require().NoError(err, "failed to create APIBinding for core.openmfp.io in consumer workspace")
 
 	suite.Eventually(func() bool {
-		err = suite.cli.Cluster(suite.consumer).Get(suite.ctx, types.NamespacedName{Name: "core.openmfp.io"}, ab)
-		return err != nil && ab.Status.Phase == apisv1alpha1.APIBindingPhaseBound
+		getErr := suite.cli.Cluster(suite.consumer).Get(suite.ctx, types.NamespacedName{Name: "core.openmfp.io"}, ab)
+		return getErr == nil && ab.Status.Phase == apisv1alpha1.APIBindingPhaseBound
 	}, 10*time.Second, 100*time.Millisecond, "APIBinding for core.openmfp.io in consumer workspace did not become ready")
 
 	// lookup api export
@@ -131,11 +132,11 @@ func (suite *ContentConfigurationTestSuite) SetupSuite() {
 	suite.Require().NoError(err, "failed to get APIExport for core.openmfp.io in consumer workspace")
 
 	cfg := rest.CopyConfig(kcpConfig)
-	cfg.Host += aes.Status.APIExportEndpoints[0].URL
+	cfg.Host = aes.Status.APIExportEndpoints[0].URL
 	provider, err := apiexport.New(cfg, apiexport.Options{})
 	suite.Require().NoError(err, "failed to create APIExport client for core.openmfp.io in consumer workspace")
 
-	mgr, err := mcmanager.New(cfg, provider, mcmanager.Options{})
+	mgr, err := mcmanager.New(cfg, provider, mcmanager.Options{Logger: log.Logr()})
 	suite.Require().NoError(err, "failed to create APIExport client for core.openmfp.io in consumer workspace")
 
 	operatorCfg := config.OperatorConfig{}
@@ -145,16 +146,15 @@ func (suite *ContentConfigurationTestSuite) SetupSuite() {
 	err = rec.SetupWithManager(mgr, &openmfpconfig.CommonServiceConfig{}, log)
 	suite.Require().NoError(err, "failed to setup ContentConfiguration reconciler with manager")
 
-	go func() {
-		err := provider.Run(suite.ctx, mgr)
-		suite.Require().NoError(err, "failed to start provider")
-	}()
-
-	go func() {
-
-		err := mgr.Start(suite.ctx)
-		suite.Require().NoError(err, "failed to start manager")
-	}()
+	var groupContext context.Context
+	groupContext, suite.cancel = context.WithCancel(suite.ctx)
+	suite.g, groupContext = errgroup.WithContext(groupContext)
+	suite.g.Go(func() error {
+		return provider.Run(groupContext, mgr)
+	})
+	suite.g.Go(func() error {
+		return mgr.Start(groupContext)
+	})
 }
 
 func (suite *ContentConfigurationTestSuite) loadFromFile(filePath string, workspace logicalcluster.Path) {
@@ -171,10 +171,9 @@ func (suite *ContentConfigurationTestSuite) loadFromFile(filePath string, worksp
 
 func (suite *ContentConfigurationTestSuite) TearDownSuite() {
 	suite.cancel()
-	err := env.Stop()
-	suite.Assert().NoError(err, "failed to stop envtest environment")
-	// Put the DefaultBindAddress back
-	metricsserver.DefaultBindAddress = ":8080"
+	err := suite.g.Wait()
+	suite.Require().NoError(err, "failed to wait for resources to be ready")
+	env.Stop()
 }
 
 func (suite *ContentConfigurationTestSuite) TestProcessContentConfiguration() {
@@ -240,14 +239,13 @@ func (suite *ContentConfigurationTestSuite) TestProcessContentConfiguration() {
 	// Wait for workspace creation and ready
 	updatedCC := &v1alpha1.ContentConfiguration{}
 	suite.Assert().Eventually(func() bool {
-		err := suite.cli.Cluster(suite.provider).Get(testContext, types.NamespacedName{
-			Name: name,
-		}, updatedCC)
+		err := suite.cli.Cluster(suite.consumer).Get(testContext, types.NamespacedName{Name: name}, updatedCC)
 		readyCondition := meta.FindStatusCondition(updatedCC.Status.Conditions, "Ready")
 		return err == nil && readyCondition != nil && readyCondition.Status == metav1.ConditionTrue
 	}, defaultTestTimeout, defaultTickInterval)
 
-	suite.verifyCondition(updatedCC.Status.Conditions, "Ready", metav1.ConditionTrue, "Valid")
+	suite.verifyCondition(updatedCC.Status.Conditions, "Ready", metav1.ConditionTrue, "Complete")
+	suite.verifyCondition(updatedCC.Status.Conditions, "Valid", metav1.ConditionTrue, "ValidationSucceeded")
 }
 func TestContentConfigurationSuite(t *testing.T) {
 	suite.Run(t, new(ContentConfigurationTestSuite))
