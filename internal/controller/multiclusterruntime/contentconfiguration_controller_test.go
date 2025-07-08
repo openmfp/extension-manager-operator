@@ -34,7 +34,6 @@ import (
 	metricsserver "sigs.k8s.io/controller-runtime/pkg/metrics/server"
 
 	"github.com/openmfp/extension-manager-operator/api/v1alpha1"
-	corev1alpha1 "github.com/openmfp/extension-manager-operator/api/v1alpha1"
 	"github.com/openmfp/extension-manager-operator/internal/config"
 )
 
@@ -62,7 +61,6 @@ type ContentConfigurationTestSuite struct {
 func init() {
 	runtime.Must(v1alpha1.AddToScheme(scheme.Scheme))
 	runtime.Must(apisv1alpha1.AddToScheme(scheme.Scheme))
-	runtime.Must(corev1alpha1.AddToScheme(scheme.Scheme))
 	runtime.Must(tenancyv1alpha1.AddToScheme(scheme.Scheme))
 	runtime.Must(topologyv1alpha1.AddToScheme(scheme.Scheme))
 
@@ -84,6 +82,7 @@ func (suite *ContentConfigurationTestSuite) SetupSuite() {
 	suite.Require().NoError(err, "failed to start envtest environment")
 
 	suite.cli, err = clusterclient.New(kcpConfig, client.Options{})
+	suite.Require().NoError(err, "failed to create cluster client")
 	_, suite.provider = envtest.NewWorkspaceFixture(suite.T(), suite.cli, core.RootCluster.Path(), envtest.WithNamePrefix("provider"))
 	suite.consumerWS, suite.consumer = envtest.NewWorkspaceFixture(suite.T(), suite.cli, core.RootCluster.Path(), envtest.WithNamePrefix("consumer"))
 	suite.ctx, suite.cancel = context.WithCancel(context.Background())
@@ -104,7 +103,7 @@ func (suite *ContentConfigurationTestSuite) SetupSuite() {
 			},
 		},
 	}
-	suite.cli.Cluster(suite.provider).Create(suite.ctx, aes)
+	suite.cli.Cluster(suite.provider).Create(suite.ctx, aes) //nolint:errcheck
 
 	ab := &apisv1alpha1.APIBinding{
 		ObjectMeta: metav1.ObjectMeta{
@@ -173,7 +172,7 @@ func (suite *ContentConfigurationTestSuite) TearDownSuite() {
 	suite.cancel()
 	err := suite.g.Wait()
 	suite.Require().NoError(err, "failed to wait for resources to be ready")
-	env.Stop()
+	env.Stop() //nolint:errcheck
 }
 
 func (suite *ContentConfigurationTestSuite) TestProcessContentConfiguration() {
