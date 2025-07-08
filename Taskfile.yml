@@ -8,6 +8,11 @@ vars:
   ENVTEST_VERSION: release-0.17
   CRD_DIRECTORY: config/crd/bases
   KCP_APIGEN_VERSION: v0.27.1
+  KCP_VERSION: 0.27.1
+  GOARCH:
+    sh: go env GOARCH
+  GOOS:
+    sh: go env GOOS
 tasks:
   ## Setup
   setup:mockery:
@@ -30,6 +35,10 @@ tasks:
     internal: true
     cmds:
       - test -s {{.LOCAL_BIN}}/go-test-coverage || GOBIN=$(pwd)/{{.LOCAL_BIN}} go install github.com/vladopajic/go-test-coverage/v2@latest
+  setup:kcp:
+    internal: true
+    cmds:
+      - test -s {{.LOCAL_BIN}}/kcp || GOBIN=$(pwd)/{{.LOCAL_BIN}} ./hack/download-tool.sh https://github.com/kcp-dev/kcp/releases/download/v{{ .KCP_VERSION }}/kcp_{{ .KCP_VERSION }}_{{ .GOOS }}_{{ .GOARCH }}.tar.gz kcp {{.KCP_VERSION}}
   setup:kcp-api-gen:
     internal: true
     cmds:
@@ -51,6 +60,7 @@ tasks:
       - "{{.LOCAL_BIN}}/controller-gen object:headerFile=hack/boilerplate.go.txt paths=./..."
       - task: schemagen
       - "{{.LOCAL_BIN}}/apigen --input-dir {{.CRD_DIRECTORY}} --output-dir ./config/resources"
+      - "{{.LOCAL_BIN}}/apigen --input-dir {{.CRD_DIRECTORY}} --output-dir ./test/setup"
       - task: copynamespacedcrd
   build:
     cmds:
@@ -75,7 +85,7 @@ tasks:
     cmds:
       - go test ./... {{.ADDITIONAL_COMMAND_ARGS}}
   test:
-    deps: [mockery, setup:envtest, setup:controller-gen]
+    deps: [mockery, setup:envtest, setup:kcp, setup:controller-gen]
     cmds:
       - task: envtest
   cover:
