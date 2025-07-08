@@ -37,7 +37,8 @@ import (
 	mcmanager "sigs.k8s.io/multicluster-runtime/pkg/manager"
 
 	"github.com/openmfp/extension-manager-operator/internal/config"
-	"github.com/openmfp/extension-manager-operator/internal/controller"
+	"github.com/openmfp/extension-manager-operator/internal/controller/controllerruntime"
+	"github.com/openmfp/extension-manager-operator/internal/controller/multiclusterruntime"
 )
 
 var operatorCmd = &cobra.Command{
@@ -125,7 +126,7 @@ func initializeMultiClusterManager(ctx context.Context, cfg *rest.Config, log *l
 		log.Fatal().Err(err).Msg("unable to set up overall controller manager")
 	}
 
-	contentConfigurationReconciler := controller.NewContentConfigurationReconciler(log, mgr, operatorCfg)
+	contentConfigurationReconciler := multiclusterruntime.NewContentConfigurationReconciler(log, mgr, operatorCfg)
 	if err := contentConfigurationReconciler.SetupWithManager(mgr, defaultCfg, log); err != nil {
 		log.Fatal().Err(err).Str("controller", "ContentConfiguration").Msg("unable to create controller")
 	}
@@ -172,7 +173,7 @@ func initializeControllerRuntimeManager(ctx context.Context, restCfg *rest.Confi
 		log.Fatal().Err(err).Msg("unable to start manager")
 	}
 
-	contentConfigurationReconciler := controller.NewContentConfigurationReconcilerCR(log, mgr, operatorCfg)
+	contentConfigurationReconciler := controllerruntime.NewContentConfigurationReconcilerCR(log, mgr, operatorCfg)
 	if err := contentConfigurationReconciler.SetupWithManager(mgr, defaultCfg, log); err != nil {
 		log.Fatal().Err(err).Str("controller", "ContentConfiguration").Msg("unable to create controller")
 	}

@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package controller
+package controllerruntime
 
 import (
 	"context"
@@ -33,11 +33,11 @@ import (
 	"github.com/openmfp/extension-manager-operator/pkg/validation/validation_test"
 )
 
-func TestContentConfigurationTestSuite(t *testing.T) {
-	suite.Run(t, new(ContentConfigurationTestSuite))
+func TestContentConfigurationCRTestSuite(t *testing.T) {
+	suite.Run(t, new(ContentConfigurationControllerTestSuite))
 }
 
-func (suite *ContentConfigurationTestSuite) TestContentConfigurationCreation() {
+func (suite *ContentConfigurationControllerTestSuite) TestContentConfigurationCRCreation() {
 	remoteURL := "https://this-address-should-be-mocked-by-httpmock"
 
 	// Define the test cases
@@ -128,7 +128,7 @@ func (suite *ContentConfigurationTestSuite) TestContentConfigurationCreation() {
 	}
 }
 
-func (suite *ContentConfigurationTestSuite) TestUpdateReconcile() {
+func (suite *ContentConfigurationControllerTestSuite) TestUpdateReconcileCR() {
 	remoteURL := "https://this-address-should-be-mocked-by-httpmock"
 
 	// Given
@@ -234,7 +234,7 @@ func (suite *ContentConfigurationTestSuite) TestUpdateReconcile() {
 	suite.True(equal)
 }
 
-func (suite *ContentConfigurationTestSuite) TestContentConfigurationCreationInternalURL() {
+func (suite *ContentConfigurationControllerTestSuite) TestContentConfigurationCreationCRInternalURL() {
 	remoteURL := "https://this-address-should-be-mocked-by-httpmock"
 	internalURL := "http://internal-url"
 

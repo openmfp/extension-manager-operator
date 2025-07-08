@@ -6,9 +6,7 @@ replace (
 	k8s.io/api => k8s.io/api v0.32.3
 	k8s.io/apimachinery => k8s.io/apimachinery v0.32.3
 	k8s.io/client-go => k8s.io/client-go v0.32.3
-	k8s.io/utils => k8s.io/utils v0.0.0-20241104100929-3ea5e8cea738
 	sigs.k8s.io/controller-runtime => sigs.k8s.io/controller-runtime v0.20.4
-	sigs.k8s.io/multicluster-runtime => sigs.k8s.io/multicluster-runtime v0.20.4-alpha.7
 )
 
 require (
@@ -19,9 +17,10 @@ require (
 	github.com/invopop/jsonschema v0.13.0
 	github.com/jarcoal/httpmock v1.4.0
 	github.com/kcp-dev/kcp/sdk v0.27.1
+	github.com/kcp-dev/logicalcluster/v3 v3.0.5
 	github.com/kcp-dev/multicluster-provider v0.1.0
 	github.com/pkg/errors v0.9.1
-	github.com/platform-mesh/golang-commons v0.0.18-0.20250703174909-3bd864e0fc90
+	github.com/platform-mesh/golang-commons v0.0.22-0.20250708054147-a1724c4ec754
 	github.com/prometheus/client_golang v1.22.0
 	github.com/rs/cors v1.11.1
 	github.com/rs/zerolog v1.34.0
@@ -68,12 +67,13 @@ require (
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.27.1 // indirect
 	github.com/hashicorp/errwrap v1.1.0 // indirect
+	github.com/hashicorp/golang-lru/v2 v2.0.7 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/kcp-dev/apimachinery/v2 v2.0.1-0.20250223115924-431177b024f3 // indirect
-	github.com/kcp-dev/logicalcluster/v3 v3.0.5 // indirect
 	github.com/mailru/easyjson v0.7.7 // indirect
+	github.com/martinlindhe/base36 v1.1.1 // indirect
 	github.com/mattn/go-colorable v0.1.14 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect

@@ -9,6 +9,7 @@ vars:
   CRD_DIRECTORY: config/crd/bases
   KCP_APIGEN_VERSION: v0.27.1
   KCP_VERSION: 0.27.1
+  GOMPLATE_VERSION: v4.3.0
   GOARCH:
     sh: go env GOARCH
   GOOS:
@@ -43,6 +44,10 @@ tasks:
     internal: true
     cmds:
       - test -s {{.LOCAL_BIN}}/apigen || GOBIN=$(pwd)/{{.LOCAL_BIN}} go install github.com/kcp-dev/kcp/sdk/cmd/apigen@{{.KCP_APIGEN_VERSION}}
+  setup:gomplate:
+    internal: true
+    cmds:
+      - test -s {{.LOCAL_BIN}}/gomplate || curl -o {{.LOCAL_BIN}}/gomplate -sSL https://github.com/hairyhenderson/gomplate/releases/download/{{ .GOMPLATE_VERSION }}/gomplate_{{ .GOOS }}-{{ .GOARCH }} && chmod +x {{.LOCAL_BIN}}/gomplate && chmod 755 {{.LOCAL_BIN}}/gomplate
 
   ## Development
   mockery:
@@ -85,7 +90,7 @@ tasks:
     cmds:
       - go test ./... {{.ADDITIONAL_COMMAND_ARGS}}
   test:
-    deps: [mockery, setup:envtest, setup:kcp, setup:controller-gen]
+    deps: [mockery, setup:envtest, setup:kcp, setup:controller-gen, setup:gomplate]
     cmds:
       - task: envtest
   cover:

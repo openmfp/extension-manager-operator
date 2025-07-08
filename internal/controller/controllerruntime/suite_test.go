@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package controller
+package controllerruntime
 
 import (
 	"context"
@@ -48,7 +48,7 @@ const (
 	defaultNamespace    = "default"
 )
 
-type ContentConfigurationTestSuite struct {
+type ContentConfigurationControllerTestSuite struct {
 	suite.Suite
 
 	kubernetesClient  client.Client
@@ -59,10 +59,10 @@ type ContentConfigurationTestSuite struct {
 	cancel context.CancelFunc
 }
 
-func (suite *ContentConfigurationTestSuite) SetupSuite() {
+func (suite *ContentConfigurationControllerTestSuite) SetupSuite() {
 	logConfig := logger.DefaultConfig()
 	logConfig.NoJSON = true
-	logConfig.Name = "ContentConfigurationTestSuite"
+	logConfig.Name = "ContentConfigurationControllerTestSuite"
 	log, err := logger.New(logConfig)
 	suite.logger = log
 	suite.Nil(err)
@@ -109,14 +109,14 @@ func (suite *ContentConfigurationTestSuite) SetupSuite() {
 	go suite.startController()
 }
 
-func (suite *ContentConfigurationTestSuite) startController() {
+func (suite *ContentConfigurationControllerTestSuite) startController() {
 	var controllerContext context.Context
 	controllerContext, suite.cancel = context.WithCancel(context.Background())
 	err := suite.kubernetesManager.Start(controllerContext)
 	suite.Nil(err)
 }
 
-func (suite *ContentConfigurationTestSuite) TearDownSuite() {
+func (suite *ContentConfigurationControllerTestSuite) TearDownSuite() {
 	suite.cancel()
 	err := suite.testEnv.Stop()
 	suite.Nil(err)

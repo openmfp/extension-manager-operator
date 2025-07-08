@@ -1,0 +1,9 @@
+apiVersion: apis.kcp.io/v1alpha1
+kind: APIBinding
+metadata:
+  name: core.openmfp.io
+spec:
+  reference:
+    export:
+      name: core.openmfp.io
+      path: root:provider
