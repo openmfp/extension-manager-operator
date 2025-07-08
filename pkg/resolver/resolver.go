@@ -18,6 +18,13 @@ type Resolver struct {
 	providerWorkspaceID string
 }
 
+func NewResolver(mgr mcmanager.Manager, providerWorkspaceID string) *Resolver {
+	return &Resolver{
+		mgr:                 mgr,
+		providerWorkspaceID: providerWorkspaceID,
+	}
+}
+
 var (
 	LabelContentFor = "ui.platform-mesh.io/content-for"
 	LabelEntity     = "ui.platform-mesh.ui/entity"
@@ -50,8 +57,7 @@ func (r *queryResolver) ContentConfigurations(ctx context.Context, path string) 
 	}
 
 	for _, binding := range apiBindings.Items {
-		// TODO: exchange path with logicalcluster.Name
-		exportWs, err := r.mgr.GetCluster(ctx, binding.Spec.Reference.Export.Path)
+		exportWs, err := r.mgr.GetCluster(ctx, binding.Status.APIExportClusterName)
 		if err != nil {
 			return nil, err
 		}

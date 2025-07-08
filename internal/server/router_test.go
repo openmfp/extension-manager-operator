@@ -85,7 +85,7 @@ func TestCreateRouter(t *testing.T) {
 
 			validator := validation.NewContentConfiguration()
 
-			router := CreateRouter(cfg, log, validator)
+			router := CreateRouter(nil, cfg, log, validator)
 			assert.NotNil(t, router)
 
 			req := httptest.NewRequest(tt.method, tt.path, bytes.NewBufferString(tt.reqBody))
