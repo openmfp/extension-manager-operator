@@ -20,7 +20,7 @@ require (
 	github.com/kcp-dev/logicalcluster/v3 v3.0.5
 	github.com/kcp-dev/multicluster-provider v0.1.0
 	github.com/pkg/errors v0.9.1
-	github.com/platform-mesh/golang-commons v0.0.22-0.20250708054147-a1724c4ec754
+	github.com/platform-mesh/golang-commons v0.1.0
 	github.com/prometheus/client_golang v1.22.0
 	github.com/rs/cors v1.11.1
 	github.com/rs/zerolog v1.34.0
@@ -29,12 +29,14 @@ require (
 	github.com/stretchr/testify v1.10.0
 	github.com/xeipuuv/gojsonschema v1.2.0
 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.62.0
+	golang.org/x/sync v0.15.0
 	gopkg.in/yaml.v3 v3.0.1
 	k8s.io/api v0.33.2
 	k8s.io/apimachinery v0.33.2
 	k8s.io/client-go v0.33.2
 	sigs.k8s.io/controller-runtime v0.21.0
 	sigs.k8s.io/multicluster-runtime v0.20.4-alpha.7
+	sigs.k8s.io/yaml v1.4.0
 )
 
 require (
@@ -112,7 +114,6 @@ require (
 	golang.org/x/exp v0.0.0-20250620022241-b7579e27df2b // indirect
 	golang.org/x/net v0.41.0 // indirect
 	golang.org/x/oauth2 v0.30.0 // indirect
-	golang.org/x/sync v0.15.0 // indirect
 	golang.org/x/sys v0.33.0 // indirect
 	golang.org/x/term v0.32.0 // indirect
 	golang.org/x/text v0.26.0 // indirect
@@ -131,7 +132,6 @@ require (
 	sigs.k8s.io/json v0.0.0-20241010143419-9aa6b5e7a4b3 // indirect
 	sigs.k8s.io/randfill v1.0.0 // indirect
 	sigs.k8s.io/structured-merge-diff/v4 v4.6.0 // indirect
-	sigs.k8s.io/yaml v1.4.0 // indirect
 )
 
 replace dario.cat/mergo => github.com/imdario/mergo v1.0.2
