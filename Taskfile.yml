@@ -19,45 +19,31 @@ tasks:
   setup:mockery:
     internal: true
     cmds:
-      - echo "Testing mockery installation"
       - test -s {{.LOCAL_BIN}}/mockery || GOBIN=$(pwd)/{{.LOCAL_BIN}} go install github.com/vektra/mockery/v2@v2.53.3
-      - echo "Testing mockery installation...Completed"
   setup:controller-gen:
     internal: true
     cmds:
-      - echo "Testing controller-gen installation"
       - test -s {{.LOCAL_BIN}}/controller-gen || GOBIN=$(pwd)/{{.LOCAL_BIN}} go install sigs.k8s.io/controller-tools/cmd/controller-gen@{{.CONTROLLER_TOOLS_VERSION}}
-      - echo "Testing controller-gen installation...Completed"
   setup:envtest:
     internal: true
     cmds:
-      - echo "Testing envtest installation"
       - test -s {{.LOCAL_BIN}}/setup-envtest|| GOBIN=$(pwd)/{{.LOCAL_BIN}} go install sigs.k8s.io/controller-runtime/tools/setup-envtest@{{.ENVTEST_VERSION}}
-      - echo "Testing envtest installation...Completed"
   setup:golangci-lint:
     internal: true
     cmds:
-      - echo "Testing golangci-lint installation"
       - test -s {{.LOCAL_BIN}}/golangci-lint || GOBIN=$(pwd)/{{.LOCAL_BIN}} go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@v2.1.6
-      - echo "Testing golangci-lint installation...Completed"
   setup:go-test-coverage:
     internal: true
     cmds:
-      - echo "Testing go-test-coverage installation"
       - test -s {{.LOCAL_BIN}}/go-test-coverage || GOBIN=$(pwd)/{{.LOCAL_BIN}} go install github.com/vladopajic/go-test-coverage/v2@latest
-      - echo "Testing go-test-coverage installation...Completed"
   setup:kcp:
     internal: true
     cmds:
-      - echo "Testing KCP installation"
       - test -s {{.LOCAL_BIN}}/kcp || GOBIN=$(pwd)/{{.LOCAL_BIN}} ./hack/download-tool.sh https://github.com/kcp-dev/kcp/releases/download/v{{ .KCP_VERSION }}/kcp_{{ .KCP_VERSION }}_{{ .GOOS }}_{{ .GOARCH }}.tar.gz kcp {{.KCP_VERSION}}
-      - echo "Testing KCP installation...Completed"
   setup:kcp-api-gen:
     internal: true
     cmds:
-      - echo "Testing KCP API Generator installation"
       - test -s {{.LOCAL_BIN}}/apigen || GOBIN=$(pwd)/{{.LOCAL_BIN}} go install github.com/kcp-dev/kcp/sdk/cmd/apigen@{{.KCP_APIGEN_VERSION}}
-      - echo "Testing KCP API Generator installation...Completed"
 
   ## Development
   mockery:
@@ -95,10 +81,9 @@ tasks:
   envtest:
     env:
       KUBEBUILDER_ASSETS:
-        sh: set -x && echo "setting KUBEBUILDER_ASSETS" && $(pwd)/{{.LOCAL_BIN}}/setup-envtest use {{.ENVTEST_K8S_VERSION}} --bin-dir $(pwd)/{{.LOCAL_BIN}} -p path
+        sh: $(pwd)/{{.LOCAL_BIN}}/setup-envtest use {{.ENVTEST_K8S_VERSION}} --bin-dir $(pwd)/{{.LOCAL_BIN}} -p path
       GO111MODULE: on
     cmds:
-      - echo "starting tests"
       - go test ./... {{.ADDITIONAL_COMMAND_ARGS}}
   test:
     deps: [mockery, setup:controller-gen, setup:envtest]
