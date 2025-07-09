@@ -18,6 +18,7 @@ package cmd
 
 import (
 	"context"
+	"errors"
 	"net/http"
 	"time"
 
@@ -79,7 +80,7 @@ func RunServer(_ *cobra.Command, _ []string) { // coverage-ignore
 	}
 
 	go func() {
-		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+		if err := srv.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
 			log.Error().Err(err).Msg("Server failed")
 			cancelMain(err)
 		}
@@ -93,7 +94,7 @@ func RunServer(_ *cobra.Command, _ []string) { // coverage-ignore
 
 	err = srv.Shutdown(shutdownCtx)
 	if err != nil {
-		log.Panic().Err(err).Msg("Graceful shutdown failed")
+		log.Error().Err(err).Msg("Graceful shutdown failed")
 	}
 	log.Info().Msg("Server stopped")
 }
