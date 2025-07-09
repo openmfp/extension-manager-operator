@@ -310,3 +310,26 @@ func TestValidation_Error2(t *testing.T) {
 	w.AssertNumberOfCalls(t, "WriteHeader", 1)
 	w.AssertNumberOfCalls(t, "Write", 1)
 }
+
+func TestHandlerValidate_WriteErrorOnValidationErrorResponse(t *testing.T) {
+	logcfg := logger.DefaultConfig()
+	log, _ := logger.New(logcfg)
+
+	mockValidator := mocks.NewExtensionConfiguration(t)
+	merr := &multierror.Error{Errors: []error{errors.New("validation error")}}
+	mockValidator.On("Validate", mock.Anything, mock.Anything).Return("", merr)
+	handler := NewHttpValidateHandler(log, mockValidator)
+
+	w := mocks.NewResponseWriter(t)
+	w.EXPECT().Header().Return(http.Header{})
+	w.EXPECT().WriteHeader(http.StatusOK)
+	w.EXPECT().Write(mock.Anything).Return(0, errors.New("simulated write error"))
+
+	reqBody := OK_VALID_JSON_CONTENT
+	req := httptest.NewRequest(http.MethodPost, "/validate", bytes.NewBufferString(reqBody))
+
+	handler.HandlerValidate(w, req)
+
+	w.AssertCalled(t, "Write", mock.Anything)
+	w.AssertCalled(t, "WriteHeader", http.StatusOK)
+}

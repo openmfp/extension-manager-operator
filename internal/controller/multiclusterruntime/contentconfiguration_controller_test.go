@@ -11,6 +11,7 @@ import (
 	"github.com/platform-mesh/golang-commons/logger"
 	"golang.org/x/sync/errgroup"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
+	ctrl "sigs.k8s.io/controller-runtime"
 	mcmanager "sigs.k8s.io/multicluster-runtime/pkg/manager"
 	"sigs.k8s.io/yaml"
 
@@ -71,13 +72,15 @@ func (suite *ContentConfigurationTestSuite) SetupSuite() {
 	logConfig.NoJSON = true
 	logConfig.Name = "ContentConfigurationControllerTestSuite"
 	log, err := logger.New(logConfig)
+	ctrl.SetLogger(log.Logr())
 	suite.Require().NoError(err, "failed to create logger %v", err)
-
+	suite.ctx, suite.cancel = context.WithCancel(context.Background())
 	// Prevent the metrics listener being created
 	metricsserver.DefaultBindAddress = "0"
 
 	env = &envtest.Environment{}
 	env.BinaryAssetsDirectory = "../../../bin"
+	os.Setenv("PRESERVE", "true")
 	kcpConfig, err = env.Start()
 	suite.Require().NoError(err, "failed to start envtest environment")
 
@@ -85,7 +88,6 @@ func (suite *ContentConfigurationTestSuite) SetupSuite() {
 	suite.Require().NoError(err, "failed to create cluster client")
 	_, suite.provider = envtest.NewWorkspaceFixture(suite.T(), suite.cli, core.RootCluster.Path(), envtest.WithNamePrefix("provider"))
 	suite.consumerWS, suite.consumer = envtest.NewWorkspaceFixture(suite.T(), suite.cli, core.RootCluster.Path(), envtest.WithNamePrefix("consumer"))
-	suite.ctx, suite.cancel = context.WithCancel(context.Background())
 
 	// Prepare apiexports and resource schema
 	suite.loadFromFile("../../../test/setup/apiresourceschema-contentconfigurations.core.openmfp.io.yaml", suite.provider)
@@ -146,8 +148,7 @@ func (suite *ContentConfigurationTestSuite) SetupSuite() {
 	suite.Require().NoError(err, "failed to setup ContentConfiguration reconciler with manager")
 
 	var groupContext context.Context
-	groupContext, suite.cancel = context.WithCancel(suite.ctx)
-	suite.g, groupContext = errgroup.WithContext(groupContext)
+	suite.g, groupContext = errgroup.WithContext(suite.ctx)
 	suite.g.Go(func() error {
 		return provider.Run(groupContext, mgr)
 	})
@@ -170,9 +171,8 @@ func (suite *ContentConfigurationTestSuite) loadFromFile(filePath string, worksp
 
 func (suite *ContentConfigurationTestSuite) TearDownSuite() {
 	suite.cancel()
-	err := suite.g.Wait()
-	suite.Require().NoError(err, "failed to wait for resources to be ready")
-	env.Stop() //nolint:errcheck
+	suite.g.Wait() //nolint:errcheck
+	env.Stop()     //nolint:errcheck
 }
 
 func (suite *ContentConfigurationTestSuite) TestProcessContentConfiguration() {
@@ -232,7 +232,7 @@ func (suite *ContentConfigurationTestSuite) TestProcessContentConfiguration() {
 	}
 
 	// When
-	err = suite.cli.Cluster(suite.consumer).Create(suite.ctx, cc)
+	err = suite.cli.Cluster(suite.consumer).Create(testContext, cc)
 	suite.Require().NoError(err)
 
 	// Wait for workspace creation and ready

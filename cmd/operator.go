@@ -131,13 +131,6 @@ func initializeMultiClusterManager(ctx context.Context, cfg *rest.Config, log *l
 		log.Fatal().Err(err).Str("controller", "ContentConfiguration").Msg("unable to create controller")
 	}
 
-	log.Info().Msg("Starting provider")
-	go func() {
-		if err := provider.Run(ctx, mgr); err != nil {
-			log.Fatal().Err(err).Msg("unable to run provider")
-		}
-	}()
-
 	if err := mgr.AddHealthzCheck("healthz", healthz.Ping); err != nil {
 		log.Fatal().Err(err).Msg("unable to set up health check")
 	}
@@ -145,6 +138,12 @@ func initializeMultiClusterManager(ctx context.Context, cfg *rest.Config, log *l
 		log.Fatal().Err(err).Msg("unable to set up ready check")
 	}
 
+	log.Info().Msg("Starting provider")
+	go func() {
+		if err := provider.Run(ctx, mgr); err != nil {
+			log.Fatal().Err(err).Msg("unable to run provider")
+		}
+	}()
 	log.Info().Msg("starting manager")
 	if err := mgr.Start(ctrl.SetupSignalHandler()); err != nil {
 		log.Fatal().Err(err).Msg("problem running manager")
