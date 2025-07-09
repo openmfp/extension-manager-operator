@@ -101,7 +101,7 @@ tasks:
       - echo "starting tests"
       - go test ./... {{.ADDITIONAL_COMMAND_ARGS}}
   test:
-    deps: [mockery, setup:kcp, setup:controller-gen, setup:envtest]
+    deps: [mockery, setup:controller-gen, setup:envtest]
     cmds:
       - task: envtest
   cover:
