@@ -95,7 +95,7 @@ tasks:
   envtest:
     env:
       KUBEBUILDER_ASSETS:
-        sh: $(pwd)/{{.LOCAL_BIN}}/setup-envtest use {{.ENVTEST_K8S_VERSION}} --bin-dir $(pwd)/{{.LOCAL_BIN}} -p path
+        sh: echo "setting KUBEBUILDER_ASSETS" && $(pwd)/{{.LOCAL_BIN}}/setup-envtest use {{.ENVTEST_K8S_VERSION}} --bin-dir $(pwd)/{{.LOCAL_BIN}} -p path
       GO111MODULE: on
     cmds:
       - echo "starting tests"
