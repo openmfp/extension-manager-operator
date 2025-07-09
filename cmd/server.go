@@ -18,15 +18,22 @@ package cmd
 
 import (
 	"context"
+	"crypto/tls"
 	"net/http"
 	"time"
 
+	"github.com/kcp-dev/multicluster-provider/apiexport"
 	openmfpcontext "github.com/platform-mesh/golang-commons/context"
 	"github.com/platform-mesh/golang-commons/traces"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/spf13/cobra"
+	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 	_ "k8s.io/client-go/plugin/pkg/client/auth"
+	"k8s.io/client-go/tools/clientcmd"
 	ctrl "sigs.k8s.io/controller-runtime"
+	"sigs.k8s.io/controller-runtime/pkg/manager"
+	metricsserver "sigs.k8s.io/controller-runtime/pkg/metrics/server"
+	mcmanager "sigs.k8s.io/multicluster-runtime/pkg/manager"
 
 	"github.com/openmfp/extension-manager-operator/internal/server"
 	"github.com/openmfp/extension-manager-operator/pkg/validation"
@@ -67,8 +74,53 @@ func RunServer(_ *cobra.Command, _ []string) { // coverage-ignore
 	// Create Prometheus metrics handler
 	metricsHandler := promhttp.Handler()
 
+	var mgr mcmanager.Manager
+	if serverCfg.KCP.Enabled {
+		log.Info().Msg("Initializing multicluster manager")
+		kcpCfg, err := clientcmd.BuildConfigFromFlags("", serverCfg.KCP.Kubeconfig)
+		if err != nil {
+			log.Fatal().Err(err).Str("controller", "ContentConfiguration").Msg("unable to construct cluster provider")
+		}
+		kcpCfg.Wrap(func(rt http.RoundTripper) http.RoundTripper {
+			return otelhttp.NewTransport(rt)
+		})
+
+		provider, err := apiexport.New(kcpCfg, apiexport.Options{
+			Scheme: scheme,
+		})
+		if err != nil {
+			log.Fatal().Err(err).Msg("unable to construct cluster provider")
+		}
+
+		mgr, err = mcmanager.New(kcpCfg, provider, manager.Options{
+			Scheme: scheme,
+			Metrics: metricsserver.Options{
+				BindAddress: defaultCfg.Metrics.BindAddress,
+				TLSOpts: []func(*tls.Config){
+					func(c *tls.Config) {
+						log.Info().Msg("disabling http/2")
+						c.NextProtos = []string{"http/1.1"}
+					},
+				},
+			},
+			BaseContext:            func() context.Context { return ctx },
+			HealthProbeBindAddress: defaultCfg.HealthProbeBindAddress,
+			LeaderElection:         defaultCfg.LeaderElection.Enabled,
+		})
+		if err != nil {
+			log.Fatal().Err(err).Msg("unable to set up overall controller manager")
+		}
+
+		log.Info().Msg("Starting provider")
+		go func() {
+			if err := provider.Run(ctx, mgr); err != nil {
+				log.Fatal().Err(err).Msg("unable to run provider")
+			}
+		}()
+	}
+
 	// Register Prometheus metrics endpoint
-	rt := server.CreateRouter(serverCfg, log, validation.NewContentConfiguration())
+	rt := server.CreateRouter(mgr, serverCfg, log, validation.NewContentConfiguration())
 	rt.Handle("/metrics", metricsHandler)
 
 	srv := &http.Server{

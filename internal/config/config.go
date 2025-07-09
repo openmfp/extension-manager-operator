@@ -1,8 +1,13 @@
 package config
 
 type ServerConfig struct {
-	IsLocal    bool   `mapstructure:"is-local"`
-	ServerPort string `mapstructure:"server-port"`
+	IsLocal             bool   `mapstructure:"is-local"`
+	ServerPort          string `mapstructure:"server-port"`
+	ProviderWorkspaceID string `mapstructure:"provider-workspace-id"`
+	KCP                 struct {
+		Enabled    bool   `mapstructure:"kcp-enabled" default:"false"`
+		Kubeconfig string `mapstructure:"kcp-kubeconfig" default:""`
+	} `mapstructure:",squash"`
 }
 
 type OperatorConfig struct {

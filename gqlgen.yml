@@ -1,0 +1,19 @@
+schema:
+  - pkg/graph/schema.graphql
+
+exec:
+  package: graph
+  layout: single-file
+  filename: pkg/graph/generated.go
+
+model:
+  filename: pkg/graph/model/models_gen.go
+  package: model
+
+resolver:
+  package: resolver
+  layout: single-file
+  filename: pkg/resolver/resolver.go
+  preserve_resolver: true
+
+omit_complexity: true
