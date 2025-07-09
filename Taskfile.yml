@@ -31,8 +31,8 @@ tasks:
   setup:envtest:
     internal: true
     cmds:
-      -  echo "Testing envtest installation"
-      - test -s {{.LOCAL_BIN}}/setup-envtest|| GOBIN=$(pwd)/{{.LOCAL_BIN}} go install sigs.k8s.io/controller-runtime/tools/setup-envtest@latest && $(pwd)/{{.LOCAL_BIN}}/setup-envtest use {{.ENVTEST_K8S_VERSION}} --bin-dir $(pwd)/{{.LOCAL_BIN}} -p path
+      - echo "Testing envtest installation"
+      - test -s {{.LOCAL_BIN}}/setup-envtest|| GOBIN=$(pwd)/{{.LOCAL_BIN}} go install sigs.k8s.io/controller-runtime/tools/setup-envtest@{{.ENVTEST_VERSION}}
       - echo "Testing envtest installation...Completed"
   setup:golangci-lint:
     internal: true
