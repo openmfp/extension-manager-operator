@@ -80,7 +80,8 @@ func (suite *ContentConfigurationTestSuite) SetupSuite() {
 
 	env = &envtest.Environment{}
 	env.BinaryAssetsDirectory = "../../../bin"
-	os.Setenv("PRESERVE", "true")
+	err = os.Setenv("PRESERVE", "true")
+	suite.Require().NoError(err, "failed to set PRESERVE environment variable")
 	kcpConfig, err = env.Start()
 	suite.Require().NoError(err, "failed to start envtest environment")
 

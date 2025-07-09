@@ -86,7 +86,7 @@ tasks:
     cmds:
       - go test ./... {{.ADDITIONAL_COMMAND_ARGS}}
   test:
-    deps: [mockery, setup:controller-gen, setup:envtest]
+    deps: [mockery, setup:envtest, setup:controller-gen]
     cmds:
       - task: envtest
   cover:
