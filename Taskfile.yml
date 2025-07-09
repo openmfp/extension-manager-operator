@@ -23,7 +23,9 @@ tasks:
   setup:controller-gen:
     internal: true
     cmds:
+      - echo "Testing controller-gen installation"
       - test -s {{.LOCAL_BIN}}/controller-gen || GOBIN=$(pwd)/{{.LOCAL_BIN}} go install sigs.k8s.io/controller-tools/cmd/controller-gen@{{.CONTROLLER_TOOLS_VERSION}}
+      - echo "Testing controller-gen installation...Completed"
   setup:envtest:
     internal: true
     cmds:
@@ -39,7 +41,9 @@ tasks:
   setup:kcp:
     internal: true
     cmds:
+      - echo "Testing KCP installation"
       - test -s {{.LOCAL_BIN}}/kcp || GOBIN=$(pwd)/{{.LOCAL_BIN}} ./hack/download-tool.sh https://github.com/kcp-dev/kcp/releases/download/v{{ .KCP_VERSION }}/kcp_{{ .KCP_VERSION }}_{{ .GOOS }}_{{ .GOARCH }}.tar.gz kcp {{.KCP_VERSION}}
+      - echo "Testing KCP installation...Completed"
   setup:kcp-api-gen:
     internal: true
     cmds:
