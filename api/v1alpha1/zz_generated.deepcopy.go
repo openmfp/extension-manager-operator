@@ -21,6 +21,7 @@ limitations under the License.
 package v1alpha1
 
 import (
+	apiextensionsv1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1"
 	runtime "k8s.io/apimachinery/pkg/runtime"
 )
@@ -297,10 +298,10 @@ func (in *ProviderMetadataSpec) DeepCopyInto(out *ProviderMetadataSpec) {
 		*out = make([]string, len(*in))
 		copy(*out, *in)
 	}
-	if in.InstallableScopes != nil {
-		in, out := &in.InstallableScopes, &out.InstallableScopes
-		*out = make([]string, len(*in))
-		copy(*out, *in)
+	if in.Data != nil {
+		in, out := &in.Data, &out.Data
+		*out = new(apiextensionsv1.JSON)
+		(*in).DeepCopyInto(*out)
 	}
 	if in.Contacts != nil {
 		in, out := &in.Contacts, &out.Contacts

@@ -17,6 +17,7 @@ limitations under the License.
 package v1alpha1
 
 import (
+	apiextensionsv1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -47,16 +48,16 @@ type Contact struct {
 
 // ProviderMetadataSpec defines the desired state of ProviderMetadata.
 type ProviderMetadataSpec struct {
-	Tags              []string `json:"tags,omitempty"`
-	InstallableScopes []string `json:"installableScopes"`
+	Tags []string `json:"tags,omitempty"`
 
 	DisplayName string `json:"displayName"`
 	Description string `json:"description,omitempty"`
 
-	ConfigurationMetadata string    `json:"configurationMetadata,omitempty"`
-	Contacts              []Contact `json:"contacts,omitempty"`
-	Documentation         *URL      `json:"documentation,omitempty"`
-	Icon                  *Icon     `json:"icon,omitempty"`
+	// Additional information that should be stored with the provider metadata.
+	Data          *apiextensionsv1.JSON `json:"data,omitempty"`
+	Contacts      []Contact             `json:"contacts,omitempty"`
+	Documentation *URL                  `json:"documentation,omitempty"`
+	Icon          *Icon                 `json:"icon,omitempty"`
 
 	Links                    []Link `json:"links,omitempty"`
 	PreferredSupportChannels []Link `json:"preferredSupportChannels,omitempty"`

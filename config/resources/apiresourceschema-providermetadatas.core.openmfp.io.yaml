@@ -2,7 +2,7 @@ apiVersion: apis.kcp.io/v1alpha1
 kind: APIResourceSchema
 metadata:
   creationTimestamp: null
-  name: v250715-0faebce.providermetadatas.core.openmfp.io
+  name: v250715-52c3ed0.providermetadatas.core.openmfp.io
 spec:
   group: core.openmfp.io
   names:
@@ -36,8 +36,6 @@ spec:
         spec:
           description: ProviderMetadataSpec defines the desired state of ProviderMetadata.
           properties:
-            configurationMetadata:
-              type: string
             contacts:
               items:
                 properties:
@@ -53,6 +51,10 @@ spec:
                 - displayName
                 type: object
               type: array
+            data:
+              description: Additional information that should be stored with the provider
+                metadata.
+              x-kubernetes-preserve-unknown-fields: true
             description:
               type: string
             displayName:
@@ -91,10 +93,6 @@ spec:
               - dark
               - light
               type: object
-            installableScopes:
-              items:
-                type: string
-              type: array
             links:
               items:
                 properties:
@@ -119,7 +117,6 @@ spec:
               type: array
           required:
           - displayName
-          - installableScopes
           type: object
         status:
           description: ProviderMetadataStatus defines the observed state of ProviderMetadata.
