@@ -4,15 +4,15 @@ kind: CustomResourceDefinition
 metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.16.3
-  name: providermetadata.core.openmfp.io
+  name: providermetadatas.core.openmfp.io
 spec:
   group: core.openmfp.io
   names:
     kind: ProviderMetadata
     listKind: ProviderMetadataList
-    plural: providermetadata
+    plural: providermetadatas
     singular: providermetadata
-  scope: Cluster
+  scope: Namespaced
   versions:
   - name: v1alpha1
     schema:

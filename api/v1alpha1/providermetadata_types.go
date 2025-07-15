@@ -64,14 +64,12 @@ type ProviderMetadataSpec struct {
 }
 
 // ProviderMetadataStatus defines the observed state of ProviderMetadata.
-type ProviderMetadataStatus struct {
-	// INSERT ADDITIONAL STATUS FIELD - define observed state of cluster
-	// Important: Run "make" to regenerate code after modifying this file
-}
+type ProviderMetadataStatus struct{}
 
 // +kubebuilder:object:root=true
 // +kubebuilder:subresource:status
 // +kubebuilder:resource:scope=Cluster
+// +kubebuilder:resource:path=providermetadatas
 
 // ProviderMetadata is the Schema for the providermetadata API.
 type ProviderMetadata struct {

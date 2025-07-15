@@ -6,5 +6,5 @@ metadata:
 spec:
   latestResourceSchemas:
   - v250704-6d57f16.contentconfigurations.core.openmfp.io
-  - v250715-f915058.providermetadata.core.openmfp.io
+  - v250715-0faebce.providermetadatas.core.openmfp.io
 status: {}

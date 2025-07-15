@@ -16,12 +16,12 @@ rules:
 - apiGroups:
   - core.core.openmfp.io
   resources:
-  - providermetadata
+  - providermetadatas
   verbs:
   - '*'
 - apiGroups:
   - core.core.openmfp.io
   resources:
-  - providermetadata/status
+  - providermetadatas/status
   verbs:
   - get
