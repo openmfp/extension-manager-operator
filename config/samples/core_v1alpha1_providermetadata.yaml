@@ -1,0 +1,9 @@
+apiVersion: core.core.openmfp.io/v1alpha1
+kind: ProviderMetadata
+metadata:
+  labels:
+    app.kubernetes.io/name: extension-manager-operator
+    app.kubernetes.io/managed-by: kustomize
+  name: providermetadata-sample
+spec:
+  # TODO(user): Add fields here

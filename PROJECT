@@ -20,4 +20,11 @@ resources:
   kind: ContentConfiguration
   path: github.com/openmfp/extension-manager-operator/api/v1alpha1
   version: v1alpha1
+- api:
+    crdVersion: v1
+  domain: core.openmfp.io
+  group: core
+  kind: ProviderMetadata
+  path: github.com/openmfp/extension-manager-operator/api/v1alpha1
+  version: v1alpha1
 version: "3"
