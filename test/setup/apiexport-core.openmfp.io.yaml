@@ -5,6 +5,6 @@ metadata:
   name: core.openmfp.io
 spec:
   latestResourceSchemas:
-  - v250708-db05fb6.contentconfigurations.core.openmfp.io
+  - v250704-6d57f16.contentconfigurations.core.openmfp.io
   - v250715-52c3ed0.providermetadatas.core.openmfp.io
 status: {}

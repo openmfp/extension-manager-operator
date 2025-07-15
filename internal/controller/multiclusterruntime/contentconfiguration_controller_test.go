@@ -91,6 +91,7 @@ func (suite *ContentConfigurationTestSuite) SetupSuite() {
 	suite.consumerWS, suite.consumer = envtest.NewWorkspaceFixture(suite.T(), suite.cli, core.RootCluster.Path(), envtest.WithNamePrefix("consumer"))
 
 	// Prepare apiexports and resource schema
+	suite.loadFromFile("../../../test/setup/apiresourceschema-providermetadatas.core.openmfp.io.yaml", suite.provider)
 	suite.loadFromFile("../../../test/setup/apiresourceschema-contentconfigurations.core.openmfp.io.yaml", suite.provider)
 	suite.loadFromFile("../../../test/setup/apiexport-core.openmfp.io.yaml", suite.provider)
 

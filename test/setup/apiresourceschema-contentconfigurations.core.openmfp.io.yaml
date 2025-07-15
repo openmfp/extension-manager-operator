@@ -2,7 +2,7 @@ apiVersion: apis.kcp.io/v1alpha1
 kind: APIResourceSchema
 metadata:
   creationTimestamp: null
-  name: v250708-db05fb6.contentconfigurations.core.openmfp.io
+  name: v250704-6d57f16.contentconfigurations.core.openmfp.io
 spec:
   group: core.openmfp.io
   names:
