@@ -19,9 +19,9 @@ package v1alpha1
 import (
 	"time"
 
-	"github.com/platform-mesh/golang-commons/controller/lifecycle/spread"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/runtime"
 )
 
 // EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!
@@ -82,8 +82,6 @@ type ContentConfiguration struct {
 	Status ContentConfigurationStatus `json:"status,omitempty"`
 }
 
-var _ spread.GenerateNextReconcileTimer = (*ContentConfiguration)(nil)
-
 //+kubebuilder:object:root=true
 
 // ContentConfigurationList contains a list of ContentConfiguration
@@ -94,7 +92,14 @@ type ContentConfigurationList struct {
 }
 
 func init() {
-	SchemeBuilder.Register(&ContentConfiguration{}, &ContentConfigurationList{})
+	SchemeBuilder.Register(func(s *runtime.Scheme) error {
+		s.AddKnownTypes(GroupVersion,
+			&ContentConfiguration{},
+			&ContentConfigurationList{},
+		)
+		metav1.AddToGroupVersion(s, GroupVersion)
+		return nil
+	})
 }
 
 func (i *ContentConfiguration) GetConditions() []metav1.Condition { return i.Status.Conditions }

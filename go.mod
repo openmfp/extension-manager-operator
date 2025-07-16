@@ -1,8 +1,9 @@
 module github.com/openmfp/extension-manager-operator
 
-go 1.24.3
+go 1.24.4
 
 replace (
+	github.com/openmfp/extension-manager-operator/api => ./api
 	k8s.io/api => k8s.io/api v0.32.3
 	k8s.io/apimachinery => k8s.io/apimachinery v0.32.3
 	k8s.io/client-go => k8s.io/client-go v0.32.3
@@ -19,6 +20,7 @@ require (
 	github.com/kcp-dev/kcp/sdk v0.27.1
 	github.com/kcp-dev/logicalcluster/v3 v3.0.5
 	github.com/kcp-dev/multicluster-provider v0.1.0
+	github.com/openmfp/extension-manager-operator/api v0.0.0-00010101000000-000000000000
 	github.com/pkg/errors v0.9.1
 	github.com/platform-mesh/golang-commons v0.1.3
 	github.com/prometheus/client_golang v1.22.0
@@ -31,10 +33,9 @@ require (
 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.62.0
 	golang.org/x/sync v0.16.0
 	gopkg.in/yaml.v3 v3.0.1
-	k8s.io/api v0.33.2
-	k8s.io/apiextensions-apiserver v0.33.0
-	k8s.io/apimachinery v0.33.2
-	k8s.io/client-go v0.33.2
+	k8s.io/api v0.33.3
+	k8s.io/apimachinery v0.33.3
+	k8s.io/client-go v0.33.3
 	sigs.k8s.io/controller-runtime v0.21.0
 	sigs.k8s.io/multicluster-runtime v0.20.4-alpha.7
 	sigs.k8s.io/yaml v1.5.0
@@ -127,6 +128,7 @@ require (
 	google.golang.org/protobuf v1.36.6 // indirect
 	gopkg.in/evanphx/json-patch.v4 v4.12.0 // indirect
 	gopkg.in/inf.v0 v0.9.1 // indirect
+	k8s.io/apiextensions-apiserver v0.33.3 // indirect
 	k8s.io/klog/v2 v2.130.1 // indirect
 	k8s.io/kube-openapi v0.0.0-20250318190949-c8a335a9a2ff // indirect
 	k8s.io/utils v0.0.0-20250604170112-4c0f3b243397 // indirect
