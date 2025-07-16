@@ -20,3 +20,4 @@ jobs:
       useTask: true
       useLocalCoverageConfig: true
       repoVersionUpdate: openmfp/helm-charts
+      apiPackagePath: api
