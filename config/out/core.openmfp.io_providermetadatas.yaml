@@ -63,16 +63,20 @@ spec:
               displayName:
                 type: string
               documentation:
-                properties:
-                  url:
-                    type: string
-                type: object
+                items:
+                  properties:
+                    displayName:
+                      type: string
+                    url:
+                      type: string
+                  type: object
+                type: array
               helpCenterData:
                 items:
                   properties:
-                    URL:
-                      type: string
                     displayName:
+                      type: string
+                    url:
                       type: string
                   type: object
                 type: array
@@ -99,18 +103,18 @@ spec:
               links:
                 items:
                   properties:
-                    URL:
-                      type: string
                     displayName:
+                      type: string
+                    url:
                       type: string
                   type: object
                 type: array
               preferredSupportChannels:
                 items:
                   properties:
-                    URL:
-                      type: string
                     displayName:
+                      type: string
+                    url:
                       type: string
                   type: object
                 type: array
