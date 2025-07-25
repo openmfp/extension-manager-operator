@@ -312,8 +312,8 @@ func (in *ProviderMetadataSpec) DeepCopyInto(out *ProviderMetadataSpec) {
 	}
 	if in.Documentation != nil {
 		in, out := &in.Documentation, &out.Documentation
-		*out = new(URL)
-		**out = **in
+		*out = make([]Link, len(*in))
+		copy(*out, *in)
 	}
 	if in.Icon != nil {
 		in, out := &in.Icon, &out.Icon
