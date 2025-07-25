@@ -38,7 +38,7 @@ type Image struct {
 
 type Link struct {
 	DisplayName string `json:"displayName,omitempty"`
-	URL         string `json:"URL,omitempty"`
+	URL         string `json:"url,omitempty"`
 }
 
 type Contact struct {
@@ -57,12 +57,17 @@ type ProviderMetadataSpec struct {
 	// Additional information that should be stored with the provider metadata.
 	Data          *apiextensionsv1.JSON `json:"data,omitempty"`
 	Contacts      []Contact             `json:"contacts,omitempty"`
-	Documentation *URL                  `json:"documentation,omitempty"`
+	Documentation []Documentation       `json:"documentation,omitempty"`
 	Icon          *Icon                 `json:"icon,omitempty"`
 
 	Links                    []Link `json:"links,omitempty"`
 	PreferredSupportChannels []Link `json:"preferredSupportChannels,omitempty"`
 	HelpCenterData           []Link `json:"helpCenterData,omitempty"`
+}
+
+type Documentation struct {
+	DisplayName string `json:"displayName,omitempty"`
+	URL         string `json:"url,omitempty"`
 }
 
 // ProviderMetadataStatus defines the observed state of ProviderMetadata.
