@@ -7,7 +7,7 @@ replace (
 	k8s.io/api => k8s.io/api v0.32.3
 	k8s.io/apimachinery => k8s.io/apimachinery v0.32.3
 	k8s.io/client-go => k8s.io/client-go v0.32.3
-	sigs.k8s.io/controller-runtime => sigs.k8s.io/controller-runtime v0.20.4
+	sigs.k8s.io/controller-runtime => sigs.k8s.io/controller-runtime v0.21.0
 )
 
 require (
@@ -45,6 +45,7 @@ require (
 	github.com/99designs/gqlgen v0.17.78 // indirect
 	github.com/bahlo/generic-list-go v0.2.0 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
+	github.com/blang/semver/v4 v4.0.0 // indirect
 	github.com/buger/jsonparser v1.1.1 // indirect
 	github.com/cenkalti/backoff/v5 v5.0.2 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
