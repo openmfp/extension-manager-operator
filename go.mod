@@ -22,7 +22,7 @@ require (
 	github.com/kcp-dev/multicluster-provider v0.2.0
 	github.com/openmfp/extension-manager-operator/api v0.142.72
 	github.com/pkg/errors v0.9.1
-	github.com/platform-mesh/golang-commons v0.1.15
+	github.com/platform-mesh/golang-commons v0.1.19
 	github.com/prometheus/client_golang v1.23.0
 	github.com/rs/cors v1.11.1
 	github.com/rs/zerolog v1.34.0
