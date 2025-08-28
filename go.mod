@@ -22,13 +22,13 @@ require (
 	github.com/kcp-dev/multicluster-provider v0.2.0
 	github.com/openmfp/extension-manager-operator/api v0.142.126
 	github.com/pkg/errors v0.9.1
-	github.com/platform-mesh/golang-commons v0.1.21
+	github.com/platform-mesh/golang-commons v0.1.23
 	github.com/prometheus/client_golang v1.23.0
 	github.com/rs/cors v1.11.1
 	github.com/rs/zerolog v1.34.0
 	github.com/spf13/cobra v1.9.1
 	github.com/spf13/viper v1.20.1
-	github.com/stretchr/testify v1.10.0
+	github.com/stretchr/testify v1.11.1
 	github.com/xeipuuv/gojsonschema v1.2.0
 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.62.0
 	golang.org/x/sync v0.16.0
